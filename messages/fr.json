@@ -1,7 +1,9 @@
 {
   "Navbar": {
     "brand": "Pounce",
-    "authButton": "Connexion / Inscription"
+    "authButton": "Connexion / Inscription",
+    "loginModalTitle": "Bienvenue",
+    "loginModalDesc": "Connectez-vous ou créez un compte pour continuer."
   },
 
   "HomePage": {

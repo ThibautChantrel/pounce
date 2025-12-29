@@ -1,7 +1,9 @@
 {
   "Navbar": {
     "brand": "Pounce",
-    "authButton": "Connexion / Inscription"
+    "authButton": "Login / Sign Up",
+    "loginModalTitle": "Welcome",
+    "loginModalDesc": "Log in or create an account to continue."
   },
   "HomePage": {
     "title": "Turn your runs into legends",

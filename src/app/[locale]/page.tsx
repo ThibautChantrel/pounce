@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button'
+import { Modal } from '@/components/ui/custom/modal'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 
@@ -73,6 +74,22 @@ export default function Home() {
         <Button variant="clay">Annuler</Button>
         <Button variant="outline">Outline</Button>
         <Button variant="ghost">{t('authButton')}</Button>
+        <Modal
+          title="Connexion"
+          description="Entrez vos identifiants pour accéder à votre compte."
+          trigger={<Button variant="default">Se connecter</Button>}
+        >
+          {/* Ici, on mettra plus tard votre formulaire <LoginForm /> */}
+          <div className="flex flex-col gap-4">
+            <input className="border p-2 rounded" placeholder="Email" />
+            <input
+              className="border p-2 rounded"
+              type="password"
+              placeholder="Mot de passe"
+            />
+            <Button className="w-full">Valider</Button>
+          </div>
+        </Modal>
       </main>
     </div>
   )
