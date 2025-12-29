@@ -18,7 +18,6 @@ export default function Hero() {
       {/* bg-black/50 signifie noir à 50% d'opacité */}
       <div className="absolute top-0 left-0 w-full h-full bg-black/50 z-10" />
 
-      {/* 3. CONTENU (Texte + Boutons) */}
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4 space-y-6">
         <h1 className="text-4xl md:text-6xl font-bold text-white max-w-4xl leading-tight">
           Title
