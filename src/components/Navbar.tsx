@@ -8,8 +8,7 @@ export default function Navbar() {
   const t = useTranslations('Navbar')
 
   return (
-    <nav className="top-0 left-0 w-full z-50 flex items-center justify-between p-2 bg-transparent text-clay">
-      {/* Partie Gauche : Logo + Nom */}
+    <nav className="absolute top-0 left-0 w-full z-50 flex items-center justify-between p-2 bg-transparent text-clay">
       <Link
         href="/"
         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -18,7 +17,6 @@ export default function Navbar() {
         <span className="text-xl font-bold tracking-tight">{t('brand')}</span>
       </Link>
 
-      {/* Partie Droite : Bouton Connexion */}
       <div className="flex items-center gap-4">
         <Modal
           title={t('loginModalTitle')}
