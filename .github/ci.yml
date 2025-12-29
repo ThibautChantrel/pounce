@@ -1,0 +1,36 @@
+name: Quality Check
+
+# Déclencheur : Quand lancer la pipeline ?
+on:
+  push:
+    branches: [main] # À chaque push sur main
+  pull_request:
+    branches: [main] # À chaque Pull Request vers main
+
+jobs:
+  test-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupérer le code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Installer Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Utilise la même version que ton local
+          cache: 'npm'
+
+      # 3. Installer les dépendances (npm ci est plus rapide et strict que npm install)
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Vérifier le style (Prettier)
+      - name: Check Formatting (Prettier)
+        run: npm run format:check
+
+      # 5. Vérifier la qualité (ESLint)
+      - name: Lint Code (ESLint)
+        run: npm run lint
