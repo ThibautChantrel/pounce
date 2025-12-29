@@ -1,0 +1,16 @@
+{
+  "Navbar": {
+    "brand": "Pounce",
+    "authButton": "Connexion / Inscription"
+  },
+
+  "HomePage": {
+    "title": "Transformez vos trajets en légendes",
+    "subtitle": "Rejoignez le défi du Métro Parisien.",
+    "cta": "Rejoindre l'aventure"
+  },
+  "ChallengeCard": {
+    "participants": "{count} participants",
+    "completed": "{pct}% Complété"
+  }
+}

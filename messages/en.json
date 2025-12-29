@@ -1,0 +1,15 @@
+{
+  "Navbar": {
+    "brand": "Pounce",
+    "authButton": "Connexion / Inscription"
+  },
+  "HomePage": {
+    "title": "Turn your runs into legends",
+    "subtitle": "Join the Paris Metro Challenge.",
+    "cta": "Join the adventure"
+  },
+  "ChallengeCard": {
+    "participants": "{count} participants",
+    "completed": "{pct}% Completed"
+  }
+}
