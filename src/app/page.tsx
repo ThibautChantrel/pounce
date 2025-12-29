@@ -63,6 +63,13 @@ export default function Home() {
         <Button className="mt-20" variant="secondary">
           Hello World
         </Button>
+        <div className="bg-canopy text-clay">hello</div>
+        <Button variant="canopy">Action principale</Button>
+        <Button variant="sienna">Action secondaire</Button>
+        <Button variant="slate">Confirmer</Button>
+        <Button variant="clay">Annuler</Button>
+        <Button variant="outline">Outline</Button>
+        <Button variant="ghost">Ghost</Button>
       </main>
     </div>
   )
