@@ -21,7 +21,8 @@
     "switchLogin": "Already have an account? Log In",
     "switchRegister": "Don't have an account? Sign Up",
     "successRegister": "Account created successfully!",
-    "googleAuth": "Continue with Google"
+    "googleAuth": "Continue with Google",
+    "successLogin": "Login successful!"
   },
 
   "HomePage": {

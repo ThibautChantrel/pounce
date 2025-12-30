@@ -3,6 +3,8 @@
 import { BusinessError, ERROR_CODES } from '@/core/errors' // <--- Import
 import { registerUser } from '@/server/modules/user/service/user.service'
 import { LoginSchema, RegisterSchema } from './auth.schema'
+import { signIn } from '@/server/modules/auth/auth.config'
+import { AuthError } from 'next-auth'
 
 export interface AuthActionState {
   success: boolean
@@ -21,11 +23,9 @@ export async function registerAction(
 
   const validated = RegisterSchema.safeParse(rawData)
 
-  // 1. Gestion des erreurs de validation (Zod)
   if (!validated.success) {
     return {
       success: false,
-      // On peut aussi typer ça plus tard, pour l'instant on renvoie le message Zod
       error: validated.error.issues[0].message,
       code: 'VALIDATION_ERROR',
     }
@@ -60,18 +60,46 @@ export async function registerAction(
 export async function loginAction(
   prevState: AuthActionState,
   formData: FormData
-) {
+): Promise<AuthActionState> {
   const rawData = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+    email: formData.get('email'),
+    password: formData.get('password'),
   }
 
   const validated = LoginSchema.safeParse(rawData)
 
-  console.log('Login submitted (Not implemented yet)')
-  return {
-    success: false,
-    error: 'Fonctionnalité en cours de développement',
-    code: 'TODO',
+  if (!validated.success) {
+    return {
+      success: false,
+      error: validated.error.issues[0].message,
+      code: 'VALIDATION_ERROR',
+    }
+  }
+
+  const { email, password } = validated.data
+
+  try {
+    const res = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+
+    if (!res || res.error) {
+      return {
+        success: false,
+        error: 'Email ou mot de passe incorrect',
+        code: 'INVALID_CREDENTIALS',
+      }
+    }
+
+    return { success: true }
+  } catch (e) {
+    console.error(e)
+    return {
+      success: false,
+      error: 'Une erreur inattendue est survenue',
+      code: 'INTERNAL_ERROR',
+    }
   }
 }

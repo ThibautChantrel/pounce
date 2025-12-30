@@ -51,6 +51,7 @@ export default function AuthModal({ trigger }: AuthModalProps) {
   /** ✅ GESTION SUCCÈS LOGIN (SAFE) */
   useEffect(() => {
     if (open && loginState?.success) {
+      toast.success(t('successLogin'))
       handleClose()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -74,6 +75,12 @@ export default function AuthModal({ trigger }: AuthModalProps) {
     setPasswordError(null)
     regAction(formData)
   }
+
+  useEffect(() => {
+    if (loginState?.error) {
+      toast.error(loginState.error)
+    }
+  }, [loginState?.error])
 
   return (
     <Modal
