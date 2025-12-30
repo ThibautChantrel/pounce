@@ -5,6 +5,24 @@
     "loginModalTitle": "Welcome",
     "loginModalDesc": "Log in or create an account to continue."
   },
+
+  "Auth": {
+    "loginTitle": "Welcome back",
+    "loginDesc": "Enter your credentials to log in.",
+    "registerTitle": "Create an account",
+    "registerDesc": "Join Pounce today.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "passwordMismatch": "Passwords do not match",
+    "nameLabel": "Name (Optional)",
+    "loginBtn": "Log In",
+    "registerBtn": "Sign Up",
+    "switchLogin": "Already have an account? Log In",
+    "switchRegister": "Don't have an account? Sign Up",
+    "successRegister": "Account created successfully!"
+  },
+
   "HomePage": {
     "title": "Turn your runs into legends",
     "subtitle": "Join the Paris Metro Challenge.",

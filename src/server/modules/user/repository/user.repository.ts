@@ -1,5 +1,4 @@
-// src/server/repositories/user.repo.ts
-import db from '@/server/db' // Ton fichier avec la config PrismaPg
+import db from '@/server/db'
 import { Prisma } from '@prisma/client'
 
 /**
@@ -15,7 +14,7 @@ export const findUserByEmail = async (email: string) => {
 /**
  * Crée un nouvel utilisateur en base.
  */
-export const createUserInDb = async (data: Prisma.UserCreateInput) => {
+export const createUser = async (data: Prisma.UserCreateInput) => {
   return await db.user.create({
     data,
   })
