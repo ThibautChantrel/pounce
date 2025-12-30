@@ -2,10 +2,17 @@
 
 import { BusinessError, ERROR_CODES } from '@/core/errors' // <--- Import
 import { registerUser } from '@/server/modules/user/service/user.service'
-import { RegisterSchema } from './auth.schema'
+import { LoginSchema, RegisterSchema } from './auth.schema'
 
-//eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function registerAction(prevState: any, formData: FormData) {
+export interface AuthActionState {
+  success: boolean
+  error?: string
+  code?: string
+}
+export async function registerAction(
+  prevState: AuthActionState,
+  formData: FormData
+) {
   const rawData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
@@ -50,9 +57,17 @@ export async function registerAction(prevState: any, formData: FormData) {
   }
 }
 
-//eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function loginAction(prevState: any, formData: FormData) {
-  // On simulera juste une erreur pour l'instant ou rien du tout
+export async function loginAction(
+  prevState: AuthActionState,
+  formData: FormData
+) {
+  const rawData = {
+    email: formData.get('email') as string,
+    password: formData.get('password') as string,
+  }
+
+  const validated = LoginSchema.safeParse(rawData)
+
   console.log('Login submitted (Not implemented yet)')
   return {
     success: false,

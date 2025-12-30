@@ -20,7 +20,8 @@
     "registerBtn": "S'inscrire",
     "switchLogin": "Déjà un compte ? Se connecter",
     "switchRegister": "Pas de compte ? S'inscrire",
-    "successRegister": "Compte créé avec succès !"
+    "successRegister": "Compte créé avec succès !",
+    "googleAuth": "Continuer avec Google"
   },
 
   "HomePage": {

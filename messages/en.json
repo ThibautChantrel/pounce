@@ -20,7 +20,8 @@
     "registerBtn": "Sign Up",
     "switchLogin": "Already have an account? Log In",
     "switchRegister": "Don't have an account? Sign Up",
-    "successRegister": "Account created successfully!"
+    "successRegister": "Account created successfully!",
+    "googleAuth": "Continue with Google"
   },
 
   "HomePage": {
