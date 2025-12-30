@@ -3,7 +3,8 @@
     "brand": "Pounce",
     "authButton": "Connexion / Inscription",
     "loginModalTitle": "Bienvenue",
-    "loginModalDesc": "Connectez-vous ou créez un compte pour continuer."
+    "loginModalDesc": "Connectez-vous ou créez un compte pour continuer.",
+    "logoutButton": "Se déconnecter"
   },
 
   "Auth": {

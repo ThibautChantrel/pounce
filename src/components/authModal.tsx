@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { loginAction, registerAction } from '@/actions/auth/auth.actions'
 import { Separator } from './ui/separator'
+import { useRouter } from 'next/navigation'
 
 interface AuthModalProps {
   trigger: React.ReactNode
@@ -17,6 +18,7 @@ interface AuthModalProps {
 
 export default function AuthModal({ trigger }: AuthModalProps) {
   const t = useTranslations('Auth')
+  const router = useRouter()
 
   const [open, setOpen] = useState(false)
   const [isLoginMode, setIsLoginMode] = useState(true)
@@ -53,6 +55,7 @@ export default function AuthModal({ trigger }: AuthModalProps) {
     if (open && loginState?.success) {
       toast.success(t('successLogin'))
       handleClose()
+      router.refresh()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginState?.success])
