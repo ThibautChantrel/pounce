@@ -2,8 +2,9 @@ import Link from 'next/link'
 import { PawPrint } from 'lucide-react'
 import { Button } from './ui/button'
 import AuthModal from './authModal'
-import { auth, signOut } from '@/server/modules/auth/auth.config'
+import { auth } from '@/server/modules/auth/auth.config'
 import { getTranslations } from 'next-intl/server'
+import LogoutButton from './LogoutButton'
 
 export default async function Navbar() {
   const t = await getTranslations('Navbar')
@@ -26,16 +27,7 @@ export default async function Navbar() {
               {session.user?.name || session.user?.email}
             </span>
 
-            <form
-              action={async () => {
-                'use server'
-                await signOut()
-              }}
-            >
-              <Button variant="ghost" type="submit">
-                {t('logoutButton')}
-              </Button>
-            </form>
+            <LogoutButton />
           </div>
         ) : (
           <AuthModal

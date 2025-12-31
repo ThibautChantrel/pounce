@@ -3,8 +3,7 @@
 import { BusinessError, ERROR_CODES } from '@/core/errors' // <--- Import
 import { registerUser } from '@/server/modules/user/service/user.service'
 import { LoginSchema, RegisterSchema } from './auth.schema'
-import { signIn } from '@/server/modules/auth/auth.config'
-import { AuthError } from 'next-auth'
+import { signIn, signOut } from '@/server/modules/auth/auth.config'
 
 export interface AuthActionState {
   success: boolean
@@ -114,4 +113,9 @@ export async function loginAction(
       code: 'INTERNAL_ERROR',
     }
   }
+}
+
+export async function logoutAction() {
+  await signOut({ redirect: false })
+  return { success: true }
 }
