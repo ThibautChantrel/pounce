@@ -33,6 +33,18 @@ export async function registerAction(
 
   try {
     await registerUser(validated.data)
+    const res = await signIn('credentials', {
+      email: validated.data.email,
+      password: validated.data.password,
+      redirect: false,
+    })
+    if (!res || res.error) {
+      return {
+        success: false,
+        error: "Échec de la connexion après l'inscription.",
+        code: 'LOGIN_AFTER_REGISTER_FAILED',
+      }
+    }
     return { success: true }
 
     //eslint-disable-next-line @typescript-eslint/no-explicit-any

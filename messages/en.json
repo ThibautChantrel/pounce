@@ -21,7 +21,7 @@
     "registerBtn": "Sign Up",
     "switchLogin": "Already have an account? Log In",
     "switchRegister": "Don't have an account? Sign Up",
-    "successRegister": "Account created successfully!",
+    "successRegister": "Account created successfully! You are now logged in.",
     "googleAuth": "Continue with Google",
     "successLogin": "Login successful!"
   },

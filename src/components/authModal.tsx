@@ -41,16 +41,15 @@ export default function AuthModal({ trigger }: AuthModalProps) {
   const pending = regPending || logPending
   const error = isLoginMode ? loginState?.error : regState?.error
 
-  /** ✅ GESTION SUCCÈS REGISTER (SAFE) */
   useEffect(() => {
     if (open && regState?.success) {
       toast.success(t('successRegister'))
       handleClose()
+      router.refresh()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [regState?.success])
 
-  /** ✅ GESTION SUCCÈS LOGIN (SAFE) */
   useEffect(() => {
     if (open && loginState?.success) {
       toast.success(t('successLogin'))
@@ -68,7 +67,6 @@ export default function AuthModal({ trigger }: AuthModalProps) {
     setPasswordError(null)
   }
 
-  /** Validation client register */
   const handleRegisterSubmit = (formData: FormData) => {
     if (password !== confirmPassword) {
       setPasswordError(t('passwordMismatch'))
