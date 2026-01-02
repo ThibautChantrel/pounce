@@ -4,9 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import Footer from '@/components/Footer'
 import '../globals.css' // Assurez-vous que le chemin vers globals.css est bon
-import Navbar from '@/components/Navbar'
 import { Toaster } from '@/components/ui/sonner'
 
 const geistSans = Geist({
@@ -45,13 +43,8 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <NextIntlClientProvider messages={messages}>
-          <Navbar />
-
           <main className="grow">{children}</main>
-
           <Toaster position="top-center" />
-
-          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

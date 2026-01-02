@@ -1,10 +1,11 @@
-import Link from 'next/link'
 import { PawPrint } from 'lucide-react'
 import { Button } from './ui/button'
 import AuthModal from './authModal'
 import { auth } from '@/server/modules/auth/auth.config'
 import { getTranslations } from 'next-intl/server'
 import LogoutButton from './LogoutButton'
+import { Settings } from 'lucide-react'
+import { Link } from '@/navigation'
 
 export default async function Navbar() {
   const t = await getTranslations('Navbar')
@@ -26,7 +27,13 @@ export default async function Navbar() {
             <span className="text-sm font-medium">
               {session.user?.name || session.user?.email}
             </span>
-
+            {session.user.role === 'ADMIN' && (
+              <Link href="/admin">
+                <Button variant="ghost">
+                  <Settings className="w-8 h-8" />
+                </Button>
+              </Link>
+            )}
             <LogoutButton />
           </div>
         ) : (
