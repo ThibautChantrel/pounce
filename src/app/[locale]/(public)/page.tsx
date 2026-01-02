@@ -1,7 +1,9 @@
+'use client'
+import AuthModal from '@/components/authModal'
 import Hero from '@/components/Hero'
 import { Button } from '@/components/ui/button'
-import { Modal } from '@/components/ui/custom/modal'
 import { useTranslations } from 'next-intl'
+import { toast } from 'sonner'
 
 export default function Home() {
   const t = useTranslations('Navbar')
@@ -26,29 +28,25 @@ export default function Home() {
           <Button variant="slate">Confirmer</Button>
           <Button variant="clay">Annuler</Button>
           <Button variant="outline">Outline</Button>
-          <Button variant="ghost">{t('authButton')}</Button>
+          <Button
+            variant="ghost"
+            onClick={() =>
+              toast('Event has been created', {
+                description: 'Sunday, December 03, 2023 at 9:00 AM',
+                action: {
+                  label: 'Undo',
+                  onClick: () => console.log('Undo'),
+                },
+              })
+            }
+          >
+            {t('authButton')}
+          </Button>
         </div>
 
-        {/* Test du Modal */}
-        <Modal
-          title="Connexion"
-          description="Entrez vos identifiants pour accéder à votre compte."
-          trigger={
-            <Button variant="default" className="mt-8">
-              Tester le Modal
-            </Button>
-          }
-        >
-          <div className="flex flex-col gap-4">
-            <input className="border p-2 rounded" placeholder="Email" />
-            <input
-              className="border p-2 rounded"
-              type="password"
-              placeholder="Mot de passe"
-            />
-            <Button className="w-full">Valider</Button>
-          </div>
-        </Modal>
+        <AuthModal
+          trigger={<Button variant="canopy">{t('authButton')}</Button>}
+        />
       </div>
     </main>
   )

@@ -4,9 +4,8 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
-import Footer from '@/components/Footer'
 import '../globals.css' // Assurez-vous que le chemin vers globals.css est bon
-import Navbar from '@/components/Navbar'
+import { Toaster } from '@/components/ui/sonner'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,15 +29,12 @@ export default async function LocaleLayout({
   children: React.ReactNode
   params: Promise<{ locale: string }> // Promise obligatoire en Next.js 15
 }) {
-  // 1. Récupération de la locale via params (async)
   const { locale } = await params
 
-  // 2. Vérification basique (optionnel si le middleware fait bien son travail)
   if (!['en', 'fr'].includes(locale)) {
     notFound()
   }
 
-  // 3. Récupération des messages côté serveur pour les passer au Client Provider
   const messages = await getMessages()
 
   return (
@@ -47,15 +43,8 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
         <NextIntlClientProvider messages={messages}>
-          {/* Navbar par dessus le contenu */}
-          <Navbar />
-
-          {/* Contenu principal */}
-          {/* Note: Comme la navbar est absolute, le haut du children sera sous la navbar. 
-              Ajoutez du padding-top dans vos pages si nécessaire, ou laissez tel quel pour un effet "hero" full screen */}
           <main className="grow">{children}</main>
-
-          <Footer />
+          <Toaster position="top-center" />
         </NextIntlClientProvider>
       </body>
     </html>

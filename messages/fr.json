@@ -3,7 +3,27 @@
     "brand": "Pounce",
     "authButton": "Connexion / Inscription",
     "loginModalTitle": "Bienvenue",
-    "loginModalDesc": "Connectez-vous ou créez un compte pour continuer."
+    "loginModalDesc": "Connectez-vous ou créez un compte pour continuer.",
+    "logoutButton": "Se déconnecter"
+  },
+
+  "Auth": {
+    "loginTitle": "Bon retour",
+    "loginDesc": "Entrez vos identifiants pour vous connecter.",
+    "registerTitle": "Créer un compte",
+    "registerDesc": "Rejoignez Pounce dès aujourd'hui.",
+    "emailLabel": "Email",
+    "passwordLabel": "Mot de passe",
+    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "nameLabel": "Nom (Optionnel)",
+    "loginBtn": "Se connecter",
+    "registerBtn": "S'inscrire",
+    "switchLogin": "Déjà un compte ? Se connecter",
+    "switchRegister": "Pas de compte ? S'inscrire",
+    "successRegister": "Compte créé avec succès ! Vous êtes maintenant connecté.",
+    "googleAuth": "Continuer avec Google",
+    "successLogin": "Connexion réussie !"
   },
 
   "HomePage": {
