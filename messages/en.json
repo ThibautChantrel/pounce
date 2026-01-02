@@ -34,5 +34,31 @@
   "ChallengeCard": {
     "participants": "{count} participants",
     "completed": "{pct}% Completed"
+  },
+
+  "Admin": {
+    "Navbar": {
+      "users": "Users"
+    },
+
+    "Users": {
+      "title": "User Management",
+      "description": "Manage all registered users.",
+      "addUser": "Add New User",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role"
+    },
+    "Actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "Results": {
+      "noResults": "No results found.",
+      "total": "Total",
+      "results": "results"
+    }
   }
 }

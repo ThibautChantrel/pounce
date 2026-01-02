@@ -1,7 +1,9 @@
 import { auth } from '@/server/modules/auth/auth.config'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { LayoutDashboard, Users, Settings, LogOut } from 'lucide-react'
+import { Users, Settings, LogOut } from 'lucide-react'
+import { Link } from '@/navigation'
+import { getTranslations } from 'next-intl/server'
+import { Button } from '@/components/ui/button'
 
 export default async function AdminLayout({
   children,
@@ -13,6 +15,7 @@ export default async function AdminLayout({
   if (!session?.user || session.user.role !== 'ADMIN') {
     redirect('/')
   }
+  const t = getTranslations('Admin')
 
   return (
     <div className="flex min-h-screen bg-muted/20">
@@ -25,14 +28,9 @@ export default async function AdminLayout({
 
         <nav className="flex-1 p-4 space-y-2">
           <AdminLink
-            href="/admin/dashboard"
-            icon={<LayoutDashboard size={18} />}
-            label="Vue d'ensemble"
-          />
-          <AdminLink
             href="/admin/users"
             icon={<Users size={18} />}
-            label="Utilisateurs"
+            label={(await t)('Navbar.users')}
           />
           <AdminLink
             href="/admin/settings"
@@ -42,10 +40,11 @@ export default async function AdminLayout({
         </nav>
 
         <div className="p-4 border-t">
-          <div className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-red-500">
-            <LogOut size={18} />
-            <span>Déconnexion</span>
-          </div>
+          <Link href="/">
+            <Button variant="ghost">
+              <LogOut size={18} />
+            </Button>
+          </Link>
         </div>
       </aside>
 

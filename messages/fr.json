@@ -34,5 +34,32 @@
   "ChallengeCard": {
     "participants": "{count} participants",
     "completed": "{pct}% Complété"
+  },
+
+  "Admin": {
+    "Navbar": {
+      "users": "Utilisateurs"
+    },
+
+    "Users": {
+      "title": "Gestion des utilisateurs",
+      "description": "Gérez tous les utilisateurs enregistrés.",
+      "addUser": "Ajouter un nouvel utilisateur",
+      "name": "Nom",
+      "email": "Email",
+      "role": "Rôle"
+    },
+    "Actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    },
+
+    "Results": {
+      "noResults": "Aucun résultat trouvé.",
+      "total": "Total",
+      "results": "résultats"
+    }
   }
 }

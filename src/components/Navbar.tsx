@@ -1,6 +1,6 @@
 import { PawPrint } from 'lucide-react'
 import { Button } from './ui/button'
-import AuthModal from './authModal'
+import AuthModal from './AuthModal'
 import { auth } from '@/server/modules/auth/auth.config'
 import { getTranslations } from 'next-intl/server'
 import LogoutButton from './LogoutButton'
