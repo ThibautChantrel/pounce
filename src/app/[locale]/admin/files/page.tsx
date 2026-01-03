@@ -1,5 +1,5 @@
-import { fetchUsers } from '@/actions/user/user.actions'
-import UsersTable from '@/components/admin/users/UsersTable'
+import { fetchFiles } from '@/actions/file/file.actions'
+import FilesTable from '@/components/admin/files/FilesTable'
 import { getTranslations } from 'next-intl/server'
 
 interface PageProps {
@@ -15,9 +15,9 @@ export default async function UsersPage(props: PageProps) {
   const search = (searchParams.search as string) || ''
   const skip = (page - 1) * limit
 
-  const { data, total } = await fetchUsers(skip, limit, search)
+  const { data, total } = await fetchFiles(skip, limit, search)
 
-  const t = await getTranslations('Admin.Users')
+  const t = await getTranslations('Admin.Files')
 
   return (
     <div className="h-full flex-1 flex-col space-y-8 p-8 flex">
@@ -30,7 +30,7 @@ export default async function UsersPage(props: PageProps) {
         </div>
       </div>
 
-      <UsersTable data={data} totalItems={total} />
+      <FilesTable data={data} totalItems={total} />
     </div>
   )
 }

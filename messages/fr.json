@@ -36,9 +36,19 @@
     "completed": "{pct}% Complété"
   },
 
+  "File": {
+    "uploadButton": "Télécharger le fichier",
+    "uploading": "Téléchargement...",
+    "uploadSuccess": "Fichier téléchargé avec succès !",
+    "uploadError": "Erreur lors du téléchargement du fichier. Veuillez réessayer.",
+    "selectFile": "Sélectionnez un fichier à télécharger",
+    "noFileSelected": "Aucun fichier sélectionné."
+  },
+
   "Admin": {
     "Navbar": {
-      "users": "Utilisateurs"
+      "users": "Utilisateurs",
+      "files": "Fichiers"
     },
 
     "Users": {
@@ -49,11 +59,31 @@
       "email": "Email",
       "role": "Rôle"
     },
+    "Files": {
+      "title": "Gestion des fichiers",
+      "description": "Gérez tous les fichiers téléchargés.",
+      "addFile": "Télécharger un nouveau fichier",
+      "filename": "Nom du fichier",
+      "uploadedBy": "Téléchargé par",
+      "uploadDate": "Date de téléchargement",
+      "size": "Taille",
+      "type": "Type",
+      "createdAt": "Créé le"
+    },
     "Actions": {
       "edit": "Modifier",
       "delete": "Supprimer",
       "save": "Enregistrer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "download": "Télécharger",
+      "copyLink": "Copier le lien",
+      "label": "Actions",
+      "deleted": "Supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression. Veuillez réessayer.",
+      "AlertDialog": {
+        "title": "Confirmer la suppression",
+        "description": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.L'élément {item} sera définitivement supprimé."
+      }
     },
 
     "Results": {
