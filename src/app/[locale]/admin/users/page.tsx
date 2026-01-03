@@ -10,16 +10,13 @@ interface PageProps {
 export default async function UsersPage(props: PageProps) {
   const searchParams = await props.searchParams
 
-  // 1. Gestion des paramètres d'URL
   const page = Number(searchParams.page) || 1
   const limit = Number(searchParams.limit) || 10
   const search = (searchParams.search as string) || ''
   const skip = (page - 1) * limit
 
-  // 2. Récupération des données (Serveur)
   const { data, total } = await fetchUsers(skip, limit, search)
 
-  // 3. Traduction du titre (Serveur)
   const t = await getTranslations('Admin.Users')
 
   return (

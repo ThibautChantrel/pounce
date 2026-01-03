@@ -51,7 +51,6 @@ export function DataTable<TData, TValue>({
   const searchParams = useSearchParams()
   const t = useTranslations('Admin')
 
-  // 1. Récupération des params depuis l'URL
   const page = Number(searchParams.get('page')) || 1
   const per_page = Number(searchParams.get('limit')) || 10
   const search = searchParams.get('search') || ''
@@ -59,7 +58,6 @@ export function DataTable<TData, TValue>({
   // Calcul du nombre total de pages
   const pageCount = Math.ceil(totalItems / per_page)
 
-  // 2. Initialisation de la table
   const table = useReactTable({
     data,
     columns,
