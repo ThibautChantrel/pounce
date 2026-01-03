@@ -31,6 +31,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Search,
+  Plus,
 } from 'lucide-react'
 import { useDebouncedCallback } from 'use-debounce'
 import { useTranslations } from 'next-intl'
@@ -55,7 +56,6 @@ export function DataTable<TData, TValue>({
   const per_page = Number(searchParams.get('limit')) || 10
   const search = searchParams.get('search') || ''
 
-  // Calcul du nombre total de pages
   const pageCount = Math.ceil(totalItems / per_page)
 
   const table = useReactTable({
@@ -76,7 +76,6 @@ export function DataTable<TData, TValue>({
   const createQueryString = React.useCallback(
     (params: Record<string, string | number | null>) => {
       const newSearchParams = new URLSearchParams(searchParams.toString())
-
       Object.entries(params).forEach(([key, value]) => {
         if (value === null) {
           newSearchParams.delete(key)
@@ -84,7 +83,6 @@ export function DataTable<TData, TValue>({
           newSearchParams.set(key, String(value))
         }
       })
-
       return newSearchParams.toString()
     },
     [searchParams]
@@ -126,6 +124,13 @@ export function DataTable<TData, TValue>({
             />
           </div>
         </div>
+
+        <Button
+          variant="ghost"
+          onClick={() => router.push(`${pathname}/create`)}
+        >
+          <Plus className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="rounded-md border bg-card">
