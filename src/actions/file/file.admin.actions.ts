@@ -5,7 +5,7 @@ import {
   getAllFiles,
   getFileById,
   upload,
-} from '@/server/modules/file/service/file.service'
+} from '@/server/modules/file/service/file.admin.service'
 
 export async function uploadFileAction(formData: FormData) {
   await upload(formData)

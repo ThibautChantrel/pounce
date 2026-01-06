@@ -1,4 +1,4 @@
-import { fetchUsers } from '@/actions/user/user.actions'
+import { fetchUsers } from '@/actions/user/user.admin.actions'
 import UsersTable from '@/components/admin/users/UsersTable'
 import { getTranslations } from 'next-intl/server'
 

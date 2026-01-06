@@ -31,7 +31,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
-import { removeFile } from '@/actions/file/file.actions'
+import { removeFile } from '@/actions/file/file.admin.actions'
 import { useFormatter, useTranslations } from 'next-intl'
 
 export type FileColumn = {

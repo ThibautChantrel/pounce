@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { useState, useRef } from 'react'
-import { uploadFileAction } from '@/actions/file/file.actions'
+import { uploadFileAction } from '@/actions/file/file.admin.actions'
 import { X, Image as ImageIcon, FileText } from 'lucide-react'
 import Image from 'next/image' // <--- Import Next Image
 import { useTranslations } from 'next-intl'

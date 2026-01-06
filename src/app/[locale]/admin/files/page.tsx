@@ -1,4 +1,4 @@
-import { fetchFiles } from '@/actions/file/file.actions'
+import { fetchFiles } from '@/actions/file/file.admin.actions'
 import FilesTable from '@/components/admin/files/FilesTable'
 import { getTranslations } from 'next-intl/server'
 

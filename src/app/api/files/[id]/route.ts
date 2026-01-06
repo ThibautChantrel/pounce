@@ -1,4 +1,4 @@
-import { getFileById } from '@/server/modules/file/service/file.service'
+import { getFileById } from '@/server/modules/file/service/file.admin.service'
 import { NextResponse } from 'next/server'
 
 export async function GET(

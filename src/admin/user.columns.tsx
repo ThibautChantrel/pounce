@@ -28,7 +28,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
-import { removeUser } from '@/actions/user/user.actions'
+import { removeUser } from '@/actions/user/user.admin.actions'
 import { useTranslations } from 'next-intl'
 
 export type UserColumn = {
