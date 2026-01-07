@@ -5,7 +5,7 @@ import {
   deleteUserById,
   getAllUsers,
   getUserById,
-} from '@/server/modules/user/service/user.admin.service'
+} from '@/server/modules/user/services/user.admin.service'
 
 export const fetchUsers = async (skip = 0, take = 10, search?: string) => {
   return await getAllUsers(skip, take, search)

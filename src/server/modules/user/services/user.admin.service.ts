@@ -1,4 +1,4 @@
-import * as userRepository from '@/server/modules/user/repository/user.repository'
+import * as userRepository from '@/server/modules/user/repositories/user.repository'
 
 export const getAllUsers = async (skip = 0, take = 10, search?: string) => {
   return await userRepository.getAll(skip, take, search)

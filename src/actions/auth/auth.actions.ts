@@ -1,7 +1,7 @@
 'use server'
 
 import { BusinessError, ERROR_CODES } from '@/core/errors' // <--- Import
-import { registerUser } from '@/server/modules/user/service/user.service'
+import { registerUser } from '@/server/modules/user/services/user.service'
 import { LoginSchema, RegisterSchema } from './auth.schema'
 import { signIn, signOut } from '@/server/modules/auth/auth.config'
 

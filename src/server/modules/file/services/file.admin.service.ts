@@ -5,7 +5,7 @@ import {
   deleteFile,
   getAll,
   getOne,
-} from '../repository/file.repository'
+} from '../repositories/file.repository'
 
 export const upload = async (formData: FormData) => {
   const session = await auth()
