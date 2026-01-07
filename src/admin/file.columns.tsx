@@ -9,7 +9,6 @@ import {
   Download,
   Copy,
   FileText,
-  Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -20,21 +19,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import { removeFile } from '@/actions/file/file.admin.actions'
 import { useFormatter, useTranslations } from 'next-intl'
 import { formatBytes } from '@/utils/files'
-import { Link } from '@/navigation'
+import { Link, useRouter } from '@/navigation'
+import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 
 export type FileColumn = {
   id: string
@@ -48,11 +38,13 @@ const FileActions = ({ file }: { file: FileColumn }) => {
   const t = useTranslations('Admin')
   const [open, setOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const router = useRouter()
 
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
       await removeFile(file.id)
+      router.refresh()
       toast.success(t('Actions.deleted'))
       setOpen(false)
     } catch {
@@ -103,36 +95,19 @@ const FileActions = ({ file }: { file: FileColumn }) => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t('Actions.AlertDialog.title')}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('Actions.AlertDialog.description', { item: file.filename })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>
-              {t('Actions.cancel')}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault()
-                handleDelete()
-              }}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              {t('Actions.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmationDialog
+        open={open}
+        onOpenChange={setOpen}
+        onConfirm={handleDelete}
+        isPending={isDeleting}
+        variant="delete"
+        title={t('Actions.AlertDialog.title')}
+        actionLabel={t('Actions.confirm')}
+        cancelLabel={t('Actions.cancel')}
+        description={t('Actions.AlertDialog.description', {
+          item: file.filename,
+        })}
+      />
     </>
   )
 }

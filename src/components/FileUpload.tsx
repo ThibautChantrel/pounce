@@ -51,15 +51,10 @@ export default function FileUpload({ onSubmit }: FileUploadProps) {
 
     setPending(true)
     try {
-      // On délègue l'envoi au parent via la prop onSubmit
       await onSubmit(formData)
-      // Si le parent ne redirige pas tout de suite, on nettoie le formulaire
       handleClear()
     } catch (error) {
-      // Le toast d'erreur peut être géré ici ou par le parent,
-      // ici on gère les erreurs inattendues de l'appel
       console.error(error)
-      // toast.error géré par le parent généralement pour les erreurs API
     } finally {
       setPending(false)
     }
@@ -98,7 +93,7 @@ export default function FileUpload({ onSubmit }: FileUploadProps) {
           <div className="relative flex items-center justify-center w-full h-32 bg-slate-50 rounded-lg border border-dashed border-slate-300">
             <div className="text-center p-4">
               <FileText className="mx-auto h-8 w-8 text-slate-400 mb-2" />
-              <p className="text-sm text-slate-600 font-medium truncate max-w-[200px]">
+              <p className="text-sm text-slate-600 font-medium truncate max-w-50">
                 {fileName}
               </p>
             </div>

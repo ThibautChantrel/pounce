@@ -2,13 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { ColumnDef } from '@tanstack/react-table'
-import {
-  MoreHorizontal,
-  ArrowUpDown,
-  Trash,
-  Pencil,
-  Loader2,
-} from 'lucide-react'
+import { MoreHorizontal, ArrowUpDown, Trash, Pencil } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -17,19 +11,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
 import { removeUser } from '@/actions/user/user.admin.actions'
 import { useTranslations } from 'next-intl'
+import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 
 export type UserColumn = {
   id: string
@@ -83,38 +68,19 @@ const UserActions = ({ user }: { user: UserColumn }) => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t('Actions.AlertDialog.title')}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('Actions.AlertDialog.description', {
-                item: user.name || user.email || 'User',
-              })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>
-              {t('Actions.cancel')}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={(e) => {
-                e.preventDefault()
-                handleDelete()
-              }}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
-              disabled={isDeleting}
-            >
-              {isDeleting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : null}
-              {t('Actions.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmationDialog
+        open={open}
+        onOpenChange={setOpen}
+        onConfirm={handleDelete}
+        isPending={isDeleting}
+        variant="delete"
+        title={t('Actions.AlertDialog.title')}
+        actionLabel={t('Actions.confirm')}
+        cancelLabel={t('Actions.cancel')}
+        description={t('Actions.AlertDialog.description', {
+          item: user.name || user.email || 'User',
+        })}
+      />
     </>
   )
 }
