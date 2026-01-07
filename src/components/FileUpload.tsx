@@ -6,6 +6,7 @@ import { useState, useRef } from 'react'
 import { X, Image as ImageIcon, FileText, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
+import { acceptedFileTypes } from '@/utils/files'
 
 // Définition des props attendues par le composant
 interface FileUploadProps {
@@ -67,7 +68,7 @@ export default function FileUpload({ onSubmit }: FileUploadProps) {
           id="file-upload"
           type="file"
           name="file"
-          accept="image/*,.gpx,application/gpx+xml"
+          accept={acceptedFileTypes}
           className="hidden"
           onChange={handleFileChange}
         />
