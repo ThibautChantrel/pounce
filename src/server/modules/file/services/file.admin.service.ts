@@ -5,7 +5,9 @@ import {
   deleteFile,
   getAll,
   getOne,
+  updateFile,
 } from '../repositories/file.repository'
+import { Prisma } from '@prisma/client'
 
 export const upload = async (formData: FormData) => {
   const session = await auth()
@@ -52,4 +54,34 @@ export const deleteFileById = async (id: string) => {
     throw new BusinessError(ERROR_CODES.NOT_FOUND, 'File not found')
   }
   return await deleteFile(id)
+}
+
+export const updateFileById = async (id: string, formData: FormData) => {
+  const existingFile = await getOne(id)
+  if (!existingFile) {
+    throw new BusinessError(ERROR_CODES.NOT_FOUND, 'File not found')
+  }
+
+  const dataToUpdate: Prisma.FileUpdateInput = {}
+
+  const file = formData.get('file') as File | null
+  if (file && file.size > 0) {
+    const buffer = Buffer.from(await file.arrayBuffer())
+
+    dataToUpdate.data = buffer
+    dataToUpdate.size = buffer.length
+    dataToUpdate.mimeType = file.type
+    dataToUpdate.filename = file.name
+  }
+
+  const filenameInput = formData.get('filename') as string | null
+  if (filenameInput && filenameInput.trim() !== '') {
+    dataToUpdate.filename = filenameInput
+  }
+
+  if (Object.keys(dataToUpdate).length === 0) {
+    return existingFile
+  }
+
+  return await updateFile(id, dataToUpdate)
 }

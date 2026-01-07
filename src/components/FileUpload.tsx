@@ -3,12 +3,16 @@
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { useState, useRef } from 'react'
-import { uploadFileAction } from '@/actions/file/file.admin.actions'
-import { X, Image as ImageIcon, FileText } from 'lucide-react'
-import Image from 'next/image' // <--- Import Next Image
+import { X, Image as ImageIcon, FileText, Loader2 } from 'lucide-react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 
-export default function FileUpload() {
+// Définition des props attendues par le composant
+interface FileUploadProps {
+  onSubmit: (formData: FormData) => Promise<void>
+}
+
+export default function FileUpload({ onSubmit }: FileUploadProps) {
   const [pending, setPending] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [fileName, setFileName] = useState<string | null>(null)
@@ -17,7 +21,6 @@ export default function FileUpload() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-
     if (file) {
       setFileName(file.name)
       if (file.type.startsWith('image/')) {
@@ -38,8 +41,9 @@ export default function FileUpload() {
     if (formRef.current) formRef.current.reset()
   }
 
-  async function handleUpload(formData: FormData) {
+  async function handleSubmit(formData: FormData) {
     const file = formData.get('file') as File
+    // Validation locale (UI pure)
     if (!file || file.size === 0) {
       toast.error(t('noFileSelected'))
       return
@@ -47,19 +51,23 @@ export default function FileUpload() {
 
     setPending(true)
     try {
-      await uploadFileAction(formData)
-      toast.success(t('uploadSuccess'))
+      // On délègue l'envoi au parent via la prop onSubmit
+      await onSubmit(formData)
+      // Si le parent ne redirige pas tout de suite, on nettoie le formulaire
       handleClear()
-    } catch {
-      toast.error('Erreur technique')
+    } catch (error) {
+      // Le toast d'erreur peut être géré ici ou par le parent,
+      // ici on gère les erreurs inattendues de l'appel
+      console.error(error)
+      // toast.error géré par le parent généralement pour les erreurs API
     } finally {
       setPending(false)
     }
   }
 
   return (
-    <div className="w-full max-w-sm">
-      <form ref={formRef} action={handleUpload} className="flex flex-col gap-4">
+    <div className="w-full max-w-sm bg-white p-6 rounded-xl shadow-lg">
+      <form ref={formRef} action={handleSubmit} className="flex flex-col gap-4">
         <input
           id="file-upload"
           type="file"
@@ -90,7 +98,7 @@ export default function FileUpload() {
           <div className="relative flex items-center justify-center w-full h-32 bg-slate-50 rounded-lg border border-dashed border-slate-300">
             <div className="text-center p-4">
               <FileText className="mx-auto h-8 w-8 text-slate-400 mb-2" />
-              <p className="text-sm text-slate-600 font-medium truncate max-w-50">
+              <p className="text-sm text-slate-600 font-medium truncate max-w-[200px]">
                 {fileName}
               </p>
             </div>
@@ -119,7 +127,13 @@ export default function FileUpload() {
           disabled={pending || !fileName}
           className="w-full"
         >
-          {pending ? t('uploading') : t('uploadButton')}
+          {pending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t('uploading')}
+            </>
+          ) : (
+            t('uploadButton')
+          )}
         </Button>
       </form>
     </div>

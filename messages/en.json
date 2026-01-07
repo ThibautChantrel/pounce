@@ -69,7 +69,9 @@
       "uploadDate": "Upload Date",
       "size": "Size",
       "type": "Type",
-      "createdAt": "Created At"
+      "createdAt": "Created At",
+      "details": "Details",
+      "noPreviews": "No previews available"
     },
 
     "Actions": {
@@ -77,6 +79,7 @@
       "delete": "Delete",
       "save": "Save",
       "cancel": "Cancel",
+      "back": "Back",
       "download": "Download",
       "copyLink": "Copy Link",
       "label": "Actions",

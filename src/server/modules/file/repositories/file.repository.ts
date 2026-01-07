@@ -11,6 +11,13 @@ export const getOne = (id: string) => {
   })
 }
 
+export const updateFile = (id: string, data: Prisma.FileUpdateInput) => {
+  return db.file.update({
+    where: { id },
+    data,
+  })
+}
+
 export const deleteFile = (id: string) => {
   return db.file.delete({
     where: { id },

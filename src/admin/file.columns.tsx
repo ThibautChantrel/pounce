@@ -33,6 +33,8 @@ import {
 import { toast } from 'sonner'
 import { removeFile } from '@/actions/file/file.admin.actions'
 import { useFormatter, useTranslations } from 'next-intl'
+import { formatBytes } from '@/utils/files'
+import { Link } from '@/navigation'
 
 export type FileColumn = {
   id: string
@@ -40,14 +42,6 @@ export type FileColumn = {
   mimeType: string
   size: number
   createdAt: Date
-}
-
-const formatBytes = (bytes: number) => {
-  if (bytes === 0) return '0 B'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
 const FileActions = ({ file }: { file: FileColumn }) => {
@@ -155,7 +149,12 @@ export const useFileColumns = () => {
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <FileText className="h-4 w-4 text-muted-foreground" />
-            <span className="font-medium">{row.getValue('filename')}</span>
+            <Link
+              href={`/admin/files/${row.original.id}`}
+              className="font-medium hover:underline hover:text-blue-600"
+            >
+              {row.getValue('filename')}
+            </Link>
           </div>
         ),
       },

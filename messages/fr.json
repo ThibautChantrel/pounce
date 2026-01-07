@@ -68,13 +68,16 @@
       "uploadDate": "Date de téléchargement",
       "size": "Taille",
       "type": "Type",
-      "createdAt": "Créé le"
+      "createdAt": "Créé le",
+      "details": "Details",
+      "noPreviews": "Aucun aperçu disponible"
     },
     "Actions": {
       "edit": "Modifier",
       "delete": "Supprimer",
       "save": "Enregistrer",
       "cancel": "Annuler",
+      "back": "Retour",
       "download": "Télécharger",
       "copyLink": "Copier le lien",
       "label": "Actions",
