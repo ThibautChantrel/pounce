@@ -42,6 +42,7 @@ export default function FileDetails({ file }: { file: FileData }) {
   const handleDownload = () => {
     window.open(fileUrl, '_blank')
   }
+  console.log('file', file)
 
   return (
     <Card className="w-full max-w-2xl mx-auto overflow-hidden">
@@ -126,7 +127,22 @@ export default function FileDetails({ file }: { file: FileData }) {
                   </div>
                 </div>
 
-                {file.createdBy && (
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-4 h-4 text-slate-500 mt-1" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-900">
+                      {t('Files.updateDate')}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      {format.dateTime(file.updatedAt, {
+                        dateStyle: 'long',
+                        timeStyle: 'short',
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                {file.createdById && (
                   <div className="flex items-start gap-3">
                     <User className="w-4 h-4 text-slate-500 mt-1" />
                     <div>
@@ -134,7 +150,7 @@ export default function FileDetails({ file }: { file: FileData }) {
                         {t('Files.uploadedBy')}
                       </p>
                       <p className="text-sm text-slate-500">
-                        {file.createdBy?.name || file.createdBy?.email}
+                        {file.createdById}
                       </p>
                     </div>
                   </div>

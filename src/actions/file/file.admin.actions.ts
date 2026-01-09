@@ -15,10 +15,8 @@ export type FileData = {
   mimeType: string
   size: number
   createdAt: Date
-  createdBy?: {
-    name: string | null
-    email: string
-  } | null
+  updatedAt: Date
+  createdById: string
 }
 
 export async function uploadFileAction(formData: FormData) {
