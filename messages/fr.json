@@ -70,7 +70,17 @@
       "type": "Type",
       "createdAt": "Créé le",
       "details": "Details",
-      "noPreviews": "Aucun aperçu disponible"
+      "noPreviews": "Aucun aperçu disponible",
+      "changefile": "Changer le fichier (Optionnel)",
+      "selectNewFile": "Sélectionnez un nouveau fichier pour remplacer l'actuel.",
+      "noModifications": "Aucune modification effectuée",
+      "newFileOnSave": "Ce fichier sera envoyé à la sauvegarde",
+      "uploadButton": "Télécharger le fichier",
+      "uploading": "Téléchargement...",
+      "uploadSuccess": "Fichier téléchargé avec succès !",
+      "uploadError": "Erreur lors du téléchargement du fichier. Veuillez réessayer.",
+      "selectFile": "Sélectionnez un fichier à télécharger",
+      "noFileSelected": "Aucun fichier sélectionné."
     },
     "Actions": {
       "edit": "Modifier",

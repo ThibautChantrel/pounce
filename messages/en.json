@@ -71,7 +71,17 @@
       "type": "Type",
       "createdAt": "Created At",
       "details": "Details",
-      "noPreviews": "No previews available"
+      "noPreviews": "No previews available",
+      "changefile": " Change File (Optional)",
+      "selectNewFile": "Select a new file to replace the current one.",
+      "noModifications": "No modifications made",
+      "newFileOnSave": "This file will be uploaded on save",
+      "uploadButton": "Upload File",
+      "uploading": "Uploading...",
+      "uploadSuccess": "File uploaded successfully!",
+      "uploadError": "Error uploading file. Please try again.",
+      "selectFile": "Select a file to upload",
+      "noFileSelected": "No file selected."
     },
 
     "Actions": {

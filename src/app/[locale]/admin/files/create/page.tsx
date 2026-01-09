@@ -8,7 +8,7 @@ import { useRouter } from '@/navigation'
 
 export default function CreatePage() {
   const router = useRouter()
-  const t = useTranslations('File')
+  const t = useTranslations('Admin.Files')
 
   // C'est cette fonction qui contient la logique métier
   const handleUploadLogic = async (formData: FormData) => {
@@ -25,12 +25,7 @@ export default function CreatePage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6">
       <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">
-          Ajouter un fichier
-        </h1>
-        <p className="text-muted-foreground">
-          Importez une image ou un fichier GPX pour vos challenges.
-        </p>
+        <h1 className="text-2xl font-bold tracking-tight">{t('selectFile')}</h1>
       </div>
 
       <FileUpload onSubmit={handleUploadLogic} />

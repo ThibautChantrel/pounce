@@ -1,15 +1,12 @@
 'use client'
 
 import { toast } from 'sonner'
-import { updateFileAction } from '@/actions/file/file.admin.actions'
-import { FileUpdateForm } from '@/components/FileUpdateForm'
+import { FileData, updateFileAction } from '@/actions/file/file.admin.actions'
 import { useRouter } from '@/navigation'
+import { FileUpdateForm } from '@/components/FileUpdateForm'
 
 interface FileEditClientProps {
-  file: {
-    id: string
-    filename: string
-  }
+  file: FileData
 }
 
 export function FileEditClient({ file }: FileEditClientProps) {
@@ -22,10 +19,9 @@ export function FileEditClient({ file }: FileEditClientProps) {
       if (res.success) {
         toast.success('Fichier mis à jour avec succès')
         router.push(`/admin/files/${file.id}`)
-        router.refresh() // Rafraîchit les données de la page cible
+        router.refresh()
       } else {
         toast.error(res.error || 'Erreur lors de la mise à jour')
-        // On throw pour que le formulaire sache qu'il y a eu une erreur (optionnel)
         throw new Error(res.error)
       }
     } catch (error) {
@@ -37,8 +33,8 @@ export function FileEditClient({ file }: FileEditClientProps) {
   return (
     <div className="bg-white p-6 rounded-lg border shadow-sm">
       <FileUpdateForm
-        initialData={{ filename: file.filename }}
-        onSubmit={handleSave} // On passe la fonction de logique
+        initialData={file}
+        onSubmit={handleSave}
         onCancel={() => router.back()}
       />
     </div>

@@ -19,11 +19,11 @@ import {
   FileType,
   Map as MapIcon,
 } from 'lucide-react'
-import Image from 'next/image'
 import { toast } from 'sonner'
 import { useTranslations, useFormatter } from 'next-intl'
 import { formatBytes } from '@/utils/files'
 import { FileData } from '@/actions/file/file.admin.actions'
+import FilePreview from '@/components/FilePreview'
 
 export default function FileDetails({ file }: { file: FileData }) {
   const t = useTranslations('Admin')
@@ -31,7 +31,6 @@ export default function FileDetails({ file }: { file: FileData }) {
 
   const isImage = file.mimeType.startsWith('image/')
   const isGpx = file.filename.endsWith('.gpx') || file.mimeType.includes('gpx')
-
   const fileUrl = `/api/files/${file.id}`
 
   const handleCopyLink = () => {
@@ -61,7 +60,6 @@ export default function FileDetails({ file }: { file: FileData }) {
             )}
             {file.filename}
           </CardTitle>
-          {/* Badge optionnel pour le type */}
           <span className="px-2 py-1 text-xs rounded-full bg-slate-200 text-slate-700 font-mono">
             {file.mimeType.split('/')[1]?.toUpperCase() || 'FILE'}
           </span>
@@ -70,30 +68,16 @@ export default function FileDetails({ file }: { file: FileData }) {
 
       <CardContent className="p-0">
         <div className="grid md:grid-cols-2">
-          {/* ZONE GAUCHE : PRÉVISUALISATION */}
           <div className="bg-slate-50 flex items-center justify-center p-6 min-h-62.5 border-b md:border-b-0 md:border-r border-slate-100">
-            {isImage ? (
-              <div className="relative w-full h-64 rounded-lg overflow-hidden shadow-sm border bg-white">
-                <Image
-                  src={fileUrl}
-                  alt={file.filename}
-                  fill
-                  className="object-contain"
-                  unoptimized
-                />
-              </div>
-            ) : (
-              <div className="text-center text-slate-400">
-                {isGpx ? (
-                  <MapIcon className="w-24 h-24 mx-auto mb-4 opacity-50" />
-                ) : (
-                  <FileText className="w-24 h-24 mx-auto mb-4 opacity-50" />
-                )}
-                <p className="text-sm font-medium text-slate-500">
-                  {t('Files.noPreviews')}
-                </p>
-              </div>
-            )}
+            <div className="w-full h-64 max-w-sm mx-auto">
+              <FilePreview
+                url={fileUrl}
+                mimeType={file.mimeType}
+                fileName={file.filename}
+                className="bg-white rounded-lg border border-slate-200 shadow-sm h-full w-full"
+                iconClassName="text-slate-400 w-16 h-16"
+              />
+            </div>
           </div>
 
           <div className="p-6 space-y-6">
