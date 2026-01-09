@@ -10,10 +10,13 @@ export async function GET(
 
     const file = await getFileById(id)
 
+    const encodedFilename = encodeURIComponent(file.filename)
+
     return new NextResponse(file.data, {
       headers: {
         'Content-Type': file.mimeType,
-        'Content-Disposition': `inline; filename="${file.filename}"`,
+        // Utiliser la syntaxe "filename*=UTF-8''" pour supporter les accents
+        'Content-Disposition': `inline; filename*=UTF-8''${encodedFilename}`,
       },
     })
   } catch (e) {
