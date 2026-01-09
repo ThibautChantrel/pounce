@@ -57,7 +57,11 @@
       "addUser": "Add New User",
       "name": "Name",
       "email": "Email",
-      "role": "Role"
+      "role": "Role",
+      "verified": "Verified",
+      "createdAt": "Created At",
+      "lastUpdate": "Last Update",
+      "info": "Account information"
     },
 
     "Files": {

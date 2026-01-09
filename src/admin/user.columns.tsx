@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { removeUser } from '@/actions/user/user.admin.actions'
 import { useTranslations } from 'next-intl'
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
+import { Link } from '@/navigation'
 
 export type UserColumn = {
   id: string
@@ -93,6 +94,16 @@ export const useUserColumns = () => {
       {
         accessorKey: 'name',
         header: t('Users.name'),
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/admin/users/${row.original.id}`}
+              className="font-medium hover:underline hover:text-blue-600"
+            >
+              {row.getValue('name')}
+            </Link>
+          </div>
+        ),
       },
       {
         accessorKey: 'email',

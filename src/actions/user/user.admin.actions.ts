@@ -21,3 +21,14 @@ export const removeUser = async (id: string) => {
   }
   return await deleteUserById(id)
 }
+
+export const getUser = async (id: string) => {
+  const user = await getUserById(id)
+  if (!user) {
+    throw new BusinessError(
+      ERROR_CODES.USER_DOES_NOT_EXIST,
+      "L'utilisateur n'existe pas"
+    )
+  }
+  return user
+}

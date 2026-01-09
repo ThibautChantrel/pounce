@@ -24,7 +24,7 @@ export async function uploadFileAction(formData: FormData) {
 }
 
 export async function getFile(id: string): Promise<FileData> {
-  return getFileById(id)
+  return await getFileById(id)
 }
 
 export const fetchFiles = async (skip = 0, take = 10, search?: string) => {
