@@ -61,7 +61,13 @@
       "verified": "Verified",
       "createdAt": "Created At",
       "lastUpdate": "Last Update",
-      "info": "Account information"
+      "info": "Account information",
+      "verifiedAt": "Verified At",
+      "VerifiedEmpty": "Leave empty if not verified.",
+      "admin": "Administrator",
+      "user": "User",
+      "updateTitle": "Update User",
+      "updateSubtitle": "Update the information and permissions for {userName}"
     },
 
     "Files": {
@@ -95,6 +101,7 @@
       "save": "Save",
       "cancel": "Cancel",
       "back": "Back",
+      "update": "Update",
       "confirm": "Confirm",
       "download": "Download",
       "copyLink": "Copy Link",

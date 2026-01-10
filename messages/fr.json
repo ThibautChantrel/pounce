@@ -61,7 +61,13 @@
       "verified": "Vérifié",
       "createdAt": "Créé le",
       "lastUpdate": "Dernière mise à jour",
-      "info": "Informations du compte"
+      "info": "Informations du compte",
+      "verifiedAt": "Vérifié le",
+      "VerifiedEmpty": "Laissez vide si non vérifié.",
+      "admin": "Administrateur",
+      "user": "Utilisateur",
+      "updateTitle": "Modifier l'utilisateur",
+      "updateSubtitle": "Mettez à jour les informations et les permissions pour {userName}"
     },
     "Files": {
       "title": "Gestion des fichiers",
@@ -94,6 +100,7 @@
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "back": "Retour",
+      "update": "Mettre à jour",
       "download": "Télécharger",
       "copyLink": "Copier le lien",
       "label": "Actions",
