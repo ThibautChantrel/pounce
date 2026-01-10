@@ -67,7 +67,9 @@
       "admin": "Administrateur",
       "user": "Utilisateur",
       "updateTitle": "Modifier l'utilisateur",
-      "updateSubtitle": "Mettez à jour les informations et les permissions pour {userName}"
+      "updateSubtitle": "Mettez à jour les informations et les permissions pour {userName}",
+      "updateSuccess": "Utilisateur mis à jour avec succès",
+      "unknownError": "Erreur inconnue lors de la mise à jour de l'utilisateur"
     },
     "Files": {
       "title": "Gestion des fichiers",

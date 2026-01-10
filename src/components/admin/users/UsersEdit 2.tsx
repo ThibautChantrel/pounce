@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { DataUpdate, UpdateFieldConfig } from '@/components/admin/data-update'
 import { useTranslations } from 'next-intl'
-import { updateUserAction } from '@/actions/user/user.admin.actions'
 
 const userFormSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
@@ -85,18 +84,18 @@ export default function UserEditPage({ user }: UserEditPageProps) {
         formData.append('emailVerified', values.emailVerified.toISOString())
       }
 
-      const result = await updateUserAction(user.id, formData)
+      await console.log('updateUserAction(formData)')
 
-      if (result?.error) {
-        toast.error('Error : ' + result.error)
+      /* if (result?.error) {
+        toast.error("Erreur : " + result.error)
       } else {
-        toast.success(t('Users.updateSuccess'))
+        toast.success("Utilisateur mis à jour avec succès")
         router.refresh()
-        router.back()
-      }
+        router.back() 
+      } */
     } catch (error) {
       console.error(error)
-      toast.error(t('Users.unknownError'))
+      toast.error('Une erreur inattendue est survenue')
     }
   }
 

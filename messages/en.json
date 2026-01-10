@@ -36,15 +36,6 @@
     "completed": "{pct}% Completed"
   },
 
-  "File": {
-    "uploadButton": "Upload File",
-    "uploading": "Uploading...",
-    "uploadSuccess": "File uploaded successfully!",
-    "uploadError": "Error uploading file. Please try again.",
-    "selectFile": "Select a file to upload",
-    "noFileSelected": "No file selected."
-  },
-
   "Admin": {
     "Navbar": {
       "users": "Users",
@@ -67,7 +58,9 @@
       "admin": "Administrator",
       "user": "User",
       "updateTitle": "Update User",
-      "updateSubtitle": "Update the information and permissions for {userName}"
+      "updateSubtitle": "Update the information and permissions for {userName}",
+      "updateSuccess": "User updated successfully",
+      "unknownError": "Unknown error occurred while updating user"
     },
 
     "Files": {
