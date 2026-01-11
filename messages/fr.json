@@ -34,5 +34,101 @@
   "ChallengeCard": {
     "participants": "{count} participants",
     "completed": "{pct}% Complété"
+  },
+
+  "File": {
+    "uploadButton": "Télécharger le fichier",
+    "uploading": "Téléchargement...",
+    "uploadSuccess": "Fichier téléchargé avec succès !",
+    "uploadError": "Erreur lors du téléchargement du fichier. Veuillez réessayer.",
+    "selectFile": "Sélectionnez un fichier à télécharger",
+    "noFileSelected": "Aucun fichier sélectionné."
+  },
+
+  "Admin": {
+    "Navbar": {
+      "users": "Utilisateurs",
+      "files": "Fichiers"
+    },
+
+    "Users": {
+      "title": "Gestion des utilisateurs",
+      "description": "Gérez tous les utilisateurs enregistrés.",
+      "addUser": "Ajouter un nouvel utilisateur",
+      "name": "Nom",
+      "email": "Email",
+      "role": "Rôle",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "verified": "Vérifié",
+      "createdAt": "Créé le",
+      "lastUpdate": "Dernière mise à jour",
+      "info": "Informations du compte",
+      "verifiedAt": "Vérifié le",
+      "VerifiedEmpty": "Laissez vide si non vérifié.",
+      "admin": "Administrateur",
+      "user": "Utilisateur",
+      "updateTitle": "Modifier l'utilisateur",
+      "createTitle": "Créer un nouvel utilisateur",
+      "createSubtitle": "Remplissez les informations ci-dessous pour créer un compte et attribuer un rôle.",
+      "updateSubtitle": "Mettez à jour les informations et les permissions pour {userName}",
+      "updateSuccess": "Utilisateur mis à jour avec succès",
+      "unknownError": "Erreur inconnue lors de la mise à jour de l'utilisateur",
+      "validation": {
+        "emailInvalid": "Adresse email invalide",
+        "nameTooShort": "Le nom est trop court",
+        "roleInvalid": "Rôle invalide",
+        "passwordTooShort": "Le mot de passe est trop court",
+        "passwordMismatch": "Les mots de passe ne correspondent pas"
+      }
+    },
+    "Files": {
+      "title": "Gestion des fichiers",
+      "description": "Gérez tous les fichiers téléchargés.",
+      "addFile": "Télécharger un nouveau fichier",
+      "filename": "Nom du fichier",
+      "uploadedBy": "Téléchargé par",
+      "uploadDate": "Date de téléchargement",
+      "updateDate": "Date de mise à jour",
+      "size": "Taille",
+      "type": "Type",
+      "createdAt": "Créé le",
+      "details": "Details",
+      "noPreviews": "Aucun aperçu disponible",
+      "changefile": "Changer le fichier (Optionnel)",
+      "selectNewFile": "Sélectionnez un nouveau fichier pour remplacer l'actuel.",
+      "noModifications": "Aucune modification effectuée",
+      "newFileOnSave": "Ce fichier sera envoyé à la sauvegarde",
+      "uploadButton": "Télécharger le fichier",
+      "uploading": "Téléchargement...",
+      "uploadSuccess": "Fichier téléchargé avec succès !",
+      "uploadError": "Erreur lors du téléchargement du fichier. Veuillez réessayer.",
+      "selectFile": "Sélectionnez un fichier à télécharger",
+      "noFileSelected": "Aucun fichier sélectionné."
+    },
+    "Actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "confirm": "Confirmer",
+      "back": "Retour",
+      "update": "Mettre à jour",
+      "download": "Télécharger",
+      "copyLink": "Copier le lien",
+      "label": "Actions",
+      "deleted": "Supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression. Veuillez réessayer.",
+      "AlertDialog": {
+        "title": "Confirmer la suppression",
+        "description": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.L'élément {item} sera définitivement supprimé."
+      }
+    },
+
+    "Results": {
+      "noResults": "Aucun résultat trouvé.",
+      "total": "Total",
+      "results": "résultats"
+    }
   }
 }

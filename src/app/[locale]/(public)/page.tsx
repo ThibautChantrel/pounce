@@ -1,5 +1,5 @@
 'use client'
-import AuthModal from '@/components/authModal'
+import AuthModal from '@/components/AuthModal'
 import Hero from '@/components/Hero'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'

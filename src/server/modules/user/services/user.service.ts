@@ -1,4 +1,4 @@
-import * as userRepository from '@/server/modules/user/repository/user.repository'
+import * as userRepository from '@/server/modules/user/repositories/user.repository'
 import bcrypt from 'bcryptjs'
 import { Prisma } from '@prisma/client'
 import { BusinessError, ERROR_CODES } from '@/core/errors'
