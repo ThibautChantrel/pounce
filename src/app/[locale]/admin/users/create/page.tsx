@@ -7,7 +7,6 @@ import { createUserAction } from '@/actions/user/user.admin.actions'
 import { RoleOptions, RoleValues } from '@/utils/users'
 import { useRouter } from '@/navigation'
 import { useTranslations } from 'next-intl'
-import { Role } from '@prisma/client'
 
 export default function CreateUserPage() {
   const router = useRouter()

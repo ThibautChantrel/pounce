@@ -11,9 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import { FileData } from '@/actions/file/file.admin.actions'
 import { useFormatter } from 'next-intl'
-import FilePreview from '../FilePreview'
-
-// --- TYPES ---
+import FileDetails from '../FileDetails'
 
 export type FieldType =
   | 'string'
@@ -24,7 +22,6 @@ export type FieldType =
   | 'file'
   | 'custom'
 
-// On définit les variantes de badge possibles
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
 
 export interface FieldConfig<T> {
@@ -34,20 +31,14 @@ export interface FieldConfig<T> {
    * soit une fonction pour récupérer la valeur complexe
    */
   key?: keyof T
-  // On remplace 'any' par 'unknown' pour plus de sécurité, ou ReactNode pour le retour
   getValue?: (data: T) => unknown
 
   type?: FieldType
 
-  /** * Pour le type 'date'.
-   * Correction: next-intl attend des options Intl, pas une string
-   */
   dateFormat?: Intl.DateTimeFormatOptions
 
-  /** Pour le type 'badge' */
   badgeVariants?: Record<string, BadgeVariant>
 
-  /** Classe CSS pour la valeur */
   className?: string
 }
 
@@ -60,8 +51,6 @@ interface DataDetailsProps<T> {
   className?: string
 }
 
-// --- COMPOSANT ---
-
 export function DataDetails<T extends Record<string, unknown>>({
   data,
   fields,
@@ -72,7 +61,6 @@ export function DataDetails<T extends Record<string, unknown>>({
 }: DataDetailsProps<T>) {
   const format = useFormatter()
 
-  // Fonction utilitaire pour extraire la valeur
   const resolveValue = (field: FieldConfig<T>): unknown => {
     if (field.getValue) return field.getValue(data)
     if (field.key) return data[field.key]
@@ -130,13 +118,7 @@ export function DataDetails<T extends Record<string, unknown>>({
 
         return (
           <div className="w-full max-w-50 h-32">
-            <FilePreview
-              url={`/api/files/${fileData.id}`}
-              mimeType={fileData.mimeType}
-              fileName={fileData.filename}
-              className="w-full h-full bg-white rounded-lg border border-slate-200 shadow-sm"
-              iconClassName="text-slate-400 opacity-60"
-            />
+            <FileDetails file={fileData} />
           </div>
         )
 
