@@ -58,6 +58,8 @@
       "name": "Nom",
       "email": "Email",
       "role": "Rôle",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
       "verified": "Vérifié",
       "createdAt": "Créé le",
       "lastUpdate": "Dernière mise à jour",
@@ -67,9 +69,18 @@
       "admin": "Administrateur",
       "user": "Utilisateur",
       "updateTitle": "Modifier l'utilisateur",
+      "createTitle": "Créer un nouvel utilisateur",
+      "createSubtitle": "Remplissez les informations ci-dessous pour créer un compte et attribuer un rôle.",
       "updateSubtitle": "Mettez à jour les informations et les permissions pour {userName}",
       "updateSuccess": "Utilisateur mis à jour avec succès",
-      "unknownError": "Erreur inconnue lors de la mise à jour de l'utilisateur"
+      "unknownError": "Erreur inconnue lors de la mise à jour de l'utilisateur",
+      "validation": {
+        "emailInvalid": "Adresse email invalide",
+        "nameTooShort": "Le nom est trop court",
+        "roleInvalid": "Rôle invalide",
+        "passwordTooShort": "Le mot de passe est trop court",
+        "passwordMismatch": "Les mots de passe ne correspondent pas"
+      }
     },
     "Files": {
       "title": "Gestion des fichiers",

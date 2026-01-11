@@ -49,6 +49,8 @@
       "name": "Name",
       "email": "Email",
       "role": "Role",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
       "verified": "Verified",
       "createdAt": "Created At",
       "lastUpdate": "Last Update",
@@ -58,9 +60,18 @@
       "admin": "Administrator",
       "user": "User",
       "updateTitle": "Update User",
+      "createTitle": "Create New User",
+      "createSubtitle": "Fill in the details to create a new user",
       "updateSubtitle": "Update the information and permissions for {userName}",
       "updateSuccess": "User updated successfully",
-      "unknownError": "Unknown error occurred while updating user"
+      "unknownError": "Unknown error occurred while updating user",
+      "validation": {
+        "emailInvalid": "Invalid email address",
+        "nameTooShort": "Name is too short",
+        "roleInvalid": "Invalid role",
+        "passwordTooShort": "Password is too short",
+        "passwordMismatch": "Passwords do not match"
+      }
     },
 
     "Files": {

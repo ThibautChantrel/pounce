@@ -31,11 +31,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Loader2, Save } from 'lucide-react'
+import { Loader2, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import FileDropZone from '../FileDropZone'
 import { useTranslations } from 'next-intl'
 
+// On reprend les mêmes types de base pour la cohérence
 export type FieldType =
   | 'text'
   | 'email'
@@ -52,7 +53,8 @@ export interface SelectOption {
   value: string
 }
 
-export interface UpdateFieldConfig<T> {
+// Configuration spécifique à la création
+export interface CreateFieldConfig<T> {
   name: Path<T>
   label: string
   type?: FieldType
@@ -61,13 +63,15 @@ export interface UpdateFieldConfig<T> {
   disabled?: boolean
   className?: string
   options?: SelectOption[]
-  currentFileUrl?: string
+  // Pas de currentFileUrl ici car c'est une création
 }
+
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface DataUpdateProps<TSchema extends z.ZodObject<any>> {
+interface DataCreateProps<TSchema extends z.ZodObject<any>> {
   schema: TSchema
+  // defaultValues est souvent utile même en création (ex: boolean à true par défaut)
   defaultValues: DefaultValues<z.input<TSchema>>
-  fields: UpdateFieldConfig<z.input<TSchema>>[]
+  fields: CreateFieldConfig<z.input<TSchema>>[]
   onSubmit: (values: z.output<TSchema>) => Promise<void>
   onCancel?: () => void
   submitLabel?: string
@@ -82,15 +86,15 @@ function toLocalDatetimeInput(value?: string | null) {
 }
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function DataUpdate<TSchema extends z.ZodObject<any>>({
+export function DataCreate<TSchema extends z.ZodObject<any>>({
   schema,
   defaultValues,
   fields,
   onSubmit,
   onCancel,
-  submitLabel = 'Enregistrer',
+  submitLabel, // Sera géré par la traduction ou une valeur par défaut
   className,
-}: DataUpdateProps<TSchema>) {
+}: DataCreateProps<TSchema>) {
   const [isLoading, setIsLoading] = useState(false)
   const t = useTranslations('Admin')
 
@@ -104,13 +108,15 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
     setIsLoading(true)
     try {
       await onSubmit(values)
+      // Optionnel : form.reset() ici si vous voulez vider le formulaire après succès
+      // Mais souvent on redirige ou on ferme une modale, donc je laisse le parent gérer.
     } finally {
       setIsLoading(false)
     }
   }
 
   const renderInput = (
-    fieldConfig: UpdateFieldConfig<z.input<TSchema>>,
+    fieldConfig: CreateFieldConfig<z.input<TSchema>>,
     field: ControllerRenderProps<z.input<TSchema>, Path<z.input<TSchema>>>
   ) => {
     const isDisabled = fieldConfig.disabled || isLoading
@@ -127,7 +133,6 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
 
       case 'textarea': {
         const value = typeof field.value === 'string' ? field.value : ''
-
         return (
           <Textarea
             name={field.name}
@@ -144,7 +149,6 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
 
       case 'select': {
         const value = typeof field.value === 'string' ? field.value : undefined
-
         return (
           <Select
             value={value}
@@ -171,7 +175,6 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
 
       case 'date': {
         const value = typeof field.value === 'string' ? field.value : null
-
         return (
           <Input
             type="datetime-local"
@@ -203,7 +206,6 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
           typeof field.value === 'number' || typeof field.value === 'string'
             ? field.value
             : ''
-
         return (
           <Input
             type="number"
@@ -222,7 +224,6 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
           typeof field.value === 'string' || typeof field.value === 'number'
             ? field.value
             : ''
-
         return (
           <Input
             type={fieldConfig.type || 'text'}
@@ -249,7 +250,7 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
           {fields.map((fieldConfig) => (
             <FormField
               key={String(fieldConfig.name)}
-              control={form.control as unknown as Control<z.input<TSchema>>} // ✅ cast sûr
+              control={form.control as unknown as Control<z.input<TSchema>>}
               name={fieldConfig.name}
               render={({ field }) => (
                 <FormItem className={fieldConfig.className}>
@@ -270,9 +271,10 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              <Save className="mr-2 h-4 w-4" />
+              // J'ai mis 'Plus' pour symboliser la création, mais 'Save' marche aussi
+              <Plus className="mr-2 h-4 w-4" />
             )}
-            {submitLabel}
+            {submitLabel || t('Actions.create') || 'Créer'}
           </Button>
 
           {onCancel && (

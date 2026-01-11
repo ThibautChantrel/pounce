@@ -6,11 +6,12 @@ import { toast } from 'sonner'
 import { DataUpdate, UpdateFieldConfig } from '@/components/admin/data-update'
 import { useTranslations } from 'next-intl'
 import { updateUserAction } from '@/actions/user/user.admin.actions'
+import { RoleOptions, RoleValues } from '@/utils/users'
 
 const userFormSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
   email: z.string().email('Adresse email invalide'),
-  role: z.enum(['ADMIN', 'USER']),
+  role: z.enum([RoleValues.Admin, RoleValues.User]),
   emailVerified: z.date().nullable().optional(),
 
   /*   isActive: z.boolean().default(true), */
@@ -52,10 +53,7 @@ export default function UserEditPage({ user }: UserEditPageProps) {
       name: 'role',
       label: t('Users.role'),
       type: 'select',
-      options: [
-        { label: t('Users.admin'), value: 'ADMIN' },
-        { label: t('Users.user'), value: 'USER' },
-      ],
+      options: RoleOptions,
     },
     {
       name: 'emailVerified',

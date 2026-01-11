@@ -2,6 +2,7 @@
 
 import { BusinessError, ERROR_CODES } from '@/core/errors' // <--- Import
 import {
+  createUser,
   deleteUserById,
   getAllUsers,
   getUserById,
@@ -44,6 +45,27 @@ export async function updateUserAction(id: string, formData: FormData) {
 
     return { success: true }
   } catch (error) {
+    if (error instanceof BusinessError) {
+      return { success: false, error: error.message }
+    }
     return { success: false, error: 'Erreur lors de la mise à jour' }
+  }
+}
+
+export async function createUserAction(formData: FormData) {
+  try {
+    const user = await createUser(formData)
+
+    revalidatePath('/admin/users')
+
+    return { success: true, data: user }
+  } catch (error) {
+    if (error instanceof BusinessError) {
+      return { success: false, error: error.message }
+    }
+    return {
+      success: false,
+      error: 'Erreur inconnue lors de la création de l’utilisateur',
+    }
   }
 }
