@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-gpx'
@@ -72,36 +72,87 @@ function fixLeafletIcons() {
   })
 }
 
-function GpxLayer({ url }: { url: string }) {
+function GpxLayer({
+  url,
+  onStartEndPoints,
+}: {
+  url: string
+  onStartEndPoints?: (points: { start: GpxPoint; end: GpxPoint }) => void
+}) {
   const map = useMap()
   useEffect(() => {
     if (!url) return
+
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     const gpxLayer = new (L as any).GPX(url, {
       async: true,
-      marker_options: {
-        startIconUrl:
-          'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-icon-start.png',
-        endIconUrl:
-          'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-icon-end.png',
-        shadowUrl:
-          'https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/pin-shadow.png',
-      },
-      polyline_options: {
-        color: '#355F4A',
-        opacity: 0.8,
-        weight: 5,
-        lineCap: 'round',
-      },
+      // Force leaflet-gpx à ne PAS créer de marqueurs
+      parseElements: [], // Tableau vide pour ne rien parser
     })
+
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    gpxLayer
-      .on('loaded', (e: any) => map.fitBounds(e.target.getBounds()))
-      .addTo(map)
+    gpxLayer.on('loaded', async (e: any) => {
+      const layer = e.target
+
+      // Charger le GPX directement pour extraire les points
+      const response = await fetch(url)
+      const text = await response.text()
+      const parser = new DOMParser()
+      const xmlDoc = parser.parseFromString(text, 'text/xml')
+
+      const trackPoints: [number, number][] = []
+      const trkpts = xmlDoc.getElementsByTagName('trkpt')
+
+      for (let i = 0; i < trkpts.length; i++) {
+        const trkpt = trkpts[i]
+        const lat = parseFloat(trkpt.getAttribute('lat') || '0')
+        const lon = parseFloat(trkpt.getAttribute('lon') || '0')
+        trackPoints.push([lat, lon])
+      }
+
+      if (trackPoints.length > 0) {
+        // Créer la polyligne
+        const polyline = L.polyline(trackPoints, {
+          color: '#355F4A',
+          opacity: 1,
+          weight: 5,
+          lineCap: 'round',
+        }).addTo(map)
+
+        // Extraire les points de départ et d'arrivée
+        const startPoint = trackPoints[0]
+        const endPoint = trackPoints[trackPoints.length - 1]
+
+        // Notifier le parent des points de départ et d'arrivée
+        if (onStartEndPoints && startPoint && endPoint) {
+          onStartEndPoints({
+            start: {
+              lat: startPoint[0],
+              lng: startPoint[1],
+              label: 'Départ',
+              color: '#F5EEE0', // Vert pour le départ
+            },
+            end: {
+              lat: endPoint[0],
+              lng: endPoint[1],
+              label: 'Arrivée',
+              color: '#EF4444', // Rouge pour l'arrivée
+            },
+          })
+        }
+
+        map.fitBounds(polyline.getBounds())
+      }
+      // Supprimer le layer GPX qui ne contient rien
+      map.removeLayer(layer)
+    })
+
+    gpxLayer.addTo(map)
+
     return () => {
-      map.removeLayer(gpxLayer)
+      // Le nettoyage est fait dans l'événement loaded
     }
-  }, [url, map])
+  }, [url, map, onStartEndPoints])
   return null
 }
 
@@ -116,12 +167,23 @@ export default function GpxViewer({
   customUrl,
   points = [],
 }: GpxViewerProps) {
+  const [startEndPoints, setStartEndPoints] = useState<{
+    start: GpxPoint | null
+    end: GpxPoint | null
+  }>({ start: null, end: null })
+
   useEffect(() => {
     fixLeafletIcons()
   }, [])
 
   if (!fileId && !customUrl) return null
   const gpxUrl = customUrl ?? `/api/files/${fileId}`
+
+  const allPoints = [
+    ...(startEndPoints.start ? [startEndPoints.start] : []),
+    ...(startEndPoints.end ? [startEndPoints.end] : []),
+    ...points,
+  ]
 
   return (
     <div className="w-full h-full min-h-100 rounded-lg overflow-hidden border shadow-sm relative z-0">
@@ -136,11 +198,21 @@ export default function GpxViewer({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <GpxLayer url={gpxUrl} />
+        <GpxLayer
+          url={gpxUrl}
+          onStartEndPoints={(points) => {
+            setStartEndPoints({
+              start: points.start,
+              end: points.end,
+            })
+          }}
+        />
 
-        {/* BOUCLE SUR LA LISTE DES POINTS */}
-        {points.map((point, index) => (
-          <PawMarker key={point.id || index} point={point} />
+        {allPoints.map((point, index) => (
+          <PawMarker
+            key={point.id || `${point.label}-${index}`}
+            point={point}
+          />
         ))}
       </MapContainer>
     </div>
