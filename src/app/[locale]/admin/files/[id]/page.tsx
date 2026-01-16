@@ -1,8 +1,9 @@
 import { notFound } from 'next/navigation'
-import { FileData, getFile } from '@/actions/file/file.admin.actions'
+import { getFile } from '@/actions/file/file.admin.actions'
 import FileDetails from '@/components/FileDetails'
 import ShowLayout from '@/components/admin/ShowLayout'
 import { DataDetails, FieldConfig } from '@/components/admin/data-details'
+import { FileData } from '@/actions/file/file.admin.type'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>

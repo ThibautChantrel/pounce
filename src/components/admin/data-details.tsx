@@ -9,9 +9,9 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { FileData } from '@/actions/file/file.admin.actions'
 import { useFormatter } from 'next-intl'
 import FileDetails from '../FileDetails'
+import { FileData } from '@/actions/file/file.admin.type'
 
 export type FieldType =
   | 'string'

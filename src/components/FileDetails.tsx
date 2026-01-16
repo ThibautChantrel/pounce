@@ -22,8 +22,8 @@ import {
 import { toast } from 'sonner'
 import { useTranslations, useFormatter } from 'next-intl'
 import { formatBytes } from '@/utils/files'
-import { FileData } from '@/actions/file/file.admin.actions'
 import FilePreview from '@/components/FilePreview'
+import { FileData } from '@/actions/file/file.admin.type'
 
 export default function FileDetails({ file }: { file: FileData }) {
   const t = useTranslations('Admin')

@@ -48,7 +48,6 @@ export async function registerAction(
 
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
-    // 2. Gestion des erreurs métier
     if (e instanceof BusinessError) {
       console.log('Erreur Métier :', e.code)
       return {
@@ -58,7 +57,6 @@ export async function registerAction(
       }
     }
 
-    // 3. Gestion des erreurs techniques (Crash DB, etc.)
     console.error('Erreur Critique :', e)
     return {
       success: false,

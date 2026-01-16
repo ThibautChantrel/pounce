@@ -17,9 +17,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Loader2, Save } from 'lucide-react'
 import { acceptedFileTypes } from '@/utils/files'
-import { FileData } from '@/actions/file/file.admin.actions'
 import FilePreview from './FilePreview'
 import { useTranslations } from 'next-intl'
+import { FileData } from '@/actions/file/file.admin.type'
 
 const formSchema = z.object({
   filename: z.string().min(1, 'Le nom du fichier est requis'),
