@@ -10,6 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -17,21 +18,48 @@ enum Role {
   ADMIN
 }
 
+enum PoiType {
+  METRO
+  MONUMENT
+  PARK
+  RESTAURANT
+  VIEWPOINT
+  OTHER
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  EXPERT
+}
+
+// --- MODELS ---
+
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
   emailVerified DateTime?
   image         String?
+  password      String?
+  role          Role      @default(USER)
 
-  //optionnel car null si connexion via Google
-  password String?
-
-  role Role @default(USER)
-
+  // Auth Relations
   accounts Account[]
   sessions Session[]
-  files    File[]
+
+  // File Relations
+  files File[]
+
+  createdChallenges Challenge[] @relation("CreatedChallenges")
+  updatedChallenges Challenge[] @relation("UpdatedChallenges")
+
+  createdTracks Track[] @relation("CreatedTracks")
+  updatedTracks Track[] @relation("UpdatedTracks")
+
+  createdPois Poi[] @relation("CreatedPois")
+  updatedPois Poi[] @relation("UpdatedPois")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -39,7 +67,6 @@ model User {
   @@map("users")
 }
 
-// Nécessaire pour NextAuth (Connexion Google/Github)
 model Account {
   userId            String
   type              String
@@ -74,7 +101,6 @@ model Session {
   @@map("sessions")
 }
 
-// Optionnel : Pour la vérification d'email ou reset password
 model VerificationToken {
   identifier String
   token      String
@@ -90,15 +116,113 @@ model File {
   filename String
   mimeType String
   size     Int
-
-  data Bytes
+  data     Bytes
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Auteur du fichier
+  // Auteur du fichier (Uploadé par)
   createdById String
   createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
+  // --- Relations Inverses (Utilisation du fichier) ---
+  // Permet de savoir où est utilisé ce fichier
+  challengeCovers  Challenge[] @relation("ChallengeCover")
+  challengeBanners Challenge[] @relation("ChallengeBanner")
+
+  trackCovers  Track[] @relation("TrackCover")
+  trackBanners Track[] @relation("TrackBanner")
+  trackGpxs    Track[] @relation("TrackGpx")
+
   @@map("files")
+}
+
+// --- CHALLENGE MODULE ---
+
+model Challenge {
+  id          String     @id @default(cuid())
+  title       String
+  description String?    @db.Text
+  location    String // Ex: "Paris, France"
+  difficulty  Difficulty @default(MEDIUM)
+
+  // Relations Images
+  coverId  String?
+  cover    File?   @relation("ChallengeCover", fields: [coverId], references: [id])
+  bannerId String?
+  banner   File?   @relation("ChallengeBanner", fields: [bannerId], references: [id])
+
+  // Enfants
+  tracks Track[]
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdById String?
+  createdBy   User?   @relation("CreatedChallenges", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation("UpdatedChallenges", fields: [updatedById], references: [id])
+
+  @@map("challenges")
+}
+
+model Track {
+  id          String  @id @default(cuid())
+  title       String
+  description String? @db.Text
+  distance    Float
+  order       Int     @default(0) // Ordre d'affichage dans le challenge
+
+  // Parent
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  // Relations Fichiers
+  coverId   String?
+  cover     File?   @relation("TrackCover", fields: [coverId], references: [id])
+  bannerId  String?
+  banner    File?   @relation("TrackBanner", fields: [bannerId], references: [id])
+  gpxFileId String?
+  gpxFile   File?   @relation("TrackGpx", fields: [gpxFileId], references: [id])
+
+  // Enfants
+  pois Poi[]
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdById String?
+  createdBy   User?   @relation("CreatedTracks", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation("UpdatedTracks", fields: [updatedById], references: [id])
+
+  @@map("tracks")
+}
+
+// Point Of Interest
+
+model Poi {
+  id          String  @id @default(cuid())
+  name        String
+  description String? @db.Text
+  type        PoiType
+  latitude    Float
+  longitude   Float
+
+  // Parent
+  trackId String
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdById String?
+  createdBy   User?   @relation("CreatedPois", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?   @relation("UpdatedPois", fields: [updatedById], references: [id])
+
+  @@map("pois")
 }
