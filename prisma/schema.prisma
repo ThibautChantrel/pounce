@@ -121,12 +121,9 @@ model File {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Auteur du fichier (Uploadé par)
   createdById String
   createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
-  // --- Relations Inverses (Utilisation du fichier) ---
-  // Permet de savoir où est utilisé ce fichier
   challengeCovers  Challenge[] @relation("ChallengeCover")
   challengeBanners Challenge[] @relation("ChallengeBanner")
 
@@ -137,13 +134,12 @@ model File {
   @@map("files")
 }
 
-// --- CHALLENGE MODULE ---
-
 model Challenge {
   id          String     @id @default(cuid())
   title       String
   description String?    @db.Text
-  location    String // Ex: "Paris, France"
+  visible     Boolean    @default(false)
+  location    String
   difficulty  Difficulty @default(MEDIUM)
 
   // Relations Images
@@ -152,31 +148,50 @@ model Challenge {
   bannerId String?
   banner   File?   @relation("ChallengeBanner", fields: [bannerId], references: [id])
 
-  // Enfants
-  tracks Track[]
+  // Relation N-N Explicite (avec ordre)
+  tracks ChallengeTrack[]
 
   // Audit
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   createdById String?
-  createdBy   User?   @relation("CreatedChallenges", fields: [createdById], references: [id])
+  createdBy   User?    @relation("CreatedChallenges", fields: [createdById], references: [id])
   updatedById String?
-  updatedBy   User?   @relation("UpdatedChallenges", fields: [updatedById], references: [id])
+  updatedBy   User?    @relation("UpdatedChallenges", fields: [updatedById], references: [id])
 
   @@map("challenges")
 }
+
+// Table de pivot Challenge <-> Track (Pour gérer l'ordre)
+model ChallengeTrack {
+  id String @id @default(cuid())
+
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  trackId String
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  order Int @default(0)
+
+  @@unique([challengeId, trackId])
+  @@map("challenge_tracks")
+}
+
+// --- TRACK MODULE ---
 
 model Track {
   id          String  @id @default(cuid())
   title       String
   description String? @db.Text
+  visible     Boolean @default(false)
   distance    Float
-  order       Int     @default(0) // Ordre d'affichage dans le challenge
 
-  // Parent
-  challengeId String
-  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  // Relation N-N vers Challenge (via Pivot)
+  challenges ChallengeTrack[]
+
+  // Relation N-N vers Poi (Implicite, sans ordre spécifique stocké)
+  pois Poi[]
 
   // Relations Fichiers
   coverId   String?
@@ -186,22 +201,18 @@ model Track {
   gpxFileId String?
   gpxFile   File?   @relation("TrackGpx", fields: [gpxFileId], references: [id])
 
-  // Enfants
-  pois Poi[]
-
   // Audit
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   createdById String?
-  createdBy   User?   @relation("CreatedTracks", fields: [createdById], references: [id])
+  createdBy   User?    @relation("CreatedTracks", fields: [createdById], references: [id])
   updatedById String?
-  updatedBy   User?   @relation("UpdatedTracks", fields: [updatedById], references: [id])
+  updatedBy   User?    @relation("UpdatedTracks", fields: [updatedById], references: [id])
 
   @@map("tracks")
 }
 
-// Point Of Interest
+// --- POI MODULE ---
 
 model Poi {
   id          String  @id @default(cuid())
@@ -211,18 +222,16 @@ model Poi {
   latitude    Float
   longitude   Float
 
-  // Parent
-  trackId String
-  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  // Relation N-N vers Track (Implicite)
+  tracks Track[]
 
   // Audit
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   createdById String?
-  createdBy   User?   @relation("CreatedPois", fields: [createdById], references: [id])
+  createdBy   User?    @relation("CreatedPois", fields: [createdById], references: [id])
   updatedById String?
-  updatedBy   User?   @relation("UpdatedPois", fields: [updatedById], references: [id])
+  updatedBy   User?    @relation("UpdatedPois", fields: [updatedById], references: [id])
 
   @@map("pois")
 }

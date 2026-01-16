@@ -82,6 +82,25 @@
         "passwordMismatch": "Les mots de passe ne correspondent pas"
       }
     },
+    "Pois": {
+      "title": "Gestion des Lieux",
+      "description": "Gérer tous les points d'intérêt de la base de données",
+      "createTitle": "Créer un Point d'Intérêt",
+      "createSubtitle": "Remplissez les détails ci-dessous pour ajouter un nouveau lieu au parcours.",
+      "createButton": "Créer le lieu",
+      "createdSuccess": "Point d'intérêt créé avec succès",
+      "name": "Nom",
+      "type": "Type",
+      "coordinates": "Coordonnées",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "createdAt": "Créé le",
+      "validation": {
+        "nameTooShort": "Le nom doit contenir au moins 2 caractères.",
+        "typeInvalid": "Veuillez sélectionner un type valide.",
+        "invalidNumber": "Veuillez entrer un nombre valide."
+      }
+    },
     "Files": {
       "title": "Gestion des fichiers",
       "description": "Gérez tous les fichiers téléchargés.",

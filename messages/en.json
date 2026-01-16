@@ -74,6 +74,26 @@
       }
     },
 
+    "Pois": {
+      "title": "POIs Management",
+      "description": "Manage all Points of Interest in database",
+      "createTitle": "Create Point of Interest",
+      "createSubtitle": "Fill in the details below to add a new location to the track.",
+      "createButton": "Create POI",
+      "createdSuccess": "Point of Interest created successfully",
+      "name": "Name",
+      "type": "Type",
+      "coordinates": "Coordinates",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "createdAt": "Created At",
+      "validation": {
+        "nameTooShort": "Name must be at least 2 characters.",
+        "typeInvalid": "Please select a valid type.",
+        "invalidNumber": "Please enter a valid number."
+      }
+    },
+
     "Files": {
       "title": "File Management",
       "description": "Manage all uploaded files.",

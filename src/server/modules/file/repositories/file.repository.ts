@@ -1,8 +1,33 @@
 import db from '@/server/db'
 import { Prisma } from '@prisma/client'
 
-export const createFile = (data: Prisma.FileCreateInput) => {
-  return db.file.create({ data })
+export const createFile = async (input: Prisma.FileCreateInput) => {
+  const cleanBuffer = new Uint8Array(input.data as unknown as ArrayBufferLike)
+
+  const userId = input.createdBy?.connect?.id
+
+  if (!userId) {
+    throw new Error("L'utilisateur (createdBy) est manquant")
+  }
+
+  return db.file.create({
+    data: {
+      // 3. Mappage MANUEL (Interdiction d'utiliser ...rest ou spread operator)
+      filename: input.filename,
+      mimeType: input.mimeType,
+      size: input.size,
+      data: cleanBuffer, // On passe le Uint8Array propre
+      createdBy: {
+        connect: { id: userId },
+      },
+    },
+    select: {
+      id: true,
+      filename: true,
+      size: true,
+      mimeType: true,
+    },
+  })
 }
 
 export const getOne = (id: string) => {
