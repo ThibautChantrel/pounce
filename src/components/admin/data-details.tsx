@@ -20,6 +20,7 @@ export type FieldType =
   | 'boolean'
   | 'badge'
   | 'file'
+  | 'file-list'
   | 'custom'
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
@@ -53,8 +54,13 @@ export function DataDetails<T extends Record<string, unknown>>({
 }: DataDetailsProps<T>) {
   const format = useFormatter()
 
-  const fileFields = fields.filter((f) => f.type === 'file')
-  const standardFields = fields.filter((f) => f.type !== 'file')
+  // 2. MODIFICATION DU FILTRE : On inclut 'file-list' avec les fichiers pour l'affichage en bas
+  const fileFields = fields.filter(
+    (f) => f.type === 'file' || f.type === 'file-list'
+  )
+  const standardFields = fields.filter(
+    (f) => f.type !== 'file' && f.type !== 'file-list'
+  )
 
   const resolveValue = (field: FieldConfig<T>): unknown => {
     if (field.getValue) return field.getValue(data)
@@ -110,8 +116,25 @@ export function DataDetails<T extends Record<string, unknown>>({
         if (!fileData || !fileData.id)
           return <span className="text-muted-foreground">Aucun fichier</span>
 
-        // On retourne le composant brut, le positionnement est géré par le parent
         return <FileDetails file={fileData} />
+
+      case 'file-list':
+        const filesList = value as FileData[] | null
+        if (!filesList || !Array.isArray(filesList) || filesList.length === 0)
+          return <span className="text-muted-foreground">Aucun fichier</span>
+
+        return (
+          <div className="flex flex-col gap-6 w-full items-center">
+            {filesList.map((fileItem) => {
+              if (!fileItem || !fileItem.id) return null
+              return (
+                <div key={fileItem.id} className="w-full flex justify-center">
+                  <FileDetails file={fileItem} />
+                </div>
+              )
+            })}
+          </div>
+        )
 
       case 'custom':
         return value as ReactNode
@@ -140,7 +163,6 @@ export function DataDetails<T extends Record<string, unknown>>({
       )}
 
       <CardContent>
-        {/* Affichage standard (Grille) */}
         {standardFields.length > 0 && (
           <dl className="divide-y divide-slate-100">
             {standardFields.map((field, index) => {
@@ -162,7 +184,6 @@ export function DataDetails<T extends Record<string, unknown>>({
           </dl>
         )}
 
-        {/* Affichage fichiers (Centré, un par ligne) */}
         {fileFields.length > 0 && (
           <div
             className={cn(

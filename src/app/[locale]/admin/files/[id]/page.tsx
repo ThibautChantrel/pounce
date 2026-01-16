@@ -25,6 +25,39 @@ export default async function FileShowPage(props: PageProps) {
     },
   ]
 
+  /* const file: FileData = await getFile(params.id)
+  const file2: FileData = await getFile('cmk5vh6500002o7y4u08e9iqq')
+
+  if (!file) {
+    notFound()
+  }
+
+  const displayData = {
+    allFiles: [file, file2].filter(Boolean) as FileData[]
+  }
+
+  const fileFields: FieldConfig<typeof displayData>[] = [
+    {
+      label: 'Liste de fichiers (Test double)',
+      type: 'file-list',
+      getValue: (data) => data.allFiles,
+    },
+  ]
+
+  return (
+    <ShowLayout module="files">
+      <div className="space-y-6">
+        <DataDetails
+          title="Informations du compte"
+          description={`ID: ${file.id}`} 
+          data={displayData}
+          fields={fileFields}
+        />
+      </div>
+    </ShowLayout>
+  )
+} */
+
   return (
     <ShowLayout module="files">
       <div className="space-y-6">
