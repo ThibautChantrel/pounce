@@ -33,10 +33,9 @@ import {
 } from '@/components/ui/select'
 import { Loader2, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import FileDropZone from '../FileDropZone'
 import { useTranslations } from 'next-intl'
+import FileUpload from '../FileUpload'
 
-// On reprend les mêmes types de base pour la cohérence
 export type FieldType =
   | 'text'
   | 'email'
@@ -53,7 +52,6 @@ export interface SelectOption {
   value: string
 }
 
-// Configuration spécifique à la création
 export interface CreateFieldConfig<T> {
   name: Path<T>
   label: string
@@ -63,13 +61,11 @@ export interface CreateFieldConfig<T> {
   disabled?: boolean
   className?: string
   options?: SelectOption[]
-  // Pas de currentFileUrl ici car c'est une création
 }
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface DataCreateProps<TSchema extends z.ZodObject<any>> {
   schema: TSchema
-  // defaultValues est souvent utile même en création (ex: boolean à true par défaut)
   defaultValues: DefaultValues<z.input<TSchema>>
   fields: CreateFieldConfig<z.input<TSchema>>[]
   onSubmit: (values: z.output<TSchema>) => Promise<void>
@@ -92,7 +88,7 @@ export function DataCreate<TSchema extends z.ZodObject<any>>({
   fields,
   onSubmit,
   onCancel,
-  submitLabel, // Sera géré par la traduction ou une valeur par défaut
+  submitLabel,
   className,
 }: DataCreateProps<TSchema>) {
   const [isLoading, setIsLoading] = useState(false)
@@ -108,8 +104,6 @@ export function DataCreate<TSchema extends z.ZodObject<any>>({
     setIsLoading(true)
     try {
       await onSubmit(values)
-      // Optionnel : form.reset() ici si vous voulez vider le formulaire après succès
-      // Mais souvent on redirige ou on ferme une modale, donc je laisse le parent gérer.
     } finally {
       setIsLoading(false)
     }
@@ -191,12 +185,11 @@ export function DataCreate<TSchema extends z.ZodObject<any>>({
 
       case 'file':
         return (
-          <div className="space-y-4">
-            <FileDropZone
-              file={field.value instanceof File ? field.value : null}
-              onFileSelect={(file) => field.onChange(file)}
-              onFileRemove={() => field.onChange(null)}
-              label={fieldConfig.placeholder || 'Glissez un fichier ici'}
+          <div className="w-full max-w-lg mx-auto">
+            <FileUpload
+              value={field.value as File | null}
+              onChange={field.onChange}
+              disabled={isDisabled}
             />
           </div>
         )
@@ -253,7 +246,13 @@ export function DataCreate<TSchema extends z.ZodObject<any>>({
               control={form.control as unknown as Control<z.input<TSchema>>}
               name={fieldConfig.name}
               render={({ field }) => (
-                <FormItem className={fieldConfig.className}>
+                <FormItem
+                  className={cn(
+                    fieldConfig.className,
+                    fieldConfig.type === 'file' &&
+                      'col-span-1 md:col-span-2 flex flex-col items-center justify-center w-full'
+                  )}
+                >
                   <FormLabel>{fieldConfig.label}</FormLabel>
                   <FormControl>{renderInput(fieldConfig, field)}</FormControl>
                   {fieldConfig.description && (
@@ -266,12 +265,11 @@ export function DataCreate<TSchema extends z.ZodObject<any>>({
           ))}
         </div>
 
-        <div className="flex gap-4 pt-4 border-t">
+        <div className="flex gap-4 pt-4 border-t justify-center md:justify-start">
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              // J'ai mis 'Plus' pour symboliser la création, mais 'Save' marche aussi
               <Plus className="mr-2 h-4 w-4" />
             )}
             {submitLabel || t('Actions.create') || 'Créer'}

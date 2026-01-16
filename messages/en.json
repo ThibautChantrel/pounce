@@ -96,7 +96,8 @@
       "uploadSuccess": "File uploaded successfully!",
       "uploadError": "Error uploading file. Please try again.",
       "selectFile": "Select a file to upload",
-      "noFileSelected": "No file selected."
+      "noFileSelected": "No file selected.",
+      "acceptedFormat": "Accepted formats : Images, PDF, GPX ..."
     },
 
     "Actions": {
