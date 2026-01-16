@@ -26,19 +26,11 @@ type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
 
 export interface FieldConfig<T> {
   label: string
-  /**
-   * Soit la clé de l'objet (ex: 'name'),
-   * soit une fonction pour récupérer la valeur complexe
-   */
   key?: keyof T
   getValue?: (data: T) => unknown
-
   type?: FieldType
-
   dateFormat?: Intl.DateTimeFormatOptions
-
   badgeVariants?: Record<string, BadgeVariant>
-
   className?: string
 }
 
@@ -61,6 +53,9 @@ export function DataDetails<T extends Record<string, unknown>>({
 }: DataDetailsProps<T>) {
   const format = useFormatter()
 
+  const fileFields = fields.filter((f) => f.type === 'file')
+  const standardFields = fields.filter((f) => f.type !== 'file')
+
   const resolveValue = (field: FieldConfig<T>): unknown => {
     if (field.getValue) return field.getValue(data)
     if (field.key) return data[field.key]
@@ -75,7 +70,6 @@ export function DataDetails<T extends Record<string, unknown>>({
     switch (field.type) {
       case 'date':
         const dateValue = new Date(value as string | number | Date)
-
         return (
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-muted-foreground" />
@@ -116,11 +110,8 @@ export function DataDetails<T extends Record<string, unknown>>({
         if (!fileData || !fileData.id)
           return <span className="text-muted-foreground">Aucun fichier</span>
 
-        return (
-          <div className="w-full max-w-50 h-32">
-            <FileDetails file={fileData} />
-          </div>
-        )
+        // On retourne le composant brut, le positionnement est géré par le parent
+        return <FileDetails file={fileData} />
 
       case 'custom':
         return value as ReactNode
@@ -149,25 +140,55 @@ export function DataDetails<T extends Record<string, unknown>>({
       )}
 
       <CardContent>
-        <dl className="divide-y divide-slate-100">
-          {fields.map((field, index) => {
-            const value = resolveValue(field)
+        {/* Affichage standard (Grille) */}
+        {standardFields.length > 0 && (
+          <dl className="divide-y divide-slate-100">
+            {standardFields.map((field, index) => {
+              const value = resolveValue(field)
+              return (
+                <div
+                  key={`${field.label}-${index}`}
+                  className="grid grid-cols-1 gap-2 py-4 sm:grid-cols-3 sm:gap-4"
+                >
+                  <dt className="text-sm font-medium text-muted-foreground">
+                    {field.label}
+                  </dt>
+                  <dd className="text-sm text-slate-900 sm:col-span-2 flex items-center">
+                    {renderValue(field, value)}
+                  </dd>
+                </div>
+              )
+            })}
+          </dl>
+        )}
 
-            return (
-              <div
-                key={`${field.label}-${index}`}
-                className="grid grid-cols-1 gap-2 py-4 sm:grid-cols-3 sm:gap-4"
-              >
-                <dt className="text-sm font-medium text-muted-foreground">
-                  {field.label}
-                </dt>
-                <dd className="text-sm text-slate-900 sm:col-span-2 flex items-center">
-                  {renderValue(field, value)}
-                </dd>
-              </div>
-            )
-          })}
-        </dl>
+        {/* Affichage fichiers (Centré, un par ligne) */}
+        {fileFields.length > 0 && (
+          <div
+            className={cn(
+              'space-y-8',
+              standardFields.length > 0 && 'mt-8 pt-8 border-t'
+            )}
+          >
+            {fileFields.map((field, index) => {
+              const value = resolveValue(field)
+              return (
+                <div
+                  key={`${field.label}-file-${index}`}
+                  className="flex flex-col items-center justify-center w-full"
+                >
+                  <div className="mb-3 text-sm font-medium text-muted-foreground text-center">
+                    {field.label}
+                  </div>
+
+                  <div className="flex justify-center w-full">
+                    {renderValue(field, value)}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </CardContent>
     </Card>
   )

@@ -67,13 +67,11 @@ export default async function UserShowPage(props: PageProps) {
       label: t('createdAt'),
       key: 'createdAt',
       type: 'date',
-      dateFormat: 'dd MMMM yyyy',
     },
     {
       label: t('lastUpdate'),
       key: 'updatedAt',
       type: 'date',
-      dateFormat: 'dd/MM/yyyy HH:mm',
     },
   ]
 

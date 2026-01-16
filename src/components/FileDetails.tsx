@@ -42,7 +42,6 @@ export default function FileDetails({ file }: { file: FileData }) {
   const handleDownload = () => {
     window.open(fileUrl, '_blank')
   }
-  console.log('file', file)
 
   return (
     <Card className="w-full max-w-2xl mx-auto overflow-hidden">
