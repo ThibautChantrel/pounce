@@ -104,7 +104,8 @@
       "uploadSuccess": "Fichier téléchargé avec succès !",
       "uploadError": "Erreur lors du téléchargement du fichier. Veuillez réessayer.",
       "selectFile": "Sélectionnez un fichier à télécharger",
-      "noFileSelected": "Aucun fichier sélectionné."
+      "noFileSelected": "Aucun fichier sélectionné.",
+      "acceptedFormat": "'Formats acceptés : Images, PDF, GPX...'"
     },
     "Actions": {
       "edit": "Modifier",

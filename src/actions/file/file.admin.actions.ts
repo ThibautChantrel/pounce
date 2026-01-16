@@ -8,16 +8,7 @@ import {
   upload,
 } from '@/server/modules/file/services/file.admin.service'
 import { revalidatePath } from 'next/cache'
-
-export type FileData = {
-  id: string
-  filename: string
-  mimeType: string
-  size: number
-  createdAt: Date
-  updatedAt: Date
-  createdById: string
-}
+import { FileData } from './file.admin.type'
 
 export async function uploadFileAction(formData: FormData) {
   return await upload(formData)

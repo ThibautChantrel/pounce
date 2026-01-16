@@ -1,9 +1,10 @@
 'use client'
 
 import { toast } from 'sonner'
-import { FileData, updateFileAction } from '@/actions/file/file.admin.actions'
+import { updateFileAction } from '@/actions/file/file.admin.actions'
 import { useRouter } from '@/navigation'
 import { FileUpdateForm } from '@/components/FileUpdateForm'
+import { FileData } from '@/actions/file/file.admin.type'
 
 interface FileEditClientProps {
   file: FileData

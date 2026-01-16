@@ -1,10 +1,19 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useMemo, useEffect } from 'react'
 import Image from 'next/image'
-import { X, FileText, Map as MapIcon } from 'lucide-react'
+import { X, FileText, Map as MapIcon, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import dynamic from 'next/dynamic'
 
+const GpxViewer = dynamic(() => import('./GpxViewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-slate-50 text-slate-400">
+      <Loader2 className="animate-spin w-8 h-8" />
+    </div>
+  ),
+})
 interface FilePreviewProps {
   file?: File | null
   url?: string
@@ -35,24 +44,24 @@ export default function FilePreview({
   const isGpx = currentName.endsWith('.gpx') || currentType.includes('gpx')
 
   const previewSrc = useMemo(() => {
-    if (file && isImage) {
+    if (file && (isImage || isGpx)) {
       return URL.createObjectURL(file)
-    } else if (url && isImage) {
+    } else if (url && (isImage || isGpx)) {
       return url
     }
     return null
-  }, [file, url, isImage])
+  }, [file, url, isImage, isGpx])
 
   useEffect(() => {
     return () => {
-      if (previewSrc && file && isImage) {
+      if (previewSrc && file && (isImage || isGpx)) {
         URL.revokeObjectURL(previewSrc)
       }
     }
-  }, [previewSrc, file, isImage])
+  }, [previewSrc, file, isImage, isGpx])
 
   if (!file && !url) return null
-
+  console.log('previewSrc', previewSrc, isGpx, isImage)
   if (previewSrc && isImage) {
     return (
       <div className={cn('relative overflow-hidden', className)}>
@@ -63,6 +72,33 @@ export default function FilePreview({
           className={cn('object-contain', imageClassName)}
           unoptimized
         />
+        {onRemove && (
+          <button
+            type="button"
+            onClick={onRemove}
+            className="absolute top-2 right-2 p-1 bg-black/50 text-white rounded-full hover:bg-black/70 transition z-10"
+          >
+            <X size={16} />
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  if (previewSrc && isGpx) {
+    const pin = {
+      lat: 48.873145,
+      lng: 2.328431,
+      label: 'Auber',
+    }
+    return (
+      <div className={cn('relative overflow-hidden', className)}>
+        <GpxViewer customUrl={previewSrc} points={[pin]} />
+
+        <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate text-center z-[500]">
+          {currentName}
+        </div>
+
         {onRemove && (
           <button
             type="button"
