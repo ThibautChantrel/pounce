@@ -48,7 +48,8 @@
   "Admin": {
     "Navbar": {
       "users": "Utilisateurs",
-      "files": "Fichiers"
+      "files": "Fichiers",
+      "pois": "Points d'intérêt"
     },
 
     "Users": {
@@ -95,6 +96,7 @@
       "latitude": "Latitude",
       "longitude": "Longitude",
       "createdAt": "Créé le",
+      "updateAt": "Modifié le",
       "validation": {
         "nameTooShort": "Le nom doit contenir au moins 2 caractères.",
         "typeInvalid": "Veuillez sélectionner un type valide.",

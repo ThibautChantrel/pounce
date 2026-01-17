@@ -24,6 +24,8 @@ import { Link, useRouter } from '@/navigation'
 import { PoiType } from '@prisma/client'
 import { deletePoiAction } from '@/actions/poi/poi.admin.actions'
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
+import { Badge } from '@/components/ui/badge'
+import { PoiTypeVariants } from '@/utils/pois'
 
 export type PoiColumn = {
   id: string
@@ -137,11 +139,11 @@ export const usePoiColumns = () => {
       {
         accessorKey: 'type',
         header: t('type'),
-        cell: ({ row }) => (
-          <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 ring-1 ring-inset ring-slate-500/10">
-            {row.getValue('type')}
-          </span>
-        ),
+        cell: ({ row }) => {
+          const type = row.original.type
+
+          return <Badge variant={PoiTypeVariants[type]}>{type}</Badge>
+        },
       },
       {
         id: 'coordinates',

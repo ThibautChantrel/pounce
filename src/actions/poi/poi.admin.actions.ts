@@ -1,6 +1,6 @@
 'use server'
 
-import { BusinessError } from '@/core/errors'
+import { BusinessError, ERROR_CODES } from '@/core/errors'
 import { CreatePoiInput, UpdatePoiInput } from '@/server/poi/poi.types'
 import { poiService } from '@/server/poi/services/poi.admin.service'
 import { revalidatePath } from 'next/cache'
@@ -30,8 +30,6 @@ export async function createPoiAction(
       }
     }
     throw error
-
-    return { success: false, error: error.message }
   }
 }
 
@@ -52,7 +50,7 @@ export async function updatePoiAction(
         code: error.code,
       }
     }
-    return { success: false, error: error.message }
+    throw error
   }
 }
 
@@ -71,8 +69,19 @@ export async function deletePoiAction(id: string): Promise<ActionResponse> {
         code: error.code,
       }
     }
-    return { success: false, error: error.message }
+    throw error
   }
+}
+
+export async function getPoiAction(id: string) {
+  const user = await poiService.get(id)
+  if (!user) {
+    throw new BusinessError(
+      ERROR_CODES.POI_DOES_NOT_EXIST,
+      "Le poi n'existe pas"
+    )
+  }
+  return user
 }
 
 export const fetchPois = async (skip = 0, take = 10, search?: string) => {

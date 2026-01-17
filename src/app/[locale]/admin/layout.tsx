@@ -40,7 +40,7 @@ export default async function AdminLayout({
           <AdminLink
             href="/admin/pois"
             icon={<Locate size={18} />}
-            label={(await t)('Navbar.files')}
+            label={(await t)('Navbar.pois')}
           />
         </nav>
 
