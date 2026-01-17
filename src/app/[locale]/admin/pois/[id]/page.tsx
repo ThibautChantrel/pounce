@@ -89,11 +89,10 @@ export default async function PoiShowPage(props: PageProps) {
   ]
 
   return (
-    // 👇 Module "pois" pour activer le bon onglet dans la sidebar (si tu as cette logique)
     <ShowLayout module="pois">
       <div className="space-y-6">
         <DataDetails
-          title={t('title')} // "Gestion des Lieux" ou "Détails du lieu"
+          title={t('title')}
           description={`ID: ${poi.id}`}
           data={poi}
           fields={poiFields}
