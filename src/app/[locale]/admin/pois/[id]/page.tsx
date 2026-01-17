@@ -73,9 +73,19 @@ export default async function PoiShowPage(props: PageProps) {
       type: 'date',
     },
     {
-      label: t('createdAt'),
+      label: t('createdBy'),
+      key: 'createdById',
+      type: 'string',
+    },
+    {
+      label: t('updatedAt'),
       key: 'updatedAt',
       type: 'date',
+    },
+    {
+      label: t('updatedBy'),
+      key: 'updatedById',
+      type: 'string',
     },
   ]
 

@@ -91,7 +91,9 @@
       "latitude": "Latitude",
       "longitude": "Longitude",
       "createdAt": "Created At",
-      "updateAt": "Update At",
+      "updatedAt": "Update At",
+      "createdBy": "Created by",
+      "updatedBy": "Modified by",
       "validation": {
         "nameTooShort": "Name must be at least 2 characters.",
         "typeInvalid": "Please select a valid type.",
