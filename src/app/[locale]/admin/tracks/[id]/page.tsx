@@ -67,7 +67,17 @@ export default async function TrackShowPage(props: PageProps) {
       type: 'string',
       className: 'font-mono text-xs text-muted-foreground',
     },
-
+    {
+      label: tGlobal('updatedAt'),
+      key: 'updatedAt',
+      type: 'date',
+    },
+    {
+      label: tGlobal('updatedBy'),
+      key: 'updatedById',
+      type: 'string',
+      className: 'font-mono text-xs text-muted-foreground',
+    },
     {
       label: 'Image de couverture',
       key: 'cover',
