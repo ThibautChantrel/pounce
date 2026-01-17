@@ -5,6 +5,7 @@ import {
   deleteFile,
   getAll,
   getOne,
+  getOneInfo,
   updateFile,
 } from '../repositories/file.repository'
 import { Prisma } from '@prisma/client'
@@ -38,6 +39,14 @@ export const upload = async (formData: FormData) => {
 
 export const getFileById = async (id: string) => {
   const file = await getOne(id)
+  if (!file) {
+    throw new BusinessError(ERROR_CODES.NOT_FOUND, 'File not found')
+  }
+  return file
+}
+
+export const getFileInfosById = async (id: string) => {
+  const file = await getOneInfo(id)
   if (!file) {
     throw new BusinessError(ERROR_CODES.NOT_FOUND, 'File not found')
   }

@@ -4,6 +4,7 @@ import {
   deleteFileById,
   getAllFiles,
   getFileById,
+  getFileInfosById,
   updateFileById,
   upload,
 } from '@/server/modules/file/services/file.admin.service'
@@ -16,6 +17,10 @@ export async function uploadFileAction(formData: FormData) {
 
 export async function getFile(id: string): Promise<FileData> {
   return await getFileById(id)
+}
+
+export async function getFileInfos(id: string): Promise<FileData> {
+  return await getFileInfosById(id)
 }
 
 export const fetchFiles = async (skip = 0, take = 10, search?: string) => {

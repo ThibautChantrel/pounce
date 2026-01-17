@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
-import { getFile } from '@/actions/file/file.admin.actions'
-import FileDetails from '@/components/FileDetails'
+import { getFileInfos } from '@/actions/file/file.admin.actions'
 import ShowLayout from '@/components/admin/ShowLayout'
 import { DataDetails, FieldConfig } from '@/components/admin/data-details'
 import { FileData } from '@/actions/file/file.admin.type'
@@ -12,7 +11,7 @@ type PageProps = {
 export default async function FileShowPage(props: PageProps) {
   const params = await props.params
 
-  const file: FileData = await getFile(params.id)
+  const file: FileData = await getFileInfos(params.id)
 
   if (!file) {
     notFound()
