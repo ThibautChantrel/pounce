@@ -58,6 +58,9 @@ export class PoiRepository {
             {
               id: { contains: search, mode: Prisma.QueryMode.insensitive },
             },
+            {
+              name: { contains: search, mode: Prisma.QueryMode.insensitive },
+            },
           ],
         }
       : {}

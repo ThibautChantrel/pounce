@@ -40,7 +40,29 @@
     "Navbar": {
       "users": "Users",
       "files": "Files",
-      "pois": "Points of interest"
+      "pois": "Points of interest",
+      "tracks": "Tracks"
+    },
+
+    "Global": {
+      "name": "Name",
+      "title": "Title",
+      "description": "Description",
+      "type": "Type",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "createdBy": "Created By",
+      "updatedBy": "Modified By",
+      "email": "Email",
+      "password": "Password",
+      "role": "Role",
+      "details": "Details",
+      "visible": "Visible",
+      "hidden": "Hidden",
+      "actions": "Actions",
+      "yes": "Yes",
+      "no": "No",
+      "empty": "Not specified"
     },
 
     "Users": {
@@ -125,6 +147,24 @@
       "selectFile": "Select a file to upload",
       "noFileSelected": "No file selected.",
       "acceptedFormat": "Accepted formats : Images, PDF, GPX ..."
+    },
+
+    "Tracks": {
+      "title": "Tracks Management",
+      "description": "Manage routes and challenge sections.",
+      "addTrack": "Add Track",
+      "createTitle": "Create a Track",
+      "createSubtitle": "Define a new segment (distance, gpx, images).",
+      "updateTitle": "Update Track",
+      "updateSubtitle": "Modification of: {title}",
+      "distance": "Distance (km)",
+      "visible": "Track Visibility",
+      "createSuccess": "Track created successfully",
+      "updateSuccess": "Track updated successfully",
+      "validation": {
+        "titleTooShort": "Title is too short.",
+        "distanceNegative": "Distance must be positive."
+      }
     },
 
     "Actions": {

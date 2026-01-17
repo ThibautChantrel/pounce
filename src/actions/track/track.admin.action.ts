@@ -1,8 +1,11 @@
 'use server'
 
 import { BusinessError, ERROR_CODES } from '@/core/errors'
-import { CreatePoiInput, UpdatePoiInput } from '@/server/modules/poi/poi.types'
-import { poiService } from '@/server/modules/poi/services/poi.admin.service'
+import { trackService } from '@/server/modules/track/services/track.admin.service'
+import {
+  CreateTrackInput,
+  UpdateTrackInput,
+} from '@/server/modules/track/track.types'
 import { revalidatePath } from 'next/cache'
 
 type ActionResponse = {
@@ -12,12 +15,12 @@ type ActionResponse = {
   data?: string
 }
 
-export async function createPoiAction(
-  data: CreatePoiInput
+export async function createTrackAction(
+  data: CreateTrackInput
 ): Promise<ActionResponse> {
   try {
-    const res = await poiService.create(data)
-    revalidatePath(`/admin/poids/${res.id}`)
+    const res = await trackService.create(data)
+    revalidatePath(`/admin/tracks`)
     return { success: true, data: res.id }
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -33,12 +36,15 @@ export async function createPoiAction(
   }
 }
 
-export async function updatePoiAction(
-  data: UpdatePoiInput
+export async function updateTrackAction(
+  data: UpdateTrackInput
 ): Promise<ActionResponse> {
   try {
-    const poi = await poiService.update(data)
-    revalidatePath(`/admin/pois/${poi.id}`)
+    const track = await trackService.update(data)
+
+    revalidatePath(`/admin/tracks/${track.id}`)
+    revalidatePath(`/admin/tracks`)
+
     return { success: true }
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -54,10 +60,10 @@ export async function updatePoiAction(
   }
 }
 
-export async function deletePoiAction(id: string): Promise<ActionResponse> {
+export async function deleteTrackAction(id: string): Promise<ActionResponse> {
   try {
-    await poiService.delete(id)
-    revalidatePath(`/admin/pois`)
+    await trackService.delete(id)
+    revalidatePath(`/admin/tracks`)
     return { success: true }
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -73,17 +79,14 @@ export async function deletePoiAction(id: string): Promise<ActionResponse> {
   }
 }
 
-export async function getPoiAction(id: string) {
-  const user = await poiService.get(id)
-  if (!user) {
-    throw new BusinessError(
-      ERROR_CODES.POI_DOES_NOT_EXIST,
-      "Le poi n'existe pas"
-    )
+export async function getTrackAction(id: string) {
+  const track = await trackService.get(id)
+  if (!track) {
+    throw new BusinessError(ERROR_CODES.NOT_FOUND, "Le parcours n'existe pas")
   }
-  return user
+  return track
 }
 
-export const fetchPois = async (skip = 0, take = 10, search?: string) => {
-  return await poiService.getAllPois(skip, take, search)
+export const fetchTracks = async (skip = 0, take = 10, search?: string) => {
+  return await trackService.getAllTracks(skip, take, search)
 }

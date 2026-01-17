@@ -1,12 +1,11 @@
 import { notFound } from 'next/navigation'
-// 👇 Import de ton action POI
 import ShowLayout from '@/components/admin/ShowLayout'
 import { Badge } from '@/components/ui/badge'
 import { DataDetails, FieldConfig } from '@/components/admin/data-details'
 import { getTranslations } from 'next-intl/server'
-import { Poi } from '@prisma/client' // Import des types Prisma
 import { getPoiAction } from '@/actions/poi/poi.admin.actions'
 import { PoiTypeVariants } from '@/utils/pois'
+import { Poi } from '@/actions/poi/poi.admin.type'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>

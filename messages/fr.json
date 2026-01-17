@@ -49,7 +49,29 @@
     "Navbar": {
       "users": "Utilisateurs",
       "files": "Fichiers",
-      "pois": "Points d'intérêt"
+      "pois": "Points d'intérêt",
+      "tracks": "Parcours"
+    },
+
+    "Global": {
+      "name": "Nom",
+      "title": "Titre",
+      "description": "Description",
+      "type": "Type",
+      "createdAt": "Créé le",
+      "updatedAt": "Mis à jour le",
+      "createdBy": "Créé par",
+      "updatedBy": "Modifié par",
+      "email": "Email",
+      "password": "Mot de passe",
+      "role": "Rôle",
+      "details": "Détails",
+      "visible": "Visible",
+      "hidden": "Caché",
+      "actions": "Actions",
+      "yes": "Oui",
+      "no": "Non",
+      "empty": "Non renseigné"
     },
 
     "Users": {
@@ -149,6 +171,24 @@
       "AlertDialog": {
         "title": "Confirmer la suppression",
         "description": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.L'élément {item} sera définitivement supprimé."
+      }
+    },
+
+    "Tracks": {
+      "title": "Gestion des Parcours",
+      "description": "Gérez les itinéraires et les sections des challenges.",
+      "addTrack": "Ajouter un parcours",
+      "createTitle": "Créer un parcours",
+      "createSubtitle": "Définissez un nouveau segment (distance, gpx, images).",
+      "updateTitle": "Modifier le parcours",
+      "updateSubtitle": "Modification de : {title}",
+      "distance": "Distance (km)",
+      "visible": "Visibilité du parcours",
+      "createSuccess": "Parcours créé avec succès",
+      "updateSuccess": "Parcours mis à jour avec succès",
+      "validation": {
+        "titleTooShort": "Le titre est trop court.",
+        "distanceNegative": "La distance doit être positive."
       }
     },
 
