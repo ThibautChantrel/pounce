@@ -78,10 +78,13 @@
     "Pois": {
       "title": "POIs Management",
       "description": "Manage all Points of Interest in database",
+      "updateTitle": "Update the Poi",
+      "updateSubtitle": "I guess the eifel tower must have changed its location",
       "createTitle": "Create Point of Interest",
       "createSubtitle": "Fill in the details below to add a new location to the track.",
       "createButton": "Create POI",
       "createdSuccess": "Point of Interest created successfully",
+      "updateSuccess": "modification of Poi done",
       "name": "Name",
       "type": "Type",
       "coordinates": "Coordinates",
