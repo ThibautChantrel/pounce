@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { DataUpdate, UpdateFieldConfig } from '@/components/admin/data-update'
 import { useTranslations } from 'next-intl'
-import { Track } from '@prisma/client'
 import { updateTrackAction } from '@/actions/track/track.admin.action'
+import { fetchFiles } from '@/actions/file/file.admin.actions'
+import { TrackWithRelations } from '@/server/modules/track/track.types'
+import { fetchPois } from '@/actions/poi/poi.admin.actions'
 
 interface TrackEditPageProps {
-  track: Track
+  track: TrackWithRelations
 }
 
 export default function TrackEditPage({ track }: TrackEditPageProps) {
@@ -17,6 +19,8 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
   const t = useTranslations('Admin.Tracks')
   const tGlobal = useTranslations('Admin.Global')
   const tAction = useTranslations('Admin.Actions')
+  const tFile = useTranslations('Admin.Files')
+  const tPois = useTranslations('Admin.Pois')
 
   const trackFormSchema = z.object({
     title: z
@@ -34,11 +38,36 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
     coverId: z.string().optional().nullable(),
     bannerId: z.string().optional().nullable(),
     gpxFileId: z.string().optional().nullable(),
+    poiIds: z.array(z.string()).optional(),
   })
 
   type TrackFormSchema = typeof trackFormSchema
   type TrackFormInput = z.input<TrackFormSchema>
   type TrackFormOutput = z.output<TrackFormSchema>
+
+  const fetchFilesForAssociation = async (params: {
+    skip: number
+    take: number
+    search?: string
+  }) => {
+    const res = await fetchFiles(params.skip, params.take, params.search)
+    return {
+      data: res.data.map((f) => ({ id: f.id, name: f.filename })),
+      total: res.total,
+    }
+  }
+
+  const fetchPoisForAssociation = async (params: {
+    skip: number
+    take: number
+    search?: string
+  }) => {
+    const res = await fetchPois(params.skip, params.take, params.search)
+    return {
+      data: res.data.map((f) => ({ id: f.id, name: f.name })),
+      total: res.total,
+    }
+  }
 
   const fields: UpdateFieldConfig<TrackFormInput>[] = [
     {
@@ -56,7 +85,7 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
     {
       name: 'visible',
       label: t('visible'),
-      type: 'boolean', // Affichera un Switch
+      type: 'boolean',
       description: 'Rendre ce parcours visible publiquement ?',
     },
     {
@@ -64,6 +93,50 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
       label: tGlobal('description'),
       type: 'textarea',
       placeholder: 'Description du parcours...',
+    },
+    {
+      name: 'coverId',
+      label: tFile('cover'),
+      type: 'relation',
+      relationFetch: fetchFilesForAssociation,
+      relationMode: 'single',
+      relationInitialData: track.cover
+        ? [{ id: track.cover.id, name: track.cover.filename }]
+        : [],
+      placeholder: tFile('placeholderCover'),
+    },
+    {
+      name: 'bannerId',
+      label: tFile('banner'),
+      type: 'relation',
+      relationFetch: fetchFilesForAssociation,
+      relationMode: 'single',
+      relationInitialData: track.banner
+        ? [{ id: track.banner.id, name: track.banner.filename }]
+        : [],
+      placeholder: tFile('placeholderBanner'),
+    },
+    {
+      name: 'gpxFileId',
+      label: tFile('gpxFile'),
+      type: 'relation',
+      relationFetch: fetchFilesForAssociation,
+      relationMode: 'single',
+      relationInitialData: track.gpxFile
+        ? [{ id: track.gpxFile.id, name: track.gpxFile.filename }]
+        : [],
+      placeholder: tFile('placeholderGpxFile'),
+    },
+    {
+      name: 'poiIds',
+      label: tPois('title'),
+      type: 'relation',
+      relationFetch: fetchPoisForAssociation,
+      relationMode: 'multiple',
+      relationInitialData: track.pois
+        ? track.pois.map((p) => ({ id: p.id, name: p.name }))
+        : [],
+      placeholder: 'Sélectionner les lieux associés...',
     },
   ]
 

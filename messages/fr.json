@@ -153,7 +153,13 @@
       "uploadError": "Erreur lors du téléchargement du fichier. Veuillez réessayer.",
       "selectFile": "Sélectionnez un fichier à télécharger",
       "noFileSelected": "Aucun fichier sélectionné.",
-      "acceptedFormat": "'Formats acceptés : Images, PDF, GPX...'"
+      "acceptedFormat": "'Formats acceptés : Images, PDF, GPX...'",
+      "banner": "Bannière",
+      "cover": "Image de couverture",
+      "gpxFile": "Fichier GPX",
+      "placeholderBanner": "Choose a banner",
+      "placeholderCover": "Choose a cover",
+      "placeholderGpxFile": "Choose a GPX File"
     },
     "Actions": {
       "edit": "Modifier",

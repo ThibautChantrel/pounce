@@ -37,13 +37,20 @@ export class TrackRepository {
   }
 
   async update(data: UpdateTrackInput, userId: string) {
-    const { id, ...fields } = data
+    const { id, poiIds, ...fields } = data
 
     return await prisma.track.update({
       where: { id },
       data: {
         ...fields,
+
         updatedById: userId,
+
+        pois: poiIds
+          ? {
+              set: poiIds.map((pId: string) => ({ id: pId })),
+            }
+          : undefined,
       },
       include: defaultInclude,
     })

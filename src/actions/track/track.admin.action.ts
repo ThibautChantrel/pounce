@@ -7,6 +7,7 @@ import {
   UpdateTrackInput,
 } from '@/server/modules/track/track.types'
 import { revalidatePath } from 'next/cache'
+import { TrackWithRelations } from './track.admin.types'
 
 type ActionResponse = {
   success: boolean
@@ -79,7 +80,7 @@ export async function deleteTrackAction(id: string): Promise<ActionResponse> {
   }
 }
 
-export async function getTrackAction(id: string) {
+export async function getTrackAction(id: string): Promise<TrackWithRelations> {
   const track = await trackService.get(id)
   if (!track) {
     throw new BusinessError(ERROR_CODES.NOT_FOUND, "Le parcours n'existe pas")

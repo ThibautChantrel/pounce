@@ -1,10 +1,25 @@
-import { Track, Poi, ChallengeTrack } from '@prisma/client'
-import { fileWithoutData } from '../file/file.types'
+import { ChallengeTrack } from '@prisma/client'
+import { FileData } from '../file/file.admin.type'
+import { Poi } from '../poi/poi.admin.type'
 
+export type Track = {
+  id: string
+  title: string
+  description: string | null
+  visible: boolean
+  distance: number
+  coverId: string | null
+  bannerId: string | null
+  gpxFileId: string | null
+  createdAt: Date
+  updatedAt: Date
+  createdById: string | null
+  updatedById: string | null
+}
 export type TrackWithRelations = Track & {
-  cover: fileWithoutData | null
-  banner: fileWithoutData | null
-  gpxFile: fileWithoutData | null
+  cover: FileData | null
+  banner: FileData | null
+  gpxFile: FileData | null
   pois?: Poi[]
   challenges?: (ChallengeTrack & {
     challenge: { title: string }

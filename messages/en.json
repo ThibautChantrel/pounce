@@ -146,7 +146,13 @@
       "uploadError": "Error uploading file. Please try again.",
       "selectFile": "Select a file to upload",
       "noFileSelected": "No file selected.",
-      "acceptedFormat": "Accepted formats : Images, PDF, GPX ..."
+      "acceptedFormat": "Accepted formats : Images, PDF, GPX ...",
+      "banner": "Banner",
+      "cover": "Cover",
+      "gpxFile": "GPX File",
+      "placeholderBanner": "Choisissez une Bannière",
+      "placeholderCover": "Choisissez une image de couverture",
+      "placeholderGpxFile": "Choisissez un fichier GPX"
     },
 
     "Tracks": {
