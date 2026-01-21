@@ -59,7 +59,6 @@ export default function CreateTrackPage() {
     {
       name: 'visible',
       label: t('Tracks.visible'), // "Visibilité"
-      // ⚠️ Important : On utilise 'boolean' pour déclencher le Switch de ton DataCreate
       type: 'boolean',
       description: 'Rendre ce parcours visible publiquement immédiatement ?',
     },

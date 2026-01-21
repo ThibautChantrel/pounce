@@ -1,12 +1,23 @@
+import { BusinessError, ERROR_CODES } from '@/core/errors'
+import { auth } from '../../auth/auth.config'
 import { CreateChallengeInput, UpdateChallengeInput } from '../challenge.type'
 import { challengeRepository } from '../repositories/challenge.repository'
 
 class ChallengeService {
-  async create(data: CreateChallengeInput, userId: string = 'system') {
+  private async getAuthenticatedUserId(): Promise<string> {
+    const session = await auth()
+    if (!session?.user?.id)
+      throw new BusinessError(ERROR_CODES.UNAUTHORIZED, 'Unauthorized')
+    return session.user.id
+  }
+
+  async create(data: CreateChallengeInput) {
+    const userId = await this.getAuthenticatedUserId()
     return await challengeRepository.create(data, userId)
   }
 
-  async update(data: UpdateChallengeInput, userId: string = 'system') {
+  async update(data: UpdateChallengeInput) {
+    const userId = await this.getAuthenticatedUserId()
     return await challengeRepository.update(data, userId)
   }
 

@@ -42,16 +42,16 @@ export type FetchRelationResponse = {
 }
 
 interface AsyncRelationSelectorProps {
-  value?: string | string[] | null // L'ID ou liste d'IDs (géré par react-hook-form)
+  value?: string | string[] | null
   onChange: (value: string | string[] | null) => void
   fetchFunction: (params: FetchRelationParams) => Promise<FetchRelationResponse>
   mode?: 'single' | 'multiple'
   label?: string
-  // Permet d'afficher le nom de l'élément sélectionné au chargement initial
-  // Sinon on ne verrait que l'ID
   initialData?: RelationItem[]
   placeholder?: string
   take?: number
+  // 👇 NOUVELLE PROP : Pour afficher les numéros (1, 2, 3...)
+  ordered?: boolean
 }
 
 export function AsyncRelationSelector({
@@ -62,6 +62,7 @@ export function AsyncRelationSelector({
   initialData = [],
   placeholder = 'Sélectionner...',
   take = 5,
+  ordered = false, // Par défaut désactivé
 }: AsyncRelationSelectorProps) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -75,12 +76,11 @@ export function AsyncRelationSelector({
   const [debouncedSearch] = useDebounce(search, 300)
   const [page, setPage] = useState(0)
 
-  // Gestion de l'affichage des éléments sélectionnés (Cache local pour les noms)
+  // Cache des noms pour l'affichage
   const [selectedItemsMap, setSelectedItemsMap] = useState<Map<string, string>>(
     new Map(initialData.map((i) => [i.id, i.name]))
   )
 
-  // 1. Charger les données
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
@@ -98,47 +98,41 @@ export function AsyncRelationSelector({
     }
   }, [fetchFunction, page, take, debouncedSearch])
 
-  // Déclencher le chargement quand les dépendances changent
   useEffect(() => {
     if (open) {
       loadData()
     }
   }, [open, loadData])
 
-  // Reset page quand on cherche
   useEffect(() => {
     setPage(0)
   }, [debouncedSearch])
 
-  // Helper pour savoir si un ID est sélectionné
   const isSelected = (id: string) => {
     if (Array.isArray(value)) return value.includes(id)
     return value === id
   }
 
-  // Helper pour gérer le clic
   const handleSelect = (item: RelationItem) => {
-    // Mise à jour du cache des noms pour l'affichage
     const newMap = new Map(selectedItemsMap)
     newMap.set(item.id, item.name)
     setSelectedItemsMap(newMap)
 
     if (mode === 'single') {
-      // Si on clique sur celui déjà sélectionné, on désélectionne (optionnel)
       if (value === item.id) onChange(null)
       else onChange(item.id)
-      setOpen(false) // On ferme en mode single
+      setOpen(false)
     } else {
       const currentArray = Array.isArray(value) ? value : []
       if (currentArray.includes(item.id)) {
         onChange(currentArray.filter((id) => id !== item.id))
       } else {
+        // Ajoute à la fin, préservant ainsi l'ordre de sélection
         onChange([...currentArray, item.id])
       }
     }
   }
 
-  // Suppression d'un item via le badge (mode multiple)
   const removeValue = (idToRemove: string, e: React.MouseEvent) => {
     e.stopPropagation()
     if (Array.isArray(value)) {
@@ -146,7 +140,7 @@ export function AsyncRelationSelector({
     }
   }
 
-  // --- RENDER DU BOUTON TRIGGER ---
+  // --- RENDU MODIFIÉ POUR SUPPORTER LE MODE "ORDERED" ---
   const renderTriggerContent = () => {
     if (!value || (Array.isArray(value) && value.length === 0)) {
       return <span className="text-muted-foreground">{placeholder}</span>
@@ -154,12 +148,44 @@ export function AsyncRelationSelector({
 
     if (mode === 'single') {
       const id = value as string
-      const name = selectedItemsMap.get(id) || id // Affiche le nom ou l'ID si nom inconnu
+      const name = selectedItemsMap.get(id) || id
       return <span className="truncate">{name}</span>
     }
 
     // Mode multiple
     const ids = value as string[]
+
+    // Si mode ordered, on affiche une liste verticale pour bien voir la séquence
+    if (ordered) {
+      return (
+        <div className="flex flex-col gap-1 w-full my-1">
+          {ids.map((id, index) => (
+            <div
+              key={id}
+              className="flex items-center justify-between bg-secondary/50 p-1.5 rounded-md text-sm group"
+            >
+              <div className="flex items-center gap-2 overflow-hidden">
+                <Badge
+                  variant="outline"
+                  className="bg-background h-5 w-5 flex items-center justify-center p-0 shrink-0"
+                >
+                  {index + 1}
+                </Badge>
+                <span className="truncate font-medium">
+                  {selectedItemsMap.get(id) || id}
+                </span>
+              </div>
+              <X
+                className="h-4 w-4 cursor-pointer text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => removeValue(id, e)}
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    // Affichage classique (Tags)
     return (
       <div className="flex flex-wrap gap-1">
         {ids.map((id) => (
@@ -182,9 +208,15 @@ export function AsyncRelationSelector({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between h-auto min-h-[40px] px-3 py-2"
+          className={cn(
+            'w-full justify-between px-3 py-2',
+            // Ajustement hauteur auto si liste verticale
+            ordered && Array.isArray(value) && value.length > 0
+              ? 'h-auto'
+              : 'h-10'
+          )}
         >
-          <div className="flex flex-1 text-left items-center">
+          <div className="flex flex-1 text-left items-center overflow-hidden">
             {renderTriggerContent()}
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -218,28 +250,39 @@ export function AsyncRelationSelector({
             </div>
           )}
 
-          {items.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => handleSelect(item)}
-              className={cn(
-                'flex items-center px-2 py-2 text-sm cursor-pointer rounded-sm hover:bg-accent hover:text-accent-foreground',
-                isSelected(item.id) && 'bg-accent/50'
-              )}
-            >
-              <Check
+          {items.map((item) => {
+            const isSel = isSelected(item.id)
+            // Calcul de l'index si sélectionné (pour afficher le numéro dans la liste déroulante aussi)
+            const index = Array.isArray(value) ? value.indexOf(item.id) : -1
+
+            return (
+              <div
+                key={item.id}
+                onClick={() => handleSelect(item)}
                 className={cn(
-                  'mr-2 h-4 w-4',
-                  isSelected(item.id) ? 'opacity-100' : 'opacity-0'
+                  'flex items-center px-2 py-2 text-sm cursor-pointer rounded-sm hover:bg-accent hover:text-accent-foreground',
+                  isSel && 'bg-accent/50'
                 )}
-              />
-              <div className="flex flex-col">
-                <span className="font-medium">{item.name}</span>
-                {/* On peut afficher l'ID en tout petit si besoin de debug */}
-                {/* <span className="text-[10px] text-muted-foreground">{item.id}</span> */}
+              >
+                <div
+                  className={cn(
+                    'mr-2 flex items-center justify-center w-4 h-4',
+                    isSel ? 'opacity-100' : 'opacity-0'
+                  )}
+                >
+                  {ordered && isSel ? (
+                    <span className="text-xs font-bold">{index + 1}</span>
+                  ) : (
+                    <Check className="h-4 w-4" />
+                  )}
+                </div>
+
+                <div className="flex flex-col">
+                  <span className="font-medium">{item.name}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* PAGINATION FOOTER */}
