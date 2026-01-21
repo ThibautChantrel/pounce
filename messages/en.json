@@ -164,6 +164,7 @@
       "updateTitle": "Update Track",
       "updateSubtitle": "Modification of: {title}",
       "distance": "Distance (km)",
+      "elevationGain": "Elevation gain",
       "visible": "Track Visibility",
       "createSuccess": "Track created successfully",
       "updateSuccess": "Track updated successfully",

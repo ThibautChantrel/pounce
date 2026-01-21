@@ -189,6 +189,7 @@
       "updateTitle": "Modifier le parcours",
       "updateSubtitle": "Modification de : {title}",
       "distance": "Distance (km)",
+      "elevationGain": "Dénivelé",
       "visible": "Visibilité du parcours",
       "createSuccess": "Parcours créé avec succès",
       "updateSuccess": "Parcours mis à jour avec succès",

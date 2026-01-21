@@ -181,11 +181,12 @@ model ChallengeTrack {
 // --- TRACK MODULE ---
 
 model Track {
-  id          String  @id @default(cuid())
-  title       String
-  description String? @db.Text
-  visible     Boolean @default(false)
-  distance    Float
+  id            String  @id @default(cuid())
+  title         String
+  description   String? @db.Text
+  visible       Boolean @default(false)
+  distance      Float
+  elevationGain Int     @default(0)
 
   // Relation N-N vers Challenge (via Pivot)
   challenges ChallengeTrack[]

@@ -8,6 +8,7 @@ export type Track = {
   description: string | null
   visible: boolean
   distance: number
+  elevationGain: number
   coverId: string | null
   bannerId: string | null
   gpxFileId: string | null

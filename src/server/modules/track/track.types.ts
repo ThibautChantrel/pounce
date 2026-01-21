@@ -20,6 +20,7 @@ export type CreateTrackInput = {
   description?: string
   visible?: boolean
   distance: number
+  elevationGain: number
 
   coverId?: string
   bannerId?: string

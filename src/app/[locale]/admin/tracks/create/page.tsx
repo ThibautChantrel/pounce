@@ -21,6 +21,10 @@ export default function CreateTrackPage() {
       .number({ message: t('Tracks.validation.distanceNegative') })
       .min(0, { message: t('Tracks.validation.distanceNegative') }),
 
+    elevationGain: z
+      .number({ message: t('Tracks.validation.distanceNegative') })
+      .min(0, { message: t('Tracks.validation.distanceNegative') }),
+
     visible: z.boolean(),
 
     coverId: z.string().optional().nullable(),
@@ -45,6 +49,12 @@ export default function CreateTrackPage() {
       label: t('Tracks.distance'), // "Distance (km)"
       type: 'number',
       placeholder: '12.5',
+    },
+    {
+      name: 'elevationGain',
+      label: t('Tracks.elevationGain'),
+      type: 'number',
+      placeholder: '12',
     },
     {
       name: 'visible',

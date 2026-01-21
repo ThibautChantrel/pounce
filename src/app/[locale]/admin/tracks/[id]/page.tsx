@@ -37,6 +37,14 @@ export default async function TrackShowPage(props: PageProps) {
       getValue: (item) => <span className="font-mono">{item.distance} km</span>,
     },
     {
+      label: t('elevationGain'),
+      key: 'elevationGain',
+      type: 'custom', // Custom pour ajouter "km"
+      getValue: (item) => (
+        <span className="font-mono">{item.elevationGain ?? 0} m</span>
+      ),
+    },
+    {
       label: t('visible'),
       key: 'visible',
       type: 'custom',

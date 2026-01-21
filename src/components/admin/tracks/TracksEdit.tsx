@@ -33,6 +33,10 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
       .number({ message: t('validation.distanceNegative') })
       .min(0, { message: t('validation.distanceNegative') }),
 
+    elevationGain: z
+      .number({ message: t('validation.distanceNegative') })
+      .min(0, { message: t('validation.distanceNegative') }),
+
     visible: z.boolean(),
 
     coverId: z.string().optional().nullable(),
@@ -81,6 +85,12 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
       label: t('distance'),
       type: 'number',
       placeholder: '12.5',
+    },
+    {
+      name: 'elevationGain',
+      label: t('elevationGain'),
+      type: 'number',
+      placeholder: '125',
     },
     {
       name: 'visible',
