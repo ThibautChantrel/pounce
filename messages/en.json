@@ -41,7 +41,8 @@
       "users": "Users",
       "files": "Files",
       "pois": "Points of interest",
-      "tracks": "Tracks"
+      "tracks": "Tracks",
+      "challenges": "Challenges"
     },
 
     "Global": {
@@ -192,6 +193,31 @@
         "description": "Are you sure you want to delete this item? This action cannot be undone. The item {item} will be permanently removed."
       }
     },
+
+    "Challenges": {
+      "title": "Challenges Management",
+      "description": "Manage global challenges and their associated tracks.",
+      "addChallenge": "Add Challenge",
+      "createTitle": "Create a Challenge",
+      "createSubtitle": "Define a new challenge (location, difficulty, tracks).",
+      "updateTitle": "Update Challenge",
+      "updateSubtitle": "Modification of: {title}",
+      "location": "Location",
+      "difficulty": "Difficulty",
+      "createSuccess": "Challenge created successfully",
+      "updateSuccess": "Challenge updated successfully",
+      "validation": {
+        "titleTooShort": "Title is too short.",
+        "locationTooShort": "Location name is too short."
+      },
+      "Difficulties": {
+        "EASY": "Easy",
+        "MEDIUM": "Medium",
+        "HARD": "Hard",
+        "EXPERT": "Expert"
+      }
+    },
+
     "Results": {
       "noResults": "No results found.",
       "total": "Total",

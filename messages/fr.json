@@ -50,7 +50,8 @@
       "users": "Utilisateurs",
       "files": "Fichiers",
       "pois": "Points d'intérêt",
-      "tracks": "Parcours"
+      "tracks": "Parcours",
+      "challenges": "Challenges"
     },
 
     "Global": {
@@ -196,6 +197,30 @@
       "validation": {
         "titleTooShort": "Le titre est trop court.",
         "distanceNegative": "La distance doit être positive."
+      }
+    },
+
+    "Challenges": {
+      "title": "Gestion des Challenges",
+      "description": "Gérez les défis globaux et les parcours associés.",
+      "addChallenge": "Ajouter un challenge",
+      "createTitle": "Créer un challenge",
+      "createSubtitle": "Définissez un nouveau défi (lieu, difficulté, parcours).",
+      "updateTitle": "Modifier le challenge",
+      "updateSubtitle": "Modification de : {title}",
+      "location": "Lieu",
+      "difficulty": "Difficulté",
+      "createSuccess": "Challenge créé avec succès",
+      "updateSuccess": "Challenge mis à jour avec succès",
+      "validation": {
+        "titleTooShort": "Le titre est trop court.",
+        "locationTooShort": "Le nom du lieu est trop court."
+      },
+      "Difficulties": {
+        "EASY": "Facile",
+        "MEDIUM": "Moyen",
+        "HARD": "Difficile",
+        "EXPERT": "Expert"
       }
     },
 
