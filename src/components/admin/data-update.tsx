@@ -73,6 +73,7 @@ export interface UpdateFieldConfig<T> {
   className?: string
   options?: SelectOption[]
   currentFileUrl?: string
+  relationOrdered?: boolean
   relationFetch?: (
     params: FetchRelationParams
   ) => Promise<FetchRelationResponse>
@@ -245,6 +246,7 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
             mode={fieldConfig.relationMode || 'single'}
             initialData={fieldConfig.relationInitialData}
             placeholder={fieldConfig.placeholder}
+            ordered={fieldConfig.relationOrdered}
           />
         )
       }
