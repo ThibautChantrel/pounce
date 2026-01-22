@@ -1,5 +1,5 @@
 import { fetchPois } from '@/actions/poi/poi.admin.actions'
-import PoisTable from '@/components/admin/pois/PoisTable'
+import PoisTable from '@/components/admin/pois/poisTable'
 import { getTranslations } from 'next-intl/server'
 
 interface PageProps {
