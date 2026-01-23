@@ -36,6 +36,20 @@
     "completed": "{pct}% Completed"
   },
 
+  "Challenges": {
+    "searchPlaceholder": "Search for a challenge, a location...",
+    "endTitle": "That's all for now!",
+    "endDescription": "More legendary challenges are coming soon to Paris.",
+    "noResults": "No challenges match your search.",
+    "defaultDescription": "Ready to accept the challenge?",
+    "viewDetails": "View details",
+    "tracks": "Tracks",
+    "distance": "Distance",
+    "elevation": "Elevation",
+    "km": "km",
+    "m": "m"
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Users",

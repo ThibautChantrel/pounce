@@ -45,6 +45,20 @@
     "noFileSelected": "Aucun fichier sélectionné."
   },
 
+  "Challenges": {
+    "searchPlaceholder": "Rechercher un challenge, un lieu...",
+    "endTitle": "C'est tout pour le moment !",
+    "endDescription": "D'autres challenges légendaires arrivent bientôt à Paris.",
+    "noResults": "Aucun challenge ne correspond à votre recherche.",
+    "defaultDescription": "Prêt à relever le défi ?",
+    "viewDetails": "Voir le détail",
+    "tracks": "Parcours",
+    "distance": "Distance",
+    "elevation": "Dénivelé",
+    "km": "km",
+    "m": "m"
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Utilisateurs",
