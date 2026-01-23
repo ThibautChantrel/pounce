@@ -1,5 +1,6 @@
 'use client'
 import AuthModal from '@/components/AuthModal'
+import { ChallengeCarousel } from '@/components/ChallengeCaroussel'
 import Hero from '@/components/Hero'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
@@ -43,6 +44,8 @@ export default function Home() {
             {t('authButton')}
           </Button>
         </div>
+
+        <ChallengeCarousel />
 
         <AuthModal
           trigger={<Button variant="canopy">{t('authButton')}</Button>}

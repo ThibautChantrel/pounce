@@ -32,6 +32,10 @@ class ChallengeService {
   async getAllChallenges(skip: number, take: number, search?: string) {
     return await challengeRepository.getAll(skip, take, search)
   }
+
+  async getAllChallengesForUser(skip: number, take: number, search?: string) {
+    return await challengeRepository.getAllForUser(skip, take, search)
+  }
 }
 
 export const challengeService = new ChallengeService()

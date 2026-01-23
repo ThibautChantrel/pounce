@@ -27,7 +27,6 @@ export type ChallengeTrack = {
 export type ChallengeWithRelations = Challenge & {
   cover: fileWithoutData | null
   banner: fileWithoutData | null
-  // Relation Many-to-Many via la table pivot
   tracks: (ChallengeTrack & {
     track: Track
   })[]

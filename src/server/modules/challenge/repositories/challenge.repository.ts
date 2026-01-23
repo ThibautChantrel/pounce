@@ -112,6 +112,41 @@ export class ChallengeRepository {
 
     return { data, total }
   }
+
+  getAllForUser = async (skip: number, take: number, search?: string) => {
+    const where: Prisma.ChallengeWhereInput = search
+      ? {
+          OR: [
+            { title: { contains: search, mode: Prisma.QueryMode.insensitive } },
+            {
+              description: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive,
+              },
+            },
+            {
+              location: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive,
+              },
+            },
+          ],
+        }
+      : {}
+
+    const [data, total] = await prisma.$transaction([
+      prisma.challenge.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: defaultInclude,
+      }),
+      prisma.challenge.count({ where }),
+    ])
+
+    return { data, total }
+  }
 }
 
 export const challengeRepository = new ChallengeRepository()
