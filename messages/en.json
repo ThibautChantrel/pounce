@@ -39,7 +39,31 @@
   "Admin": {
     "Navbar": {
       "users": "Users",
-      "files": "Files"
+      "files": "Files",
+      "pois": "Points of interest",
+      "tracks": "Tracks",
+      "challenges": "Challenges"
+    },
+
+    "Global": {
+      "name": "Name",
+      "title": "Title",
+      "description": "Description",
+      "type": "Type",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "createdBy": "Created By",
+      "updatedBy": "Modified By",
+      "email": "Email",
+      "password": "Password",
+      "role": "Role",
+      "details": "Details",
+      "visible": "Visible",
+      "hidden": "Hidden",
+      "actions": "Actions",
+      "yes": "Yes",
+      "no": "No",
+      "empty": "Not specified"
     },
 
     "Users": {
@@ -74,6 +98,33 @@
       }
     },
 
+    "Pois": {
+      "title": "POIs Management",
+      "description": "Manage all Points of Interest in database",
+      "updateTitle": "Update the Poi",
+      "updateSubtitle": "I guess the eifel tower must have changed its location",
+      "createTitle": "Create Point of Interest",
+      "createSubtitle": "Fill in the details below to add a new location to the track.",
+      "createButton": "Create POI",
+      "createdSuccess": "Point of Interest created successfully",
+      "updateSuccess": "modification of Poi done",
+      "name": "Name",
+      "type": "Type",
+      "coordinates": "Coordinates",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "createdAt": "Created At",
+      "updatedAt": "Update At",
+      "createdBy": "Created by",
+      "updatedBy": "Modified by",
+      "choosePois": "Choose some points of interests...",
+      "validation": {
+        "nameTooShort": "Name must be at least 2 characters.",
+        "typeInvalid": "Please select a valid type.",
+        "invalidNumber": "Please enter a valid number."
+      }
+    },
+
     "Files": {
       "title": "File Management",
       "description": "Manage all uploaded files.",
@@ -97,7 +148,32 @@
       "uploadError": "Error uploading file. Please try again.",
       "selectFile": "Select a file to upload",
       "noFileSelected": "No file selected.",
-      "acceptedFormat": "Accepted formats : Images, PDF, GPX ..."
+      "acceptedFormat": "Accepted formats : Images, PDF, GPX ...",
+      "banner": "Banner",
+      "cover": "Cover",
+      "gpxFile": "GPX File",
+      "placeholderBanner": "Choose a banner",
+      "placeholderCover": "Choose a cover",
+      "placeholderGpxFile": "Choose a GPX File"
+    },
+
+    "Tracks": {
+      "title": "Tracks Management",
+      "description": "Manage routes and challenge sections.",
+      "addTrack": "Add Track",
+      "createTitle": "Create a Track",
+      "createSubtitle": "Define a new segment (distance, gpx, images).",
+      "updateTitle": "Update Track",
+      "updateSubtitle": "Modification of: {title}",
+      "distance": "Distance (km)",
+      "elevationGain": "Elevation gain",
+      "visible": "Track Visibility",
+      "createSuccess": "Track created successfully",
+      "updateSuccess": "Track updated successfully",
+      "validation": {
+        "titleTooShort": "Title is too short.",
+        "distanceNegative": "Distance must be positive."
+      }
     },
 
     "Actions": {
@@ -118,6 +194,31 @@
         "description": "Are you sure you want to delete this item? This action cannot be undone. The item {item} will be permanently removed."
       }
     },
+
+    "Challenges": {
+      "title": "Challenges Management",
+      "description": "Manage global challenges and their associated tracks.",
+      "addChallenge": "Add Challenge",
+      "createTitle": "Create a Challenge",
+      "createSubtitle": "Define a new challenge (location, difficulty, tracks).",
+      "updateTitle": "Update Challenge",
+      "updateSubtitle": "Modification of: {title}",
+      "location": "Location",
+      "difficulty": "Difficulty",
+      "createSuccess": "Challenge created successfully",
+      "updateSuccess": "Challenge updated successfully",
+      "validation": {
+        "titleTooShort": "Title is too short.",
+        "locationTooShort": "Location name is too short."
+      },
+      "Difficulties": {
+        "EASY": "Easy",
+        "MEDIUM": "Medium",
+        "HARD": "Hard",
+        "EXPERT": "Expert"
+      }
+    },
+
     "Results": {
       "noResults": "No results found.",
       "total": "Total",

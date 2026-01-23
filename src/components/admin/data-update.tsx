@@ -35,6 +35,12 @@ import { Loader2, Save } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import FileDropZone from '../FileDropZone'
 import { useTranslations } from 'next-intl'
+import {
+  AsyncRelationSelector,
+  FetchRelationParams,
+  FetchRelationResponse,
+  RelationItem,
+} from '../AsyncRelationSelector'
 
 /* -------------------------------------------------------------------------- */
 /* TYPES */
@@ -50,6 +56,7 @@ export type FieldType =
   | 'boolean'
   | 'select'
   | 'file'
+  | 'relation'
 
 export interface SelectOption {
   label: string
@@ -66,6 +73,12 @@ export interface UpdateFieldConfig<T> {
   className?: string
   options?: SelectOption[]
   currentFileUrl?: string
+  relationOrdered?: boolean
+  relationFetch?: (
+    params: FetchRelationParams
+  ) => Promise<FetchRelationResponse>
+  relationMode?: 'single' | 'multiple'
+  relationInitialData?: RelationItem[]
 }
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface DataUpdateProps<TSchema extends z.ZodObject<any>> {
@@ -217,6 +230,23 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
               const v = e.target.valueAsNumber
               field.onChange(Number.isNaN(v) ? null : v)
             }}
+          />
+        )
+      }
+
+      case 'relation': {
+        if (!fieldConfig.relationFetch)
+          return <div className="text-red-500">Config manquante</div>
+
+        return (
+          <AsyncRelationSelector
+            value={field.value as string | string[] | null}
+            onChange={(val) => field.onChange(val)}
+            fetchFunction={fieldConfig.relationFetch}
+            mode={fieldConfig.relationMode || 'single'}
+            initialData={fieldConfig.relationInitialData}
+            placeholder={fieldConfig.placeholder}
+            ordered={fieldConfig.relationOrdered}
           />
         )
       }

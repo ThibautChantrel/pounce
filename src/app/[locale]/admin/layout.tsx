@@ -1,6 +1,13 @@
 import { auth } from '@/server/modules/auth/auth.config'
 import { redirect } from 'next/navigation'
-import { Users, LogOut, FileText } from 'lucide-react'
+import {
+  Users,
+  LogOut,
+  FileText,
+  Locate,
+  Waypoints,
+  Swords,
+} from 'lucide-react'
 import { Link } from '@/navigation'
 import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/ui/button'
@@ -36,6 +43,21 @@ export default async function AdminLayout({
             href="/admin/files"
             icon={<FileText size={18} />}
             label={(await t)('Navbar.files')}
+          />
+          <AdminLink
+            href="/admin/pois"
+            icon={<Locate size={18} />}
+            label={(await t)('Navbar.pois')}
+          />
+          <AdminLink
+            href="/admin/tracks"
+            icon={<Waypoints size={18} />}
+            label={(await t)('Navbar.tracks')}
+          />
+          <AdminLink
+            href="/admin/challenges"
+            icon={<Swords size={18} />}
+            label={(await t)('Navbar.challenges')}
           />
         </nav>
 

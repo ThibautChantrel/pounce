@@ -37,9 +37,8 @@ export default async function UserShowPage(props: PageProps) {
       key: 'role',
       type: 'badge',
       badgeVariants: {
-        ADMIN: 'destructive', // Rouge pour admin
-        USER: 'secondary', // Gris pour user
-        // Autres rôles si nécessaire
+        ADMIN: 'destructive',
+        USER: 'secondary',
       },
     },
     {

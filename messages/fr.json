@@ -48,7 +48,31 @@
   "Admin": {
     "Navbar": {
       "users": "Utilisateurs",
-      "files": "Fichiers"
+      "files": "Fichiers",
+      "pois": "Points d'intérêt",
+      "tracks": "Parcours",
+      "challenges": "Challenges"
+    },
+
+    "Global": {
+      "name": "Nom",
+      "title": "Titre",
+      "description": "Description",
+      "type": "Type",
+      "createdAt": "Créé le",
+      "updatedAt": "Mis à jour le",
+      "createdBy": "Créé par",
+      "updatedBy": "Modifié par",
+      "email": "Email",
+      "password": "Mot de passe",
+      "role": "Rôle",
+      "details": "Détails",
+      "visible": "Visible",
+      "hidden": "Caché",
+      "actions": "Actions",
+      "yes": "Oui",
+      "no": "Non",
+      "empty": "Non renseigné"
     },
 
     "Users": {
@@ -82,6 +106,32 @@
         "passwordMismatch": "Les mots de passe ne correspondent pas"
       }
     },
+    "Pois": {
+      "title": "Gestion des Lieux",
+      "description": "Gérer tous les points d'intérêt de la base de données",
+      "createTitle": "Créer un Point d'Intérêt",
+      "createSubtitle": "Remplissez les détails ci-dessous pour ajouter un nouveau lieu au parcours.",
+      "updateTitle": "Modifier le point d'intérêt",
+      "updateSubtitle": "Comme si la tour eifel avait changer de lieu aha",
+      "createButton": "Créer le lieu",
+      "createdSuccess": "Point d'intérêt créé avec succès",
+      "updateSuccess": "Mise à jour du Poi effectuée",
+      "name": "Nom",
+      "type": "Type",
+      "coordinates": "Coordonnées",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "createdAt": "Créé le",
+      "updatedAt": "Modifié le",
+      "createdBy": "Créé par",
+      "updatedBy": "Modfier par",
+      "choosePois": "Choisissez des points d'intérêts...",
+      "validation": {
+        "nameTooShort": "Le nom doit contenir au moins 2 caractères.",
+        "typeInvalid": "Veuillez sélectionner un type valide.",
+        "invalidNumber": "Veuillez entrer un nombre valide."
+      }
+    },
     "Files": {
       "title": "Gestion des fichiers",
       "description": "Gérez tous les fichiers téléchargés.",
@@ -105,7 +155,13 @@
       "uploadError": "Erreur lors du téléchargement du fichier. Veuillez réessayer.",
       "selectFile": "Sélectionnez un fichier à télécharger",
       "noFileSelected": "Aucun fichier sélectionné.",
-      "acceptedFormat": "'Formats acceptés : Images, PDF, GPX...'"
+      "acceptedFormat": "'Formats acceptés : Images, PDF, GPX...'",
+      "banner": "Bannière",
+      "cover": "Image de couverture",
+      "gpxFile": "Fichier GPX",
+      "placeholderBanner": "Choisissez une Bannière",
+      "placeholderCover": "Choisissez une image de couverture",
+      "placeholderGpxFile": "Choisissez un fichier GPX"
     },
     "Actions": {
       "edit": "Modifier",
@@ -123,6 +179,49 @@
       "AlertDialog": {
         "title": "Confirmer la suppression",
         "description": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.L'élément {item} sera définitivement supprimé."
+      }
+    },
+
+    "Tracks": {
+      "title": "Gestion des Parcours",
+      "description": "Gérez les itinéraires et les sections des challenges.",
+      "addTrack": "Ajouter un parcours",
+      "createTitle": "Créer un parcours",
+      "createSubtitle": "Définissez un nouveau segment (distance, gpx, images).",
+      "updateTitle": "Modifier le parcours",
+      "updateSubtitle": "Modification de : {title}",
+      "distance": "Distance (km)",
+      "elevationGain": "Dénivelé",
+      "visible": "Visibilité du parcours",
+      "createSuccess": "Parcours créé avec succès",
+      "updateSuccess": "Parcours mis à jour avec succès",
+      "validation": {
+        "titleTooShort": "Le titre est trop court.",
+        "distanceNegative": "La distance doit être positive."
+      }
+    },
+
+    "Challenges": {
+      "title": "Gestion des Challenges",
+      "description": "Gérez les défis globaux et les parcours associés.",
+      "addChallenge": "Ajouter un challenge",
+      "createTitle": "Créer un challenge",
+      "createSubtitle": "Définissez un nouveau défi (lieu, difficulté, parcours).",
+      "updateTitle": "Modifier le challenge",
+      "updateSubtitle": "Modification de : {title}",
+      "location": "Lieu",
+      "difficulty": "Difficulté",
+      "createSuccess": "Challenge créé avec succès",
+      "updateSuccess": "Challenge mis à jour avec succès",
+      "validation": {
+        "titleTooShort": "Le titre est trop court.",
+        "locationTooShort": "Le nom du lieu est trop court."
+      },
+      "Difficulties": {
+        "EASY": "Facile",
+        "MEDIUM": "Moyen",
+        "HARD": "Difficile",
+        "EXPERT": "Expert"
       }
     },
 

@@ -35,6 +35,13 @@ import { Loader2, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 import FileUpload from '../FileUpload'
+// 👇 Import du sélecteur de relation
+import {
+  AsyncRelationSelector,
+  FetchRelationParams,
+  FetchRelationResponse,
+  RelationItem,
+} from '../AsyncRelationSelector'
 
 export type FieldType =
   | 'text'
@@ -46,6 +53,7 @@ export type FieldType =
   | 'boolean'
   | 'select'
   | 'file'
+  | 'relation' // 👈 Ajout du type
 
 export interface SelectOption {
   label: string
@@ -61,6 +69,14 @@ export interface CreateFieldConfig<T> {
   disabled?: boolean
   className?: string
   options?: SelectOption[]
+
+  // 👇 Props spécifiques aux relations
+  relationFetch?: (
+    params: FetchRelationParams
+  ) => Promise<FetchRelationResponse>
+  relationMode?: 'single' | 'multiple'
+  relationOrdered?: boolean // Important pour les Challenges
+  relationInitialData?: RelationItem[]
 }
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -208,6 +224,24 @@ export function DataCreate<TSchema extends z.ZodObject<any>>({
               const v = e.target.valueAsNumber
               field.onChange(Number.isNaN(v) ? null : v)
             }}
+          />
+        )
+      }
+
+      // 👇 Case relation ajouté
+      case 'relation': {
+        if (!fieldConfig.relationFetch)
+          return <div className="text-red-500">Config manquante</div>
+
+        return (
+          <AsyncRelationSelector
+            value={field.value as string | string[] | null}
+            onChange={(val) => field.onChange(val)}
+            fetchFunction={fieldConfig.relationFetch}
+            mode={fieldConfig.relationMode || 'single'}
+            ordered={fieldConfig.relationOrdered} // Important pour les Challenges
+            initialData={fieldConfig.relationInitialData}
+            placeholder={fieldConfig.placeholder}
           />
         )
       }

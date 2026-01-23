@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Check, X, Calendar } from 'lucide-react'
+import { Check, X, Calendar, ExternalLink } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils'
 import { useFormatter } from 'next-intl'
 import FileDetails from '../FileDetails'
 import { FileData } from '@/actions/file/file.admin.type'
+import { Link } from '@/navigation'
 
 export type FieldType =
   | 'string'
@@ -22,6 +23,7 @@ export type FieldType =
   | 'file'
   | 'file-list'
   | 'custom'
+  | 'link-list'
 
 type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline'
 
@@ -84,6 +86,8 @@ export function DataDetails<T extends Record<string, unknown>>({
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
               })}
             </span>
           </div>
@@ -134,6 +138,31 @@ export function DataDetails<T extends Record<string, unknown>>({
               )
             })}
           </div>
+        )
+
+      case 'link-list':
+        // On s'attend à recevoir un tableau d'objets { label: string, url: string }
+        const listItems = value as { label: string; url: string }[]
+
+        if (!Array.isArray(listItems) || listItems.length === 0) {
+          return <span className="text-muted-foreground">-</span>
+        }
+
+        return (
+          <ul className="flex flex-col gap-2">
+            {listItems.map((item, index) => (
+              <li key={index} className="flex items-center">
+                <Link
+                  href={item.url}
+                  className="group flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400 group-hover:bg-blue-600" />
+                  {item.label}
+                  <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         )
 
       case 'custom':

@@ -8,18 +8,20 @@ export async function GET(
   try {
     const { id } = await params
 
+    // Cette fonction retourne bien 'data' (le Buffer), c'est parfait pour ici.
     const file = await getFileById(id)
 
     const encodedFilename = encodeURIComponent(file.filename)
-
-    return new NextResponse(file.data, {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new NextResponse(file.data as any, {
       headers: {
         'Content-Type': file.mimeType,
-        // Utiliser la syntaxe "filename*=UTF-8''" pour supporter les accents
+        'Content-Length': file.size.toString(),
         'Content-Disposition': `inline; filename*=UTF-8''${encodedFilename}`,
       },
     })
   } catch (e) {
-    return new NextResponse('Unauthorized or not found', { status: 401 })
+    console.error(e) // Toujours utile de loguer l'erreur serveur
+    return new NextResponse('Unauthorized or not found', { status: 404 })
   }
 }

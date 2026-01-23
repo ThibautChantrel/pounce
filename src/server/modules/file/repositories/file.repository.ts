@@ -11,6 +11,22 @@ export const getOne = (id: string) => {
   })
 }
 
+export const getOneInfo = (id: string) => {
+  return db.file.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      filename: true,
+      mimeType: true,
+      size: true,
+      createdAt: true,
+      updatedAt: true,
+      createdById: true,
+      // data: true
+    },
+  })
+}
+
 export const updateFile = (id: string, data: Prisma.FileUpdateInput) => {
   return db.file.update({
     where: { id },
