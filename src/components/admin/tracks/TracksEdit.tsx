@@ -146,7 +146,7 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
       relationInitialData: track.pois
         ? track.pois.map((p) => ({ id: p.id, name: p.name }))
         : [],
-      placeholder: 'Sélectionner les lieux associés...',
+      placeholder: t('Pois.choosePois'),
     },
   ]
 
@@ -157,7 +157,6 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
         id: track.id,
         ...values,
         description: values.description!,
-        // TODO : CHANGE
         coverId: values.coverId ?? undefined,
         bannerId: values.bannerId ?? undefined,
         gpxFileId: values.gpxFileId ?? undefined,
@@ -194,6 +193,7 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
           defaultValues={{
             title: track.title,
             distance: track.distance,
+            elevationGain: track.elevationGain,
             visible: track.visible,
             description: track.description || '',
             coverId: track.coverId,

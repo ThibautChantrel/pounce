@@ -6,6 +6,8 @@ import { DataCreate, CreateFieldConfig } from '@/components/admin/data-create' /
 import { useRouter } from '@/navigation'
 import { useTranslations } from 'next-intl'
 import { createTrackAction } from '@/actions/track/track.admin.action'
+import { fetchFiles } from '@/actions/file/file.admin.actions'
+import { fetchPois } from '@/actions/poi/poi.admin.actions'
 
 export default function CreateTrackPage() {
   const router = useRouter()
@@ -30,12 +32,36 @@ export default function CreateTrackPage() {
     coverId: z.string().optional().nullable(),
     bannerId: z.string().optional().nullable(),
     gpxFileId: z.string().optional().nullable(),
+    poiIds: z.array(z.string()).optional(),
   })
 
   // On déduit le type TS à partir du schéma Zod
   type CreateTrackSchemaType = z.output<typeof createTrackSchema>
 
-  // 2. Configuration des champs (Mapping vers ton DataCreate)
+  const fetchFilesForRelation = async (params: {
+    skip: number
+    take: number
+    search?: string
+  }) => {
+    const res = await fetchFiles(params.skip, params.take, params.search)
+    return {
+      data: res.data.map((f) => ({ id: f.id, name: f.filename })),
+      total: res.total,
+    }
+  }
+
+  const fetchPoisForAssociation = async (params: {
+    skip: number
+    take: number
+    search?: string
+  }) => {
+    const res = await fetchPois(params.skip, params.take, params.search)
+    return {
+      data: res.data.map((f) => ({ id: f.id, name: f.name })),
+      total: res.total,
+    }
+  }
+
   const fields: CreateFieldConfig<CreateTrackSchemaType>[] = [
     {
       name: 'title',
@@ -69,6 +95,38 @@ export default function CreateTrackPage() {
       placeholder: 'Description du parcours...',
       className: 'col-span-1 md:col-span-2', // Prend toute la largeur
     },
+    {
+      name: 'coverId',
+      label: t('Files.cover'),
+      type: 'relation',
+      relationFetch: fetchFilesForRelation,
+      relationMode: 'single',
+      placeholder: t('Files.placeholderCover'),
+    },
+    {
+      name: 'bannerId',
+      label: t('Files.banner'),
+      type: 'relation',
+      relationFetch: fetchFilesForRelation,
+      relationMode: 'single',
+      placeholder: t('Files.placeholderBanner'),
+    },
+    {
+      name: 'gpxFileId',
+      label: t('Files.gpxFile'),
+      type: 'relation',
+      relationFetch: fetchFilesForRelation,
+      relationMode: 'single',
+      placeholder: t('Files.placeholderGpxFile'),
+    },
+    {
+      name: 'poiIds',
+      label: t('Pois.title'),
+      type: 'relation',
+      relationFetch: fetchPoisForAssociation,
+      relationMode: 'multiple',
+      placeholder: t('Pois.choosePois'),
+    },
   ]
 
   // 3. Soumission
@@ -76,12 +134,10 @@ export default function CreateTrackPage() {
     try {
       const result = await createTrackAction({
         ...values,
-        // Nettoyage des chaînes vides pour les optionnels
         description: values.description || undefined,
-        // TODO : Change  : Les fichiers sont ignorés pour le moment (null)
-        coverId: undefined,
-        bannerId: undefined,
-        gpxFileId: undefined,
+        coverId: values.coverId || undefined,
+        bannerId: values.bannerId || undefined,
+        gpxFileId: values.gpxFileId || undefined,
       })
 
       if (!result.success) {
@@ -112,6 +168,7 @@ export default function CreateTrackPage() {
         defaultValues={{
           title: '',
           distance: 0,
+          elevationGain: 0,
           visible: false,
           description: '',
           coverId: null,

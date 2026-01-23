@@ -125,6 +125,7 @@
       "updatedAt": "Modifié le",
       "createdBy": "Créé par",
       "updatedBy": "Modfier par",
+      "choosePois": "Choisissez des points d'intérêts...",
       "validation": {
         "nameTooShort": "Le nom doit contenir au moins 2 caractères.",
         "typeInvalid": "Veuillez sélectionner un type valide.",
@@ -158,9 +159,9 @@
       "banner": "Bannière",
       "cover": "Image de couverture",
       "gpxFile": "Fichier GPX",
-      "placeholderBanner": "Choose a banner",
-      "placeholderCover": "Choose a cover",
-      "placeholderGpxFile": "Choose a GPX File"
+      "placeholderBanner": "Choisissez une Bannière",
+      "placeholderCover": "Choisissez une image de couverture",
+      "placeholderGpxFile": "Choisissez un fichier GPX"
     },
     "Actions": {
       "edit": "Modifier",

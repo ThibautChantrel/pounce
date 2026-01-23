@@ -1,6 +1,5 @@
 import { getTrackAction } from '@/actions/track/track.admin.action'
 import TrackEditPage from '@/components/admin/tracks/TracksEdit'
-import { X } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
 type PageProps = {

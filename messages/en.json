@@ -117,6 +117,7 @@
       "updatedAt": "Update At",
       "createdBy": "Created by",
       "updatedBy": "Modified by",
+      "choosePois": "Choose some points of interests...",
       "validation": {
         "nameTooShort": "Name must be at least 2 characters.",
         "typeInvalid": "Please select a valid type.",
@@ -151,9 +152,9 @@
       "banner": "Banner",
       "cover": "Cover",
       "gpxFile": "GPX File",
-      "placeholderBanner": "Choisissez une Bannière",
-      "placeholderCover": "Choisissez une image de couverture",
-      "placeholderGpxFile": "Choisissez un fichier GPX"
+      "placeholderBanner": "Choose a banner",
+      "placeholderCover": "Choose a cover",
+      "placeholderGpxFile": "Choose a GPX File"
     },
 
     "Tracks": {
