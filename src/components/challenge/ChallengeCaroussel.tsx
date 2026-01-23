@@ -9,13 +9,13 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from '@/components/ui/carousel'
-import { ChallengeCard } from './ChallengeCard'
 import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type'
 import { Flag, Search, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { fetchChallenges } from '@/actions/challenge/challenge.action'
 import { useDebounce } from 'use-debounce'
 import { useTranslations } from 'next-intl'
+import { ChallengeCard } from './ChallengeCard'
 
 const ITEMS_PER_PAGE = 10
 

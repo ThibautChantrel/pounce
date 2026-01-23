@@ -56,7 +56,27 @@
     "distance": "Distance",
     "elevation": "Dénivelé",
     "km": "km",
-    "m": "m"
+    "m": "m",
+    "ChallengeDetail": {
+      "statsTitle": "Détails du Défi",
+      "totalDistance": "Distance Totale",
+      "totalElevation": "Dénivelé Cumulé",
+      "tracksCount": "Composition",
+      "stages": "étapes",
+      "createdOn": "Créé le {date}",
+      "tracksTitle": "Les étapes du parcours",
+      "stage": "Étape",
+      "elevation": "Dénivelé",
+      "distance": "Distance",
+      "noDescription": "Aucune description disponible pour ce challenge.",
+      "noTrackDescription": "Pas de description.",
+      "Difficulties": {
+        "EASY": "Facile",
+        "MEDIUM": "Moyen",
+        "HARD": "Difficile",
+        "EXPERT": "Expert"
+      }
+    }
   },
 
   "Admin": {

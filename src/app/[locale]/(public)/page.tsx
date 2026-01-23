@@ -1,6 +1,6 @@
 'use client'
 import AuthModal from '@/components/AuthModal'
-import { ChallengeCarousel } from '@/components/ChallengeCaroussel'
+import { ChallengeCarousel } from '@/components/challenge/ChallengeCaroussel'
 import Hero from '@/components/Hero'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'

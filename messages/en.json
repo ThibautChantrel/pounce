@@ -47,7 +47,27 @@
     "distance": "Distance",
     "elevation": "Elevation",
     "km": "km",
-    "m": "m"
+    "m": "m",
+    "ChallengeDetail": {
+      "statsTitle": "Challenge Details",
+      "totalDistance": "Total Distance",
+      "totalElevation": "Total Elevation",
+      "tracksCount": "Composition",
+      "stages": "stages",
+      "createdOn": "Created on {date}",
+      "tracksTitle": "Course Stages",
+      "stage": "Stage",
+      "elevation": "Elevation",
+      "distance": "Distance",
+      "noDescription": "No description available for this challenge.",
+      "noTrackDescription": "No description.",
+      "Difficulties": {
+        "EASY": "Easy",
+        "MEDIUM": "Medium",
+        "HARD": "Hard",
+        "EXPERT": "Expert"
+      }
+    }
   },
 
   "Admin": {
