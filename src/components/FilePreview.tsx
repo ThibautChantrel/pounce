@@ -86,14 +86,9 @@ export default function FilePreview({
   }
 
   if (previewSrc && isGpx) {
-    const pin = {
-      lat: 48.873145,
-      lng: 2.328431,
-      label: 'Auber',
-    }
     return (
       <div className={cn('relative overflow-hidden', className)}>
-        <GpxViewer customUrl={previewSrc} points={[pin]} />
+        <GpxViewer customUrl={previewSrc} points={[]} />
 
         <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1 truncate text-center z-[500]">
           {currentName}
