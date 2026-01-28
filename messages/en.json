@@ -36,6 +36,40 @@
     "completed": "{pct}% Completed"
   },
 
+  "Challenges": {
+    "searchPlaceholder": "Search for a challenge, a location...",
+    "endTitle": "That's all for now!",
+    "endDescription": "More legendary challenges are coming soon to Paris.",
+    "noResults": "No challenges match your search.",
+    "defaultDescription": "Ready to accept the challenge?",
+    "viewDetails": "View details",
+    "tracks": "Tracks",
+    "distance": "Distance",
+    "elevation": "Elevation",
+    "km": "km",
+    "m": "m",
+    "ChallengeDetail": {
+      "statsTitle": "Challenge Details",
+      "totalDistance": "Total Distance",
+      "totalElevation": "Total Elevation",
+      "tracksCount": "Composition",
+      "stages": "stages",
+      "createdOn": "Created on {date}",
+      "tracksTitle": "Course Stages",
+      "stage": "Stage",
+      "elevation": "Elevation",
+      "distance": "Distance",
+      "noDescription": "No description available for this challenge.",
+      "noTrackDescription": "No description.",
+      "Difficulties": {
+        "EASY": "Easy",
+        "MEDIUM": "Medium",
+        "HARD": "Hard",
+        "EXPERT": "Expert"
+      }
+    }
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Users",

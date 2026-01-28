@@ -146,7 +146,7 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
       relationInitialData: track.pois
         ? track.pois.map((p) => ({ id: p.id, name: p.name }))
         : [],
-      placeholder: t('Pois.choosePois'),
+      placeholder: tPois('choosePois'),
     },
   ]
 
