@@ -53,3 +53,8 @@ export type UpdateTrackInput = Partial<CreateTrackInput> & {
   gpxFileId?: string | null
   poiIds?: string[]
 }
+
+export type PoiWithDistance = Poi & { distanceFromStart: number }
+export type TrackWithPoisDistance = Omit<TrackWithRelations, 'pois'> & {
+  pois: PoiWithDistance[]
+}

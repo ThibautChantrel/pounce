@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { ChallengeTrack } from '@/actions/challenge/challenge.admin.type'
-import { Track } from '@/actions/track/track.admin.types'
+import { Track } from '@/actions/track/track.types'
 import { TrackCard } from '../track/TrackCard'
 
 type TrackWithRelation = ChallengeTrack & { track: Track }

@@ -1,6 +1,6 @@
 import { fileWithoutData } from '@/server/modules/file/file.types'
 import { Difficulty } from '@prisma/client'
-import { Track } from '../track/track.admin.types'
+import { Track } from '../track/track.types'
 
 export type Challenge = {
   id: string

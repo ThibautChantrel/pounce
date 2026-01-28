@@ -3,7 +3,7 @@ import { Link } from '@/navigation'
 import { Map, Mountain, ArrowRight, ImageOff } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { ChallengeTrack } from '@/actions/challenge/challenge.admin.type'
-import { Track } from '@/actions/track/track.admin.types'
+import { Track } from '@/actions/track/track.types'
 
 type TrackWithRelation = ChallengeTrack & { track: Track }
 
