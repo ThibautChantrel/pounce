@@ -157,6 +157,7 @@
     "Pois": {
       "title": "Gestion des Lieux",
       "description": "Gérer tous les points d'intérêt de la base de données",
+      "descriptionAttr": "Description",
       "createTitle": "Créer un Point d'Intérêt",
       "createSubtitle": "Remplissez les détails ci-dessous pour ajouter un nouveau lieu au parcours.",
       "updateTitle": "Modifier le point d'intérêt",

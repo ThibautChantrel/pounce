@@ -57,7 +57,7 @@ export default async function PoiShowPage(props: PageProps) {
       ),
     },
     {
-      label: t('description'),
+      label: t('descriptionAttr'),
       key: 'description',
       type: 'custom',
       getValue: (p: Poi) => (

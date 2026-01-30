@@ -150,7 +150,6 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
     },
   ]
 
-  // 4. Gestion de la soumission
   const handleSubmit = async (values: TrackFormOutput) => {
     try {
       const result = await updateTrackAction({
@@ -199,6 +198,7 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
             coverId: track.coverId,
             bannerId: track.bannerId,
             gpxFileId: track.gpxFileId,
+            poiIds: track.pois ? track.pois.map((p) => p.id) : [],
           }}
           onSubmit={handleSubmit}
           onCancel={() => router.back()}

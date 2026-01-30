@@ -149,7 +149,8 @@ export function AsyncRelationSelector({
     if (mode === 'single') {
       const id = value as string
       const name = selectedItemsMap.get(id) || id
-      return <span className="truncate">{name}</span>
+
+      return <span className="block truncate max-w-full">{name}</span>
     }
 
     // Mode multiple
@@ -163,6 +164,8 @@ export function AsyncRelationSelector({
             <div
               key={id}
               className="flex items-center justify-between bg-secondary/50 p-1.5 rounded-md text-sm group"
+              // 👇 AJOUT : Empêcher le clic sur la ligne entière d'ouvrir le menu si voulu (optionnel)
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-2 overflow-hidden">
                 <Badge
@@ -175,10 +178,16 @@ export function AsyncRelationSelector({
                   {selectedItemsMap.get(id) || id}
                 </span>
               </div>
-              <X
-                className="h-4 w-4 cursor-pointer text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => removeValue(id, e)}
-              />
+
+              {/* 👇 CORRECTION ICI POUR LA CROIX */}
+              <div
+                role="button"
+                className="cursor-pointer text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity p-0.5"
+                onPointerDown={(e) => e.stopPropagation()} // Bloque l'ouverture Radix
+                onClick={(e) => removeValue(id, e)} // Bloque le clic standard
+              >
+                <X className="h-4 w-4" />
+              </div>
             </div>
           ))}
         </div>
@@ -189,12 +198,18 @@ export function AsyncRelationSelector({
     return (
       <div className="flex flex-wrap gap-1">
         {ids.map((id) => (
-          <Badge key={id} variant="secondary" className="mr-1">
+          <Badge key={id} variant="secondary" className="mr-1 pr-1">
             {selectedItemsMap.get(id) || id}
-            <X
-              className="ml-1 h-3 w-3 cursor-pointer hover:text-destructive"
+
+            {/* 👇 CORRECTION ICI POUR LA CROIX */}
+            <div
+              role="button"
+              className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer hover:bg-destructive/20 hover:text-destructive p-0.5"
+              onPointerDown={(e) => e.stopPropagation()} // IMPORTANT : Bloque Radix
               onClick={(e) => removeValue(id, e)}
-            />
+            >
+              <X className="h-3 w-3" />
+            </div>
           </Badge>
         ))}
       </div>
@@ -209,14 +224,14 @@ export function AsyncRelationSelector({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            'w-full justify-between px-3 py-2',
-            // Ajustement hauteur auto si liste verticale
-            ordered && Array.isArray(value) && value.length > 0
-              ? 'h-auto'
+            'w-full justify-between px-3 py-2 overflow-hidden',
+            Array.isArray(value) && value.length > 0
+              ? 'h-auto min-h-10'
               : 'h-10'
           )}
         >
-          <div className="flex flex-1 text-left items-center overflow-hidden">
+          {/* 👇 AJOUT : on ajoute 'whitespace-normal' pour autoriser le retour à la ligne */}
+          <div className="flex flex-1 text-left items-center whitespace-normal min-w-0">
             {renderTriggerContent()}
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

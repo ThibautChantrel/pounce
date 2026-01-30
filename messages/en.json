@@ -149,6 +149,7 @@
     "Pois": {
       "title": "POIs Management",
       "description": "Manage all Points of Interest in database",
+      "descriptionAttr": "Description",
       "updateTitle": "Update the Poi",
       "updateSubtitle": "I guess the eifel tower must have changed its location",
       "createTitle": "Create Point of Interest",
