@@ -4,17 +4,23 @@ import {
 } from '@/utils/geo'
 import { trackRepository } from '../repositories/track.repository'
 import { TrackWithPoisDistance } from '../track.types'
+import { auth } from '../../auth/auth.config'
 
 export class TrackServiceUser {
+  /* Fonction qui get un track avec ses POIs enrichis de distances */
   async get(id: string): Promise<TrackWithPoisDistance | null> {
-    // 1. Récupérer le track avec ses relations (dont les POIs)
+    const session = await auth()
+
     const track = await trackRepository.findById(id)
+    if (
+      track?.visible === false &&
+      !(!!session?.user.role && session.user.role === 'ADMIN')
+    )
+      return null
     if (!track) return null
 
-    // 2. Récupérer le contenu binaire du GPX
     const gpxFile = await trackRepository.findGpxContent(id)
 
-    // Si pas de GPX, on renvoie les POIs avec distance 0 ou null
     if (!gpxFile || !gpxFile.data) {
       return {
         ...track,
@@ -22,17 +28,13 @@ export class TrackServiceUser {
       }
     }
 
-    // 3. Convertir le Buffer en string et parser les points
     const gpxString = gpxFile.data.toString('utf-8')
     const trackPoints = parseGpxAndCalculateDistances(gpxString)
 
-    // 4. Pour chaque POI, trouver le point du tracé le plus proche ("Snap to track")
     const enrichedPois = track.pois.map((poi) => {
       let minDistance = Infinity
       let distanceOnTrack = 0
 
-      // On parcourt tous les points du tracé pour trouver le plus proche du POI
-      // (Algorithme naïf mais suffisant pour < 10k points)
       for (const pt of trackPoints) {
         const distToPoint = getDistanceFromLatLonInMeters(
           poi.latitude,
@@ -49,12 +51,10 @@ export class TrackServiceUser {
 
       return {
         ...poi,
-        // On convertit en km pour l'affichage (optionnel)
         distanceFromStart: parseFloat((distanceOnTrack / 1000).toFixed(2)),
       }
     })
 
-    // 5. On trie les POIs par ordre de passage (optionnel mais conseillé)
     enrichedPois.sort((a, b) => a.distanceFromStart - b.distanceFromStart)
 
     return {
