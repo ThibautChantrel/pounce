@@ -7,6 +7,7 @@ import 'leaflet-gpx'
 import { MapContainer, TileLayer, useMap, Marker, Tooltip } from 'react-leaflet'
 import { renderToString } from 'react-dom/server'
 import { PawPrint } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export type GpxPoint = {
   id?: string | number
@@ -156,16 +157,18 @@ function GpxLayer({
   return null
 }
 
-interface GpxViewerProps {
+export interface GpxViewerProps {
   fileId?: string
   customUrl?: string
   points?: GpxPoint[]
+  className?: string
 }
 
 export default function GpxViewer({
   fileId,
   customUrl,
   points = [],
+  className,
 }: GpxViewerProps) {
   const [startEndPoints, setStartEndPoints] = useState<{
     start: GpxPoint | null
@@ -186,7 +189,12 @@ export default function GpxViewer({
   ]
 
   return (
-    <div className="w-full h-full min-h-100 rounded-lg overflow-hidden border shadow-sm relative z-0">
+    <div
+      className={cn(
+        'w-full h-full min-h-100 rounded-lg overflow-hidden border shadow-sm relative z-0',
+        className
+      )}
+    >
       <MapContainer
         center={[46.603354, 1.888334]}
         zoom={5}

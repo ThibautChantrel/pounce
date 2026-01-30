@@ -6,9 +6,10 @@ import { getTrackAction } from '@/actions/track/track.action'
 import { MapPin } from 'lucide-react'
 import { TrackHero } from '@/components/track/TrackHero'
 import { TrackDescription } from '@/components/track/TrackDescription'
-import { TrackMapPlaceholder } from '@/components/track/TrackMapPlaceHolder'
 import { Timeline } from '@/components/Timeline'
 import { TrackInlineStats } from '@/components/track/TrackStat'
+import { GpxPoint } from '@/components/GpxViewer' // Import du type seulement
+import { TrackGpxMap } from '@/components/track/TrackGpxMap'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>
@@ -28,13 +29,26 @@ export default async function TrackDetailPage(props: PageProps) {
     ? `/api/files/${track.bannerId}`
     : '/images/placeholder-track.jpg'
 
-  const gpxDownloadUrl = `/api/files/${track.gpxFile?.id}`
+  const gpxDownloadUrl = `/api/tracks/${track.id}/gpx`
+
+  // URL pour l'affichage de la carte (peut être la même ou api files direct)
+  const gpxMapUrl = track.gpxFile ? `/api/files/${track.gpxFile.id}` : undefined
 
   const createdAt = new Date(track.createdAt).toLocaleDateString(undefined, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   })
+
+  // Transformation des POIs BDD en POIs Carte
+  // ⚠️ Assurez-vous que vos objets 'poi' ont bien latitude/longitude dans le type de retour de getTrackAction
+  const mapPoints: GpxPoint[] = track.pois.map((poi) => ({
+    id: poi.id,
+    lat: poi.latitude || 0,
+    lng: poi.longitude || 0,
+    label: poi.name,
+    color: '#355F4A',
+  }))
 
   return (
     <main className="min-h-screen dark:bg-black pb-20">
@@ -56,7 +70,11 @@ export default async function TrackDetailPage(props: PageProps) {
           <div className="lg:col-span-2 space-y-8">
             <TrackDescription description={track.description!} />
 
-            <TrackMapPlaceholder />
+            <TrackGpxMap
+              customUrl={gpxMapUrl}
+              points={mapPoints}
+              className="h-87.5 min-h-0"
+            />
           </div>
 
           <div className="lg:col-span-1 space-y-6">
