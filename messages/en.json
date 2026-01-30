@@ -218,6 +218,7 @@
       "visible": "Track Visibility",
       "createSuccess": "Track created successfully",
       "updateSuccess": "Track updated successfully",
+      "noPois": "No points of interest",
       "validation": {
         "titleTooShort": "Title is too short.",
         "distanceNegative": "Distance must be positive."

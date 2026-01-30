@@ -5,18 +5,18 @@ import { useTranslations } from 'next-intl'
 
 type Props = {
   title: string
-  coverUrl: string
+  bannerUrl: string
   createdAt: string
   hasGpx: boolean
 }
 
-export function TrackHero({ title, coverUrl, createdAt, hasGpx }: Props) {
+export function TrackHero({ title, bannerUrl, createdAt, hasGpx }: Props) {
   const t = useTranslations('Tracks')
 
   return (
     <div className="relative h-[40vh] min-h-75 w-full group overflow-hidden">
       <Image
-        src={coverUrl}
+        src={bannerUrl}
         alt={title}
         fill
         className="object-cover transition-transform duration-700 group-hover:scale-105"

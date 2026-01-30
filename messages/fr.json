@@ -243,6 +243,7 @@
       "visible": "Visibilité du parcours",
       "createSuccess": "Parcours créé avec succès",
       "updateSuccess": "Parcours mis à jour avec succès",
+      "noPois": "Aucun point d'intérêt",
       "validation": {
         "titleTooShort": "Le titre est trop court.",
         "distanceNegative": "La distance doit être positive."

@@ -15,6 +15,7 @@ export default async function TrackShowPage(props: PageProps) {
   const params = await props.params
   const t = await getTranslations('Admin.Tracks')
   const tGlobal = await getTranslations('Admin.Global')
+  const tAdmin = await getTranslations('Admin')
 
   const track = await getTrackAction(params.id)
 
@@ -63,6 +64,21 @@ export default async function TrackShowPage(props: PageProps) {
           {item.description || '-'}
         </p>
       ),
+    },
+    {
+      label: tAdmin('Navbar.pois'),
+      key: 'pois',
+      type: 'link-list',
+      getValue: (item) => {
+        if (!item.pois || item.pois.length === 0) {
+          return t('noPois')
+        }
+
+        return item.pois.map((p, index) => ({
+          label: `${index + 1}. ${p.name}`,
+          url: `/admin/pois/${p.id}`,
+        }))
+      },
     },
     {
       label: tGlobal('createdAt'),

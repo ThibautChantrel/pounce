@@ -26,6 +26,7 @@ export const getAll = async (skip: number, take: number, search?: string) => {
         OR: [
           { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
           { email: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          { id: { contains: search, mode: Prisma.QueryMode.insensitive } },
         ],
       }
     : {}

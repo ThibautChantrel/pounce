@@ -24,8 +24,8 @@ export default async function TrackDetailPage(props: PageProps) {
     notFound()
   }
 
-  const coverUrl = track.cover
-    ? `/api/files/${track.cover.id}`
+  const bannerUrl = track.bannerId
+    ? `/api/files/${track.bannerId}`
     : '/images/placeholder-track.jpg'
 
   const gpxDownloadUrl = `/api/files/${track.gpxFile?.id}`
@@ -40,7 +40,7 @@ export default async function TrackDetailPage(props: PageProps) {
     <main className="min-h-screen dark:bg-black pb-20">
       <TrackHero
         title={track.title}
-        coverUrl={coverUrl}
+        bannerUrl={bannerUrl}
         createdAt={createdAt}
         hasGpx={!!track.gpxFile}
       />
