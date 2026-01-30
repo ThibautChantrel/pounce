@@ -8,7 +8,7 @@ import { TrackHero } from '@/components/track/TrackHero'
 import { TrackDescription } from '@/components/track/TrackDescription'
 import { Timeline } from '@/components/Timeline'
 import { TrackInlineStats } from '@/components/track/TrackStat'
-import { GpxPoint } from '@/components/GpxViewer' // Import du type seulement
+import { GpxPoint } from '@/components/GpxViewer'
 import { TrackGpxMap } from '@/components/track/TrackGpxMap'
 
 type PageProps = {
@@ -31,7 +31,6 @@ export default async function TrackDetailPage(props: PageProps) {
 
   const gpxDownloadUrl = `/api/tracks/${track.id}/gpx`
 
-  // URL pour l'affichage de la carte (peut être la même ou api files direct)
   const gpxMapUrl = track.gpxFile ? `/api/files/${track.gpxFile.id}` : undefined
 
   const createdAt = new Date(track.createdAt).toLocaleDateString(undefined, {
@@ -40,8 +39,6 @@ export default async function TrackDetailPage(props: PageProps) {
     year: 'numeric',
   })
 
-  // Transformation des POIs BDD en POIs Carte
-  // ⚠️ Assurez-vous que vos objets 'poi' ont bien latitude/longitude dans le type de retour de getTrackAction
   const mapPoints: GpxPoint[] = track.pois.map((poi) => ({
     id: poi.id,
     lat: poi.latitude || 0,

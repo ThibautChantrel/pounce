@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-gpx'
 import { MapContainer, TileLayer, useMap, Marker, Tooltip } from 'react-leaflet'
 import { renderToString } from 'react-dom/server'
-import { PawPrint } from 'lucide-react'
+import { PawPrint, Plus, Minus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export type GpxPoint = {
@@ -29,7 +29,6 @@ const PawMarker = ({ point }: { point: GpxPoint }) => {
         >
           <PawPrint size={20} fill="currentColor" fillOpacity={0.2} />
         </div>
-        {/* Pointe */}
         <div
           className="absolute -bottom-1 w-3 h-3 rotate-45"
           style={{ backgroundColor: color }}
@@ -73,6 +72,35 @@ function fixLeafletIcons() {
   })
 }
 
+const CustomZoomControl = () => {
+  const map = useMap()
+
+  return (
+    <div className="absolute bottom-5 right-5 z-[400] flex flex-col gap-2">
+      <button
+        onClick={(e) => {
+          e.stopPropagation()
+          map.zoomIn()
+        }}
+        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-zinc-700 hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
+        aria-label="Zoom in"
+      >
+        <Plus size={20} className="cursor-pointer" />
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation()
+          map.zoomOut()
+        }}
+        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-zinc-700 hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
+        aria-label="Zoom out"
+      >
+        <Minus size={20} className="cursor-pointer" />
+      </button>
+    </div>
+  )
+}
+
 function GpxLayer({
   url,
   onStartEndPoints,
@@ -87,15 +115,13 @@ function GpxLayer({
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     const gpxLayer = new (L as any).GPX(url, {
       async: true,
-      // Force leaflet-gpx à ne PAS créer de marqueurs
-      parseElements: [], // Tableau vide pour ne rien parser
+      parseElements: [],
     })
 
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     gpxLayer.on('loaded', async (e: any) => {
       const layer = e.target
 
-      // Charger le GPX directement pour extraire les points
       const response = await fetch(url)
       const text = await response.text()
       const parser = new DOMParser()
@@ -112,7 +138,6 @@ function GpxLayer({
       }
 
       if (trackPoints.length > 0) {
-        // Créer la polyligne
         const polyline = L.polyline(trackPoints, {
           color: '#355F4A',
           opacity: 1,
@@ -120,38 +145,35 @@ function GpxLayer({
           lineCap: 'round',
         }).addTo(map)
 
-        // Extraire les points de départ et d'arrivée
         const startPoint = trackPoints[0]
         const endPoint = trackPoints[trackPoints.length - 1]
 
-        // Notifier le parent des points de départ et d'arrivée
         if (onStartEndPoints && startPoint && endPoint) {
           onStartEndPoints({
             start: {
               lat: startPoint[0],
               lng: startPoint[1],
               label: 'Départ',
-              color: '#F5EEE0', // Vert pour le départ
+              color: '#F5EEE0',
             },
             end: {
               lat: endPoint[0],
               lng: endPoint[1],
               label: 'Arrivée',
-              color: '#EF4444', // Rouge pour l'arrivée
+              color: '#EF4444',
             },
           })
         }
 
         map.fitBounds(polyline.getBounds())
       }
-      // Supprimer le layer GPX qui ne contient rien
       map.removeLayer(layer)
     })
 
     gpxLayer.addTo(map)
 
     return () => {
-      // Le nettoyage est fait dans l'événement loaded
+      // Cleanup
     }
   }, [url, map, onStartEndPoints])
   return null
@@ -199,12 +221,15 @@ export default function GpxViewer({
         center={[46.603354, 1.888334]}
         zoom={5}
         scrollWheelZoom={false}
+        zoomControl={false}
         style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
           attribution="&copy; OpenStreetMap"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        <CustomZoomControl />
 
         <GpxLayer
           url={gpxUrl}
