@@ -10,5 +10,8 @@ const GpxViewer = dynamic(() => import('@/components/GpxViewer'), {
 })
 
 export function TrackGpxMap(props: GpxViewerProps) {
+  if (!props.customUrl) {
+    return <TrackMapPlaceholder />
+  }
   return <GpxViewer {...props} />
 }

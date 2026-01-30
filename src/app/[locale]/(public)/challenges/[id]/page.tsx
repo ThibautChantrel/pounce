@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
-import { getChallengeAction } from '@/actions/challenge/challenge.admin.action'
 import { ChallengeHeader } from '@/components/challenge/ChallengeHeader'
 import { ChallengeTrackList } from '@/components/challenge/ChallengeTrackList'
 import { Info } from 'lucide-react'
+import { getChallengeForUserAction } from '@/actions/challenge/challenge.action'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>
@@ -13,7 +13,7 @@ export default async function ChallengeDetailPage(props: PageProps) {
   const params = await props.params
   const t = await getTranslations('Challenges.ChallengeDetail')
 
-  const challenge = await getChallengeAction(params.id)
+  const challenge = await getChallengeForUserAction(params.id)
 
   if (!challenge) {
     notFound()

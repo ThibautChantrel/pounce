@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
-import { challengeService } from '@/server/modules/challenge/services/challenge.service'
+import { challengeService } from '@/server/modules/challenge/services/challenge.admin.service'
 import { BusinessError, ERROR_CODES } from '@/core/errors'
 import { Difficulty } from '@prisma/client'
 import {

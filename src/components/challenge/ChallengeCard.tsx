@@ -17,6 +17,8 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
 
   const trackCount = challenge.tracks.length
 
+  console.log('challenge in ChallengeCard:', challenge)
+
   const totalDistance = challenge.tracks.reduce(
     (acc, curr) => acc + curr.track.distance,
     0

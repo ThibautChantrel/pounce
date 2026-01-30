@@ -12,10 +12,10 @@ import {
 import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type'
 import { Flag, Search, Loader2, PawPrint } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { fetchChallenges } from '@/actions/challenge/challenge.action'
 import { useDebounce } from 'use-debounce'
 import { useTranslations } from 'next-intl'
 import { ChallengeCard } from './ChallengeCard'
+import { fetchChallengesForUser } from '@/actions/challenge/challenge.action'
 
 const ITEMS_PER_PAGE = 10
 
@@ -39,7 +39,7 @@ export function ChallengeCarousel() {
       try {
         const currentSkip = reset ? 0 : challenges.length
 
-        const response = await fetchChallenges(
+        const response = await fetchChallengesForUser(
           currentSkip,
           ITEMS_PER_PAGE,
           debouncedSearch
@@ -106,7 +106,7 @@ export function ChallengeCarousel() {
               <PawPrint className="w-6 h-6" />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Marquez votre empreinte
+              Marquez votre empreinte {/* TODO */}
             </h2>
           </div>
 
