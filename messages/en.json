@@ -70,6 +70,20 @@
     }
   },
 
+  "Tracks": {
+    "track": "Track",
+    "distance": "Distance",
+    "elevationGain": "Elevation gain",
+    "pois": "Points of interest",
+    "createdAt": "Created on",
+    "downloadGpx": "Download GPX",
+    "mapComingSoon": "Interactive map coming soon",
+    "about": "About",
+    "noDescription": "No description available for this track.",
+    "Arrival": "Arrival",
+    "GpxAvailable": "GPX file available"
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Users",
