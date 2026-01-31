@@ -99,14 +99,14 @@ export default async function TrackDetailPage(props: PageProps) {
                     </p>
                   )}
 
-                  <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider tetx-slate">
+                  <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider tetx-muted-foreground">
                     {poi.type}
                   </div>
                 </>
               )}
               renderEnd={
                 <>
-                  <span className="text-xs font-mono font-bold text-white bg-slate dark:bg-slate px-1.5 py-0.5 rounded">
+                  <span className="text-xs font-mono font-bold text-white bg-muted-foreground dark:bg-muted-foreground px-1.5 py-0.5 rounded">
                     {track.distance} km
                   </span>
                   <h4 className="font-bold text-sm leading-tight mt-1">

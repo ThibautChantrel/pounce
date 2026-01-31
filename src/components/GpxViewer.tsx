@@ -82,7 +82,7 @@ const CustomZoomControl = () => {
           e.stopPropagation()
           map.zoomIn()
         }}
-        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-slate hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
+        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-muted-foreground hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
         aria-label="Zoom in"
       >
         <Plus size={20} className="cursor-pointer" />
@@ -92,7 +92,7 @@ const CustomZoomControl = () => {
           e.stopPropagation()
           map.zoomOut()
         }}
-        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-slate hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
+        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-muted-foreground hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
         aria-label="Zoom out"
       >
         <Minus size={20} className="cursor-pointer" />

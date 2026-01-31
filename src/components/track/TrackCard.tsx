@@ -23,7 +23,7 @@ export function TrackCard({ item, index, t }: TrackCardProps) {
           {/* --- BLOC IMAGE --- */}
           <div className="shrink-0 md:w-32 dark:bg-zinc-800 border-b md:border-b-0 md:border-r flex items-center justify-center">
             <div className="relative h-40 w-full p-4 md:p-0 md:h-full md:w-full">
-              <div className="relative w-full h-full md:w-full md:h-full overflow-hidden rounded-lg md:rounded-none shadow-sm md:shadow-none bg-secondary dark:bg-slate flex items-center justify-center">
+              <div className="relative w-full h-full md:w-full md:h-full overflow-hidden rounded-lg md:rounded-none shadow-sm md:shadow-none bg-secondary dark:bg-muted-foreground flex items-center justify-center">
                 {coverId ? (
                   <Image
                     src={`/api/files/${coverId}`}
