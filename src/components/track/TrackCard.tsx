@@ -3,7 +3,7 @@ import { Link } from '@/navigation'
 import { Map, Mountain, ArrowRight, ImageOff } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { ChallengeTrack } from '@/actions/challenge/challenge.admin.type'
-import { Track } from '@/actions/track/track.admin.types'
+import { Track } from '@/actions/track/track.types'
 
 type TrackWithRelation = ChallengeTrack & { track: Track }
 
@@ -18,12 +18,12 @@ export function TrackCard({ item, index, t }: TrackCardProps) {
 
   return (
     <Link href={`/tracks/${item.track.id}`} className="group block h-full">
-      <Card className="h-full p-0 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-canopy/50 group-hover:bg-zinc-50 dark:group-hover:bg-zinc-900">
+      <Card className="h-full p-0 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-canopy/50 group-hover:bg-zinc-50 dark:group-hover:bg-slate">
         <div className="flex flex-col md:flex-row md:items-stretch h-full">
           {/* --- BLOC IMAGE --- */}
           <div className="shrink-0 md:w-32 dark:bg-zinc-800 border-b md:border-b-0 md:border-r flex items-center justify-center">
             <div className="relative h-40 w-full p-4 md:p-0 md:h-full md:w-full">
-              <div className="relative w-full h-full md:w-full md:h-full overflow-hidden rounded-lg md:rounded-none shadow-sm md:shadow-none bg-clay dark:bg-zinc-700 flex items-center justify-center">
+              <div className="relative w-full h-full md:w-full md:h-full overflow-hidden rounded-lg md:rounded-none shadow-sm md:shadow-none bg-clay dark:bg-slate flex items-center justify-center">
                 {coverId ? (
                   <Image
                     src={`/api/files/${coverId}`}

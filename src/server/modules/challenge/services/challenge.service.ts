@@ -1,41 +1,24 @@
-import { BusinessError, ERROR_CODES } from '@/core/errors'
 import { auth } from '../../auth/auth.config'
-import { CreateChallengeInput, UpdateChallengeInput } from '../challenge.type'
 import { challengeRepository } from '../repositories/challenge.repository'
 
-class ChallengeService {
-  private async getAuthenticatedUserId(): Promise<string> {
+class ChallengeUserService {
+  async getForUser(id: string) {
     const session = await auth()
-    if (!session?.user?.id)
-      throw new BusinessError(ERROR_CODES.UNAUTHORIZED, 'Unauthorized')
-    return session.user.id
-  }
-
-  async create(data: CreateChallengeInput) {
-    const userId = await this.getAuthenticatedUserId()
-    return await challengeRepository.create(data, userId)
-  }
-
-  async update(data: UpdateChallengeInput) {
-    const userId = await this.getAuthenticatedUserId()
-    return await challengeRepository.update(data, userId)
-  }
-
-  async delete(id: string) {
-    return await challengeRepository.delete(id)
-  }
-
-  async get(id: string) {
-    return await challengeRepository.findById(id)
-  }
-
-  async getAllChallenges(skip: number, take: number, search?: string) {
-    return await challengeRepository.getAll(skip, take, search)
+    return await challengeRepository.findByIdForUser(
+      id,
+      !!session?.user.role && session.user.role === 'ADMIN'
+    )
   }
 
   async getAllChallengesForUser(skip: number, take: number, search?: string) {
-    return await challengeRepository.getAllForUser(skip, take, search)
+    const session = await auth()
+    return await challengeRepository.getAllForUser(
+      skip,
+      take,
+      search,
+      !!session?.user.role && session.user.role === 'ADMIN'
+    )
   }
 }
 
-export const challengeService = new ChallengeService()
+export const challengeUserService = new ChallengeUserService()

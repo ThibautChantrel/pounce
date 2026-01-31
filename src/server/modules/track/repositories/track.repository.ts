@@ -113,6 +113,24 @@ export class TrackRepository {
       select: { id: true, title: true },
     })
   }
+
+  async findGpxContent(trackId: string) {
+    const track = await prisma.track.findUnique({
+      where: { id: trackId },
+      select: {
+        gpxFile: {
+          select: {
+            filename: true,
+            mimeType: true,
+            data: true,
+            size: true,
+          },
+        },
+      },
+    })
+
+    return track?.gpxFile
+  }
 }
 
 export const trackRepository = new TrackRepository()

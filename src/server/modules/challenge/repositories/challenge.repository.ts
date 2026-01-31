@@ -75,6 +75,44 @@ export class ChallengeRepository {
     })
   }
 
+  async findByIdForUser(id: string, admin?: boolean) {
+    const where: Prisma.ChallengeWhereUniqueInput = { id }
+
+    if (!admin) {
+      where.visible = true
+      where.tracks = {
+        some: {
+          track: {
+            visible: true,
+          },
+        },
+      }
+    }
+
+    const include = admin
+      ? defaultInclude
+      : {
+          cover: defaultInclude.cover,
+          banner: defaultInclude.banner,
+          tracks: {
+            orderBy: { order: 'asc' as Prisma.SortOrder },
+            where: {
+              track: {
+                visible: true,
+              },
+            },
+            include: {
+              track: true,
+            },
+          },
+        }
+
+    return await prisma.challenge.findUnique({
+      where,
+      include,
+    })
+  }
+
   getAll = async (skip: number, take: number, search?: string) => {
     const where: Prisma.ChallengeWhereInput = search
       ? {
@@ -113,7 +151,12 @@ export class ChallengeRepository {
     return { data, total }
   }
 
-  getAllForUser = async (skip: number, take: number, search?: string) => {
+  getAllForUser = async (
+    skip: number,
+    take: number,
+    search?: string,
+    admin?: boolean
+  ) => {
     const where: Prisma.ChallengeWhereInput = search
       ? {
           OR: [
@@ -134,13 +177,36 @@ export class ChallengeRepository {
         }
       : {}
 
+    if (!admin) {
+      where.visible = true
+      where.tracks = {
+        some: {
+          track: {
+            visible: true,
+          },
+        },
+      }
+    }
+
     const [data, total] = await prisma.$transaction([
       prisma.challenge.findMany({
         where,
         skip,
         take,
         orderBy: { createdAt: 'desc' },
-        include: defaultInclude,
+        include: {
+          ...defaultInclude,
+          tracks: admin
+            ? defaultInclude.tracks
+            : {
+                ...defaultInclude.tracks,
+                where: {
+                  track: {
+                    visible: true,
+                  },
+                },
+              },
+        },
       }),
       prisma.challenge.count({ where }),
     ])

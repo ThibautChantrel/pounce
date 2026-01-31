@@ -79,6 +79,20 @@
     }
   },
 
+  "Tracks": {
+    "track": "Parcours",
+    "distance": "Distance",
+    "elevationGain": "Dénivelé +",
+    "pois": "Points d’intérêt",
+    "createdAt": "Créé le",
+    "downloadGpx": "Télécharger le GPX",
+    "mapComingSoon": "Carte interactive bientôt disponible",
+    "about": "À propos",
+    "noDescription": "Aucune description pour ce parcours.",
+    "Arrival": "Arrivée",
+    "GpxAvailable": "GPX disponible"
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Utilisateurs",
@@ -143,6 +157,7 @@
     "Pois": {
       "title": "Gestion des Lieux",
       "description": "Gérer tous les points d'intérêt de la base de données",
+      "descriptionAttr": "Description",
       "createTitle": "Créer un Point d'Intérêt",
       "createSubtitle": "Remplissez les détails ci-dessous pour ajouter un nouveau lieu au parcours.",
       "updateTitle": "Modifier le point d'intérêt",
@@ -229,6 +244,7 @@
       "visible": "Visibilité du parcours",
       "createSuccess": "Parcours créé avec succès",
       "updateSuccess": "Parcours mis à jour avec succès",
+      "noPois": "Aucun point d'intérêt",
       "validation": {
         "titleTooShort": "Le titre est trop court.",
         "distanceNegative": "La distance doit être positive."

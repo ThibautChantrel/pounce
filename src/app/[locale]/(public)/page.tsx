@@ -5,7 +5,7 @@ import Hero from '@/components/Hero'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
+    <main className="flex min-h-screen flex-col dark:bg-black">
       <Hero />
 
       <div className="flex flex-col items-center gap-6 py-4 px-4">

@@ -70,6 +70,20 @@
     }
   },
 
+  "Tracks": {
+    "track": "Track",
+    "distance": "Distance",
+    "elevationGain": "Elevation gain",
+    "pois": "Points of interest",
+    "createdAt": "Created on",
+    "downloadGpx": "Download GPX",
+    "mapComingSoon": "Interactive map coming soon",
+    "about": "About",
+    "noDescription": "No description available for this track.",
+    "Arrival": "Arrival",
+    "GpxAvailable": "GPX file available"
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Users",
@@ -135,6 +149,7 @@
     "Pois": {
       "title": "POIs Management",
       "description": "Manage all Points of Interest in database",
+      "descriptionAttr": "Description",
       "updateTitle": "Update the Poi",
       "updateSubtitle": "I guess the eifel tower must have changed its location",
       "createTitle": "Create Point of Interest",
@@ -204,6 +219,7 @@
       "visible": "Track Visibility",
       "createSuccess": "Track created successfully",
       "updateSuccess": "Track updated successfully",
+      "noPois": "No points of interest",
       "validation": {
         "titleTooShort": "Title is too short.",
         "distanceNegative": "Distance must be positive."

@@ -17,6 +17,8 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
 
   const trackCount = challenge.tracks.length
 
+  console.log('challenge in ChallengeCard:', challenge)
+
   const totalDistance = challenge.tracks.reduce(
     (acc, curr) => acc + curr.track.distance,
     0
@@ -75,36 +77,26 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
             </div>
           </div>
 
-          <div className="z-10 grid grid-cols-3 gap-2 transition-opacity duration-300 group-hover:opacity-0">
-            <div className="flex flex-col items-start border-l-2 border-white/50 pl-3">
-              <span className="text-xs uppercase opacity-70">
-                {t('tracks')}
-              </span>
-              <div className="flex items-center gap-1 text-lg font-bold">
-                <Trophy className="w-4 h-4" />
-                {trackCount}
-              </div>
+          <div className="z-10 flex w-full items-center justify-between transition-opacity duration-300 group-hover:opacity-0">
+            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+              <Trophy className="w-4 h-4" />
+              <span>{trackCount}</span>
             </div>
 
-            <div className="flex flex-col items-start border-l-2 border-white/50 pl-3">
-              <span className="text-xs uppercase opacity-70">
-                {t('distance')}
-              </span>
-              <div className="flex items-center gap-1 text-lg font-bold">
-                <Map className="w-4 h-4" />
+            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+              <Map className="w-4 h-4" />
+              <span>
                 {totalDistance.toFixed(1)}{' '}
-                <span className="text-xs">{t('km')}</span>
-              </div>
+                <span className="text-xs font-normal">{t('km')}</span>
+              </span>
             </div>
 
-            <div className="flex flex-col items-start border-l-2 border-white/50 pl-3">
-              <span className="text-xs uppercase opacity-70">
-                {t('elevation')}
+            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+              <Mountain className="w-4 h-4" />
+              <span>
+                {totalElevation}{' '}
+                <span className="text-xs font-normal">{t('m')}</span>
               </span>
-              <div className="flex items-center gap-1 text-lg font-bold">
-                <Mountain className="w-4 h-4" />
-                {totalElevation} <span className="text-xs">{t('m')}</span>
-              </div>
             </div>
           </div>
         </div>

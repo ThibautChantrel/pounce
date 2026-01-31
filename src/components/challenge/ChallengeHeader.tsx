@@ -63,7 +63,12 @@ export async function ChallengeHeader({
           {/* COVER IMAGE (Avatar) */}
           <div className="relative shrink-0">
             <div className="h-40 w-40 md:h-52 md:w-52 rounded-2xl overflow-hidden border-4 border-clay shadow-xl bg-clay">
-              <Image src={coverUrl} alt={title} fill className="object-cover" />
+              <Image
+                src={coverUrl}
+                alt={title}
+                fill
+                className="object-cover rounded-xl"
+              />
             </div>
           </div>
 

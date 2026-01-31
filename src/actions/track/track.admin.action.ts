@@ -7,7 +7,7 @@ import {
   UpdateTrackInput,
 } from '@/server/modules/track/track.types'
 import { revalidatePath } from 'next/cache'
-import { TrackWithRelations } from './track.admin.types'
+import { TrackWithRelations } from './track.types'
 
 type ActionResponse = {
   success: boolean

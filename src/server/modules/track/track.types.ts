@@ -21,7 +21,6 @@ export type CreateTrackInput = {
   visible?: boolean
   distance: number
   elevationGain: number
-
   coverId?: string
   bannerId?: string
   gpxFileId?: string
@@ -37,4 +36,9 @@ export type UpdateTrackInput = Partial<CreateTrackInput> & {
   bannerId?: string | null
   gpxFileId?: string | null
   poiIds?: string[]
+}
+
+export type PoiWithDistance = Poi & { distanceFromStart: number }
+export type TrackWithPoisDistance = Omit<TrackWithRelations, 'pois'> & {
+  pois: PoiWithDistance[]
 }
