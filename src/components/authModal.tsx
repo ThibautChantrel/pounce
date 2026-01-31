@@ -164,7 +164,7 @@ export default function AuthModal({ trigger }: AuthModalProps) {
           <Button
             type="submit"
             disabled={pending}
-            variant={isLoginMode ? 'default' : 'canopy'}
+            variant={isLoginMode ? 'default' : 'primary'}
           >
             {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoginMode ? t('loginBtn') : t('registerBtn')}

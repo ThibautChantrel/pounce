@@ -10,21 +10,20 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        canopy:
-          'bg-canopy text-clay hover:bg-canopy/90 focus-visible:ring-canopy/30',
+        primary:
+          'bg-primary text-secondary hover:bg-primary/90 focus-visible:ring-primary/30',
         sienna:
           'bg-sienna text-white hover:bg-sienna/90 focus-visible:ring-sienna/30',
         slate:
           'bg-slate text-white hover:bg-slate/90 focus-visible:ring-slate/30',
-        clay: 'bg-clay text-slate hover:bg-clay/80 border border-border focus-visible:ring-slate/20',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border focus-visible:ring-secondary/20',
         destructive:
           'bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
         outline:
           'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
-        secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost:
-          'hover:bg-clay hover:text-accent-foreground dark:hover:bg-accent/50',
+          'hover:bg-secondary hover:text-accent-foreground dark:hover:bg-accent/50',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {

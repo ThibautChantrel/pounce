@@ -62,7 +62,7 @@ export async function ChallengeHeader({
         <div className="relative -mt-20 mb-8 flex flex-col md:flex-row gap-6 items-start md:items-end">
           {/* COVER IMAGE (Avatar) */}
           <div className="relative shrink-0">
-            <div className="h-40 w-40 md:h-52 md:w-52 rounded-2xl overflow-hidden border-4 border-clay shadow-xl bg-clay">
+            <div className="h-40 w-40 md:h-52 md:w-52 rounded-2xl overflow-hidden border-4 border-secondary shadow-xl bg-secondary">
               <Image
                 src={coverUrl}
                 alt={title}
@@ -82,8 +82,8 @@ export async function ChallengeHeader({
                   {t(`Difficulties.${difficulty}`)}
                 </Badge>
 
-                <span className="flex items-center hover:text-canopy transition-colors">
-                  <MapPin className="w-4 h-4 mr-1.5 text-canopy" />
+                <span className="flex items-center hover:text-primary transition-colors">
+                  <MapPin className="w-4 h-4 mr-1.5 text-primary" />
                   {location}
                 </span>
 
@@ -108,7 +108,7 @@ export async function ChallengeHeader({
                 </span>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight font-heading uppercase text-canopy drop-shadow-sm mt-1">
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight font-heading uppercase text-primary drop-shadow-sm mt-1">
                 {title}
               </h1>
             </div>

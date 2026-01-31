@@ -12,7 +12,7 @@ export default async function Navbar() {
   const session = await auth()
 
   return (
-    <nav className="absolute top-0 left-0 w-full z-50 flex items-center justify-between p-2 bg-transparent text-clay">
+    <nav className="absolute top-0 left-0 w-full z-50 flex items-center justify-between p-2 bg-transparent text-secondary">
       <Link
         href="/"
         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
@@ -38,7 +38,7 @@ export default async function Navbar() {
           </div>
         ) : (
           <AuthModal
-            trigger={<Button variant="canopy">{t('authButton')}</Button>}
+            trigger={<Button variant="primary">{t('authButton')}</Button>}
           />
         )}
       </div>

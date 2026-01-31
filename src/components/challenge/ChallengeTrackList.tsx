@@ -18,7 +18,7 @@ export async function ChallengeTrackList({ tracks }: ChallengeTrackListProps) {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold flex items-center gap-3">
-        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-canopy text-clay text-sm font-bold">
+        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-secondary text-sm font-bold">
           {sortedTracks.length}
         </span>
         {t('tracksTitle')}

@@ -101,8 +101,8 @@ export function ChallengeCarousel() {
     <div className="w-full py-4 flex flex-col gap-8">
       <div className="container px-4 md:px-0">
         <div className="flex flex-col md:flex-row md:items-center gap-4">
-          <div className="flex items-center gap-3 text-canopy">
-            <div className="p-2 bg-canopy/10 rounded-full">
+          <div className="flex items-center gap-3 text-primary">
+            <div className="p-2 bg-primary/10 rounded-full">
               <PawPrint className="w-6 h-6" />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground">

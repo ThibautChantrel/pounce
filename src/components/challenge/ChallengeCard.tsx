@@ -48,9 +48,9 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
         </div>
 
         {/* --- COUCHE 2 : FOND "CLAY" AU SURVOL --- */}
-        <div className="absolute inset-0 bg-clay opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-secondary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-        <div className="relative h-full flex flex-col justify-between p-6 text-white group-hover:text-canopy transition-colors duration-300">
+        <div className="relative h-full flex flex-col justify-between p-6 text-white group-hover:text-primary transition-colors duration-300">
           <div className="z-10">
             <h3 className="text-2xl font-bold uppercase tracking-wider font-heading">
               {challenge.title}
@@ -71,7 +71,7 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
                 }
               </p>
 
-              <span className="inline-flex items-center gap-2 border border-current bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm text-sm font-bold hover:bg-canopy hover:text-clay transition-colors">
+              <span className="inline-flex items-center gap-2 border border-current bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm text-sm font-bold hover:bg-primary hover:text-secondary transition-colors">
                 {t('viewDetails')} <ArrowRight className="w-4 h-4" />
               </span>
             </div>
