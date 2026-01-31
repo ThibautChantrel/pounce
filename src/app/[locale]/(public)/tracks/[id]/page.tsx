@@ -85,7 +85,7 @@ export default async function TrackDetailPage(props: PageProps) {
               renderContent={(poi) => (
                 <>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-mono font-bold text-clay bg-clay/10 px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-mono font-bold text-canopy bg-clay/10 px-1.5 py-0.5 rounded">
                       {poi.distanceFromStart} km
                     </span>
                     <h4 className="font-bold text-sm leading-tight">

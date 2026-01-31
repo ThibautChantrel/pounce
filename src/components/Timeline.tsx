@@ -27,7 +27,7 @@ function DefaultMarker({ index }: { index: number }) {
 
 function EndMarker() {
   return (
-    <div className="w-7 h-7 rounded-full bg-zinc-900 dark:bg-white border-2 border-zinc-900 dark:border-white flex items-center justify-center">
+    <div className="w-7 h-7 rounded-full bg-canopy dark:bg-white border-2 border-clay dark:border-white flex items-center justify-center">
       <div className="w-2 h-2 rounded-full bg-white dark:bg-black" />
     </div>
   )
@@ -45,19 +45,19 @@ export function Timeline<T>({
     <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-sm border border-zinc-100 dark:border-zinc-800">
       {title && (
         <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-          {Icon && <Icon className="w-5 h-5 text-clay" />}
+          {Icon && <Icon className="w-5 h-5 text-canopy" />}
           {title}
         </h3>
       )}
 
       <div className="relative pl-2 space-y-8">
         {/* Ligne verticale */}
-        <div className="absolute left-[15px] top-2 bottom-2 w-0.5 bg-zinc-200 dark:bg-zinc-700" />
+        <div className="absolute left-5 top-0 bottom-0 w-px bg-clay dark:bg-zinc-700" />
 
         {items.map((item, index) => (
           <div key={item.id} className="relative flex gap-4">
-            {/* Marker */}
-            <div className="relative z-10 shrink-0 mt-1">
+            {/* Colonne marker */}
+            <div className="relative z-10 w-7 flex justify-center">
               {renderMarker ? (
                 renderMarker(index, item.data)
               ) : (
