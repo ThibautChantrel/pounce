@@ -19,7 +19,7 @@ type TimelineProps<T> = {
 
 function DefaultMarker({ index }: { index: number }) {
   return (
-    <div className="w-7 h-7 rounded-full bg-white dark:bg-black border-2 border-canopy flex items-center justify-center text-[10px] font-bold text-canopy shadow-sm">
+    <div className="w-7 h-7 rounded-full bg-white dark:bg-black border-2 border-primary flex items-center justify-center text-[10px] font-bold text-primary shadow-sm">
       {index + 1}
     </div>
   )
@@ -27,7 +27,7 @@ function DefaultMarker({ index }: { index: number }) {
 
 function EndMarker() {
   return (
-    <div className="w-7 h-7 rounded-full bg-canopy dark:bg-white border-2 border-clay dark:border-white flex items-center justify-center">
+    <div className="w-7 h-7 rounded-full bg-primary dark:bg-white border-2 border-secondary dark:border-white flex items-center justify-center">
       <div className="w-2 h-2 rounded-full bg-white dark:bg-black" />
     </div>
   )
@@ -45,14 +45,14 @@ export function Timeline<T>({
     <div className="bg-white dark:bg-slate rounded-2xl p-6 shadow-sm border border-zinc-100 dark:border-slate">
       {title && (
         <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
-          {Icon && <Icon className="w-5 h-5 text-canopy" />}
+          {Icon && <Icon className="w-5 h-5 text-primary" />}
           {title}
         </h3>
       )}
 
       <div className="relative pl-2 space-y-8">
         {/* Ligne verticale */}
-        <div className="absolute left-5 top-0 bottom-0 w-px bg-slate" />
+        <div className="absolute left-5 top-0 bottom-0 w-px bg-muted-foreground" />
 
         {items.map((item, index) => (
           <div key={item.id} className="relative flex gap-4">

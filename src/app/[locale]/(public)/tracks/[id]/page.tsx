@@ -85,7 +85,7 @@ export default async function TrackDetailPage(props: PageProps) {
               renderContent={(poi) => (
                 <>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-mono font-bold text-canopy bg-clay/10 px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-mono font-bold text-primary bg-secondary/10 px-1.5 py-0.5 rounded">
                       {poi.distanceFromStart} km
                     </span>
                     <h4 className="font-bold text-sm leading-tight">
@@ -99,14 +99,14 @@ export default async function TrackDetailPage(props: PageProps) {
                     </p>
                   )}
 
-                  <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider tetx-slate">
+                  <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider tetx-muted-foreground">
                     {poi.type}
                   </div>
                 </>
               )}
               renderEnd={
                 <>
-                  <span className="text-xs font-mono font-bold text-white bg-slate dark:bg-slate px-1.5 py-0.5 rounded">
+                  <span className="text-xs font-mono font-bold text-white bg-muted-foreground dark:bg-muted-foreground px-1.5 py-0.5 rounded">
                     {track.distance} km
                   </span>
                   <h4 className="font-bold text-sm leading-tight mt-1">

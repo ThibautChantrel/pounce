@@ -46,7 +46,7 @@ export function TrackInlineStats({
       {gpxUrl && (
         <Button
           size="sm"
-          className="ml-2 bg-canopy text-white hover:bg-canopy/90"
+          className="ml-2 bg-primary text-white hover:bg-primary/90"
           onClick={handleDownload}
         >
           <Download className="w-4 h-4 mr-1.5" />

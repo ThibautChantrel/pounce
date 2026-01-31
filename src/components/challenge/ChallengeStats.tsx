@@ -18,15 +18,15 @@ export async function ChallengeStats({
   const t = await getTranslations('Challenges.ChallengeDetail')
 
   return (
-    <Card className="border-none shadow-md bg-white canopy sticky top-24">
+    <Card className="border-none shadow-md bg-white primary sticky top-24">
       <CardContent className="p-6 space-y-6">
-        <h3 className="font-semibold text-lg flex items-center gap-2 text-canopy">
-          <Trophy className="w-5 h-5 text-canopy" />
+        <h3 className="font-semibold text-lg flex items-center gap-2 text-primary">
+          <Trophy className="w-5 h-5 text-primary" />
           {t('statsTitle')}
         </h3>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col p-3 bg-clay text-canopy rounded-lg">
+          <div className="flex flex-col p-3 bg-secondary text-primary rounded-lg">
             <span className="text-xs text-muted-foreground uppercase">
               {t('totalDistance')}
             </span>
@@ -35,7 +35,7 @@ export async function ChallengeStats({
               <span className="text-sm font-normal">km</span>
             </span>
           </div>
-          <div className="flex flex-col p-3 bg-clay text-canopy rounded-lg">
+          <div className="flex flex-col p-3 bg-secondary text-primary rounded-lg">
             <span className="text-xs text-muted-foreground uppercase">
               {t('totalElevation')}
             </span>
@@ -43,7 +43,7 @@ export async function ChallengeStats({
               {totalElevation} <span className="text-sm font-normal">m</span>
             </span>
           </div>
-          <div className="col-span-2 flex flex-col p-3 bg-clay text-canopy rounded-lg">
+          <div className="col-span-2 flex flex-col p-3 bg-secondary text-primary rounded-lg">
             <span className="text-xs text-muted-foreground uppercase">
               {t('tracksCount')}
             </span>

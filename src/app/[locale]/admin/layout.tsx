@@ -88,7 +88,7 @@ function AdminLink({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+      className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md hover:bg-secondary hover:text-muted-foreground transition-colors"
     >
       {icon}
       {label}

@@ -44,7 +44,7 @@ export default async function ChallengeDetailPage(props: PageProps) {
 
       <div className="container max-w-5xl mx-auto px-4">
         <div className="mb-12 mt-8">
-          <div className="flex items-center gap-2 text-canopy font-bold text-lg border-b border-zinc-200 dark:border-zinc-800 pb-2 mb-4">
+          <div className="flex items-center gap-2 text-primary font-bold text-lg border-b border-zinc-200 dark:border-zinc-800 pb-2 mb-4">
             <Info className="w-5 h-5" />
             <h2>{t('statsTitle')}</h2>
           </div>

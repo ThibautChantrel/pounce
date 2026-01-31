@@ -18,12 +18,12 @@ export function TrackCard({ item, index, t }: TrackCardProps) {
 
   return (
     <Link href={`/tracks/${item.track.id}`} className="group block h-full">
-      <Card className="h-full p-0 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-canopy/50 group-hover:bg-zinc-50 dark:group-hover:bg-slate">
+      <Card className="h-full p-0 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-primary/50 group-hover:bg-zinc-50 dark:group-hover:bg-slate">
         <div className="flex flex-col md:flex-row md:items-stretch h-full">
           {/* --- BLOC IMAGE --- */}
           <div className="shrink-0 md:w-32 dark:bg-zinc-800 border-b md:border-b-0 md:border-r flex items-center justify-center">
             <div className="relative h-40 w-full p-4 md:p-0 md:h-full md:w-full">
-              <div className="relative w-full h-full md:w-full md:h-full overflow-hidden rounded-lg md:rounded-none shadow-sm md:shadow-none bg-clay dark:bg-slate flex items-center justify-center">
+              <div className="relative w-full h-full md:w-full md:h-full overflow-hidden rounded-lg md:rounded-none shadow-sm md:shadow-none bg-secondary dark:bg-muted-foreground flex items-center justify-center">
                 {coverId ? (
                   <Image
                     src={`/api/files/${coverId}`}
@@ -51,7 +51,7 @@ export function TrackCard({ item, index, t }: TrackCardProps) {
 
           <div className="flex-1 p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="min-w-0 flex-1 flex flex-col justify-center">
-              <h3 className="text-lg font-bold group-hover:text-canopy transition-colors mb-1 truncate">
+              <h3 className="text-lg font-bold group-hover:text-primary transition-colors mb-1 truncate">
                 {item.track.title}
               </h3>
 
