@@ -1,11 +1,11 @@
 import { PawPrint } from 'lucide-react'
 import { Button } from './ui/button'
-import AuthModal from './AuthModal'
 import { auth } from '@/server/modules/auth/auth.config'
 import { getTranslations } from 'next-intl/server'
 import LogoutButton from './LogoutButton'
 import { Settings } from 'lucide-react'
 import { Link } from '@/navigation'
+import AuthModal from './authModal'
 
 export default async function Navbar() {
   const t = await getTranslations('Navbar')
