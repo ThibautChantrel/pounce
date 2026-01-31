@@ -29,7 +29,7 @@ export default async function ChallengeDetailPage(props: PageProps) {
   )
 
   return (
-    <main className="min-h-screen bg-zinc-50 dark:bg-black pb-20">
+    <main className="min-h-screen dark:bg-black pb-20">
       <ChallengeHeader
         title={challenge.title}
         location={challenge.location}

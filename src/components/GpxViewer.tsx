@@ -76,13 +76,13 @@ const CustomZoomControl = () => {
   const map = useMap()
 
   return (
-    <div className="absolute bottom-5 right-5 z-[400] flex flex-col gap-2">
+    <div className="absolute bottom-5 right-5 z-400 flex flex-col gap-2">
       <button
         onClick={(e) => {
           e.stopPropagation()
           map.zoomIn()
         }}
-        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-zinc-700 hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
+        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-slate hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
         aria-label="Zoom in"
       >
         <Plus size={20} className="cursor-pointer" />
@@ -92,7 +92,7 @@ const CustomZoomControl = () => {
           e.stopPropagation()
           map.zoomOut()
         }}
-        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-zinc-700 hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
+        className="w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center text-slate hover:bg-zinc-50 hover:text-black transition-all border border-zinc-100"
         aria-label="Zoom out"
       >
         <Minus size={20} className="cursor-pointer" />

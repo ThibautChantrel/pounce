@@ -26,7 +26,7 @@ export function TrackInlineStats({
 
   return (
     <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-sm font-medium text-muted-foreground">
-      <Badge variant="secondary">test</Badge>
+      {/* <Badge variant="secondary">test</Badge> */}
 
       <span className="flex items-center">
         <Navigation className="w-4 h-4 mr-1.5" />

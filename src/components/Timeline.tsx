@@ -42,7 +42,7 @@ export function Timeline<T>({
   renderEnd,
 }: TimelineProps<T>) {
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-sm border border-zinc-100 dark:border-zinc-800">
+    <div className="bg-white dark:bg-slate rounded-2xl p-6 shadow-sm border border-zinc-100 dark:border-slate">
       {title && (
         <h3 className="font-bold text-lg mb-6 flex items-center gap-2">
           {Icon && <Icon className="w-5 h-5 text-canopy" />}
@@ -52,7 +52,7 @@ export function Timeline<T>({
 
       <div className="relative pl-2 space-y-8">
         {/* Ligne verticale */}
-        <div className="absolute left-5 top-0 bottom-0 w-px bg-clay dark:bg-zinc-700" />
+        <div className="absolute left-5 top-0 bottom-0 w-px bg-slate" />
 
         {items.map((item, index) => (
           <div key={item.id} className="relative flex gap-4">
