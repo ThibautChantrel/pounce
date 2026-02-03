@@ -67,11 +67,13 @@ export default async function TrackDetailPage(props: PageProps) {
           <div className="lg:col-span-2 space-y-8">
             <TrackDescription description={track.description!} />
 
-            <TrackGpxMap
-              customUrl={gpxMapUrl}
-              points={mapPoints}
-              className="h-87.5 min-h-0"
-            />
+            <div className="sticky top-24">
+              <TrackGpxMap
+                customUrl={gpxMapUrl}
+                points={mapPoints}
+                className="h-96"
+              />
+            </div>
           </div>
 
           <div className="lg:col-span-1 space-y-6">
