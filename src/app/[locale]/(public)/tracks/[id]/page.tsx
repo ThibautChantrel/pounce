@@ -10,6 +10,11 @@ import { Timeline } from '@/components/Timeline'
 import { TrackInlineStats } from '@/components/track/TrackStat'
 import { GpxPoint } from '@/components/GpxViewer'
 import { TrackGpxMap } from '@/components/track/TrackGpxMap'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>
@@ -96,9 +101,17 @@ export default async function TrackDetailPage(props: PageProps) {
                   </div>
 
                   {poi.description && (
-                    <p className="text-xs text-muted-foreground line-clamp-2">
-                      {poi.description}
-                    </p>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <p className="text-xs text-muted-foreground line-clamp-2 cursor-pointer hover:underline">
+                          {poi.description}
+                        </p>
+                      </PopoverTrigger>
+
+                      <PopoverContent className="w-80 text-xs">
+                        {poi.description}
+                      </PopoverContent>
+                    </Popover>
                   )}
 
                   <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider tetx-muted-foreground">
