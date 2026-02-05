@@ -6,6 +6,8 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  SortingState, // Import nécessaire pour le typage
+  OnChangeFn, // Import nécessaire pour le typage
 } from '@tanstack/react-table'
 import {
   Table,
@@ -52,12 +54,62 @@ export function DataTable<TData, TValue>({
   const searchParams = useSearchParams()
   const t = useTranslations('Admin')
 
+  // --- 1. Gestion des paramètres d'URL existants ---
   const page = Number(searchParams.get('page')) || 1
   const per_page = Number(searchParams.get('limit')) || 10
   const search = searchParams.get('search') || ''
 
+  // --- 2. Gestion du Tri (Parsing URL -> État Table) ---
+  // On lit "?sort=role:asc,email:desc" pour le transformer en objet TanStack
+  const sortParam = searchParams.get('sort')
+
+  const sorting = React.useMemo<SortingState>(() => {
+    if (!sortParam) return []
+
+    return sortParam.split(',').map((item) => {
+      const [id, order] = item.split(':')
+      return {
+        id,
+        desc: order === 'desc',
+      }
+    })
+  }, [sortParam])
+
   const pageCount = Math.ceil(totalItems / per_page)
 
+  // --- 3. Gestionnaire de changement de Tri (État Table -> URL) ---
+  const handleSortingChange: OnChangeFn<SortingState> = (updaterOrValue) => {
+    // TanStack nous donne soit la nouvelle valeur, soit une fonction de mise à jour
+    const newSorting =
+      typeof updaterOrValue === 'function'
+        ? updaterOrValue(sorting)
+        : updaterOrValue
+
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (newSorting.length > 0) {
+      // Transformation de l'état en chaîne : "col1:asc,col2:desc"
+      const sortString = newSorting
+        .map((s) => `${s.id}:${s.desc ? 'desc' : 'asc'}`)
+        .join(',')
+
+      params.set('sort', sortString)
+    } else {
+      // Si le tableau est vide (3ème clic), on supprime le paramètre
+      params.delete('sort')
+    }
+
+    // Nettoyage des anciens paramètres si jamais ils existent encore
+    params.delete('sortBy')
+    params.delete('sortOrder')
+
+    // On retourne à la page 1 quand on change le tri par précaution UX
+    params.set('page', '1')
+
+    router.push(`${pathname}?${params.toString()}`)
+  }
+
+  // --- 4. Configuration de la Table ---
   const table = useReactTable({
     data,
     columns,
@@ -67,9 +119,12 @@ export function DataTable<TData, TValue>({
         pageIndex: page - 1,
         pageSize: per_page,
       },
+      sorting, // Injection de l'état calculé
     },
+    onSortingChange: handleSortingChange, // Injection du gestionnaire
     manualPagination: true,
     manualFiltering: true,
+    manualSorting: true, // IMPORTANT : Indique que le tri est serveur
     getCoreRowModel: getCoreRowModel(),
   })
 
@@ -112,6 +167,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
+      {/* Barre d'outils (Recherche + Création) */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 w-full max-w-sm">
           <div className="relative w-full">
@@ -133,6 +189,7 @@ export function DataTable<TData, TValue>({
         </Button>
       </div>
 
+      {/* Tableau */}
       <div className="rounded-md border bg-card">
         <Table>
           <TableHeader>
@@ -184,6 +241,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
+      {/* Pagination */}
       <div className="flex items-center justify-between px-2">
         <div className="flex-1 text-sm text-muted-foreground">
           {t('Results.total')} : {totalItems} résultats
