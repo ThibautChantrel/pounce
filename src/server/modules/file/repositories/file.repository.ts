@@ -2,7 +2,19 @@ import db from '@/server/db'
 import { Prisma } from '@prisma/client'
 
 export const createFile = (data: Prisma.FileCreateInput) => {
-  return db.file.create({ data })
+  return db.file.create({
+    data,
+
+    select: {
+      id: true,
+      filename: true,
+      mimeType: true,
+      size: true,
+      createdAt: true,
+      updatedAt: true,
+      createdById: true,
+    },
+  })
 }
 
 export const getOne = (id: string) => {
@@ -37,6 +49,15 @@ export const updateFile = (id: string, data: Prisma.FileUpdateInput) => {
 export const deleteFile = (id: string) => {
   return db.file.delete({
     where: { id },
+    select: {
+      id: true,
+      filename: true,
+      mimeType: true,
+      size: true,
+      createdAt: true,
+      updatedAt: true,
+      createdById: true,
+    },
   })
 }
 
