@@ -2,6 +2,7 @@ import prisma from '@/server/db'
 import { Prisma } from '@prisma/client'
 import { fileSelectNoData } from '../../file/file.types'
 import { CreateChallengeInput, UpdateChallengeInput } from '../challenge.type'
+import { FetchParams } from '@/utils/fetch'
 
 const defaultInclude = {
   cover: { select: fileSelectNoData },
@@ -113,7 +114,7 @@ export class ChallengeRepository {
     })
   }
 
-  getAll = async (skip: number, take: number, search?: string) => {
+  getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
     const where: Prisma.ChallengeWhereInput = search
       ? {
           OR: [
@@ -133,13 +134,15 @@ export class ChallengeRepository {
           ],
         }
       : {}
+    const finalOrderBy = orderBy?.length ? orderBy : [{ createdAt: 'desc' }]
 
     const [data, total] = await prisma.$transaction([
       prisma.challenge.findMany({
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
+        orderBy: finalOrderBy as any,
         include: {
           cover: { select: fileSelectNoData },
           _count: { select: { tracks: true } },

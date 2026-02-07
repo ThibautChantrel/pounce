@@ -2,6 +2,7 @@ import { auth } from '@/server/modules/auth/auth.config'
 import { BusinessError, ERROR_CODES } from '@/core/errors'
 import { poiRepository } from '../repositories/poi.repository'
 import { CreatePoiInput, Poi, UpdatePoiInput } from '../poi.types'
+import { FetchParams } from '@/utils/fetch'
 
 export class PoiService {
   private async getAuthenticatedUserId(): Promise<string> {
@@ -46,8 +47,8 @@ export class PoiService {
     return await poiRepository.delete(id)
   }
 
-  getAllPois = async (skip = 0, take = 10, search?: string) => {
-    return await poiRepository.getAll(skip, take, search)
+  getAllPois = async (params: FetchParams) => {
+    return await poiRepository.getAll(params)
   }
 
   async get(id: string): Promise<Poi | null> {

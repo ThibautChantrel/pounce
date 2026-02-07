@@ -8,6 +8,7 @@ import {
 } from '@/server/modules/track/track.types'
 import { revalidatePath } from 'next/cache'
 import { TrackWithRelations } from './track.types'
+import { FetchParams } from '@/utils/fetch'
 
 type ActionResponse = {
   success: boolean
@@ -88,6 +89,6 @@ export async function getTrackAction(id: string): Promise<TrackWithRelations> {
   return track
 }
 
-export const fetchTracks = async (skip = 0, take = 10, search?: string) => {
-  return await trackService.getAllTracks(skip, take, search)
+export const fetchTracks = async (params: FetchParams) => {
+  return await trackService.getAllTracks(params)
 }

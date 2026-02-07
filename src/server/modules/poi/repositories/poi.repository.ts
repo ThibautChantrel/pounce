@@ -1,6 +1,7 @@
 import prisma from '@/server/db'
 import { CreatePoiInput, UpdatePoiInput } from '../poi.types'
 import { Prisma } from '@prisma/client'
+import { FetchParams } from '@/utils/fetch'
 
 export class PoiRepository {
   async create(data: CreatePoiInput, userId: string) {
@@ -51,7 +52,7 @@ export class PoiRepository {
     })
   }
 
-  getAll = async (skip: number, take: number, search?: string) => {
+  getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
     const where = search
       ? {
           OR: [
@@ -64,13 +65,15 @@ export class PoiRepository {
           ],
         }
       : {}
+    const finalOrderBy = orderBy?.length ? orderBy : [{ createdAt: 'desc' }]
 
     const [data, total] = await prisma.$transaction([
       prisma.poi.findMany({
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
+        orderBy: finalOrderBy as any,
       }),
       prisma.poi.count({ where }),
     ])

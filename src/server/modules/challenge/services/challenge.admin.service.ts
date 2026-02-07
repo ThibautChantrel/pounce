@@ -2,6 +2,7 @@ import { BusinessError, ERROR_CODES } from '@/core/errors'
 import { auth } from '../../auth/auth.config'
 import { CreateChallengeInput, UpdateChallengeInput } from '../challenge.type'
 import { challengeRepository } from '../repositories/challenge.repository'
+import { FetchParams } from '@/utils/fetch'
 
 class ChallengeService {
   private async getAuthenticatedUserId(): Promise<string> {
@@ -30,8 +31,8 @@ class ChallengeService {
     return await challengeRepository.findById(id)
   }
 
-  async getAllChallenges(skip: number, take: number, search?: string) {
-    return await challengeRepository.getAll(skip, take, search)
+  async getAllChallenges(params: FetchParams) {
+    return await challengeRepository.getAll(params)
   }
 }
 

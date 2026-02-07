@@ -1,4 +1,5 @@
 import db from '@/server/db'
+import { FetchParams } from '@/utils/fetch'
 import { Prisma } from '@prisma/client'
 
 export const createFile = (data: Prisma.FileCreateInput) => {
@@ -61,7 +62,7 @@ export const deleteFile = (id: string) => {
   })
 }
 
-export const getAll = async (skip: number, take: number, search?: string) => {
+export const getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
   const where = search
     ? {
         OR: [
@@ -81,6 +82,7 @@ export const getAll = async (skip: number, take: number, search?: string) => {
         ],
       }
     : {}
+  const finalOrderBy = orderBy?.length ? orderBy : [{ createdAt: 'desc' }]
 
   const [data, total] = await db.$transaction([
     db.file.findMany({
@@ -101,7 +103,8 @@ export const getAll = async (skip: number, take: number, search?: string) => {
       where,
       skip,
       take,
-      orderBy: { createdAt: 'desc' },
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
+      orderBy: finalOrderBy as any,
     }),
     db.file.count({ where }),
   ])

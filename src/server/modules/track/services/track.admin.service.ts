@@ -6,6 +6,7 @@ import {
   UpdateTrackInput,
   TrackWithRelations,
 } from '../track.types'
+import { FetchParams } from '@/utils/fetch'
 
 export class TrackService {
   private async getAuthenticatedUserId(): Promise<string> {
@@ -18,7 +19,10 @@ export class TrackService {
   async create(data: CreateTrackInput) {
     const userId = await this.getAuthenticatedUserId()
 
-    const existingTracks = await trackRepository.getAll(0, 1, data.title)
+    const existingTracks = await trackRepository.getAll({
+      skip: 0,
+      take: 50,
+    })
 
     const duplicate = existingTracks.data.find(
       (t) => t.title.toLowerCase() === data.title.toLowerCase()
@@ -43,7 +47,11 @@ export class TrackService {
     }
 
     if (data.title && data.title !== existing.title) {
-      const tracksWithSameName = await trackRepository.getAll(0, 10, data.title)
+      const tracksWithSameName = await trackRepository.getAll({
+        skip: 0,
+        take: 50,
+        search: data.title,
+      })
       const duplicate = tracksWithSameName.data.find(
         (t) =>
           t.title.toLowerCase() === data.title?.toLowerCase() &&
@@ -72,8 +80,8 @@ export class TrackService {
     return await trackRepository.delete(id)
   }
 
-  getAllTracks = async (skip = 0, take = 10, search?: string) => {
-    return await trackRepository.getAll(skip, take, search)
+  getAllTracks = async (params: FetchParams) => {
+    return await trackRepository.getAll(params)
   }
 
   async get(id: string): Promise<TrackWithRelations | null> {

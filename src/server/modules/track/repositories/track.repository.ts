@@ -2,6 +2,7 @@ import prisma from '@/server/db'
 import { Prisma } from '@prisma/client'
 import { CreateTrackInput, UpdateTrackInput } from '../track.types'
 import { fileSelectNoData } from '../../file/file.types'
+import { FetchParams } from '@/utils/fetch'
 const defaultInclude = {
   cover: {
     select: fileSelectNoData,
@@ -77,7 +78,7 @@ export class TrackRepository {
     })
   }
 
-  getAll = async (skip: number, take: number, search?: string) => {
+  getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
     const where: Prisma.TrackWhereInput = search
       ? {
           OR: [
@@ -93,13 +94,15 @@ export class TrackRepository {
           ],
         }
       : {}
+    const finalOrderBy = orderBy?.length ? orderBy : [{ createdAt: 'desc' }]
 
     const [data, total] = await prisma.$transaction([
       prisma.track.findMany({
         where,
         skip,
         take,
-        orderBy: { createdAt: 'desc' },
+        //eslint-disable-next-line @typescript-eslint/no-explicit-any
+        orderBy: finalOrderBy as any,
       }),
       prisma.track.count({ where }),
     ])

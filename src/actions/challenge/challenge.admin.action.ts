@@ -9,6 +9,7 @@ import {
   CreateChallengeInput,
   UpdateChallengeInput,
 } from './challenge.admin.type'
+import { FetchParams } from '@/utils/fetch'
 
 // --- SCHÉMAS ZOD ---
 
@@ -114,6 +115,6 @@ export async function getChallengeAction(id: string) {
   }
 }
 
-export async function fetchChallenges(skip = 0, take = 10, search?: string) {
-  return await challengeService.getAllChallenges(skip, take, search)
+export async function fetchChallenges(params: FetchParams) {
+  return await challengeService.getAllChallenges(params)
 }
