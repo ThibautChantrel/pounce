@@ -25,8 +25,7 @@ export default async function AdminLayout({
   const t = getTranslations('Admin')
 
   return (
-    <div className="flex min-h-screen bg-muted/20">
-      {/* --- SIDEBAR GAUCHE --- */}
+    <div className="flex h-screen bg-muted/20">
       <aside className="w-64 bg-card border-r hidden md:flex flex-col">
         <div className="p-6 border-b">
           <h2 className="text-xl font-bold tracking-tight">Admin Panel</h2>
@@ -71,7 +70,9 @@ export default async function AdminLayout({
       </aside>
 
       {/* --- CONTENU PRINCIPAL --- */}
-      <main className="flex-1 p-8 overflow-y-auto">{children}</main>
+      <main className="flex-1 overflow-y-auto bg-background p-4">
+        {children}
+      </main>
     </div>
   )
 }
