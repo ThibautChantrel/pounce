@@ -1,21 +1,18 @@
 import { fetchUsers } from '@/actions/user/user.admin.actions'
 import UsersTable from '@/components/admin/users/UsersTable'
+import { parseTableParams } from '@/utils/fetch'
 import { getTranslations } from 'next-intl/server'
 
 interface PageProps {
-  params: Promise<{ locale: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function UsersPage(props: PageProps) {
-  const searchParams = await props.searchParams
+export default async function UsersPage({ searchParams }: PageProps) {
+  const rawParams = await searchParams
 
-  const page = Number(searchParams.page) || 1
-  const limit = Number(searchParams.limit) || 10
-  const search = (searchParams.search as string) || ''
-  const skip = (page - 1) * limit
+  const params = parseTableParams(rawParams)
 
-  const { data, total } = await fetchUsers(skip, limit, search)
+  const { data, total } = await fetchUsers(params)
 
   const t = await getTranslations('Admin.Users')
 

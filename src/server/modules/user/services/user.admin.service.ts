@@ -1,8 +1,9 @@
 import { BusinessError, ERROR_CODES } from '@/core/errors'
 import * as userRepository from '@/server/modules/user/repositories/user.repository'
+import { FetchParams } from '@/utils/fetch'
 
-export const getAllUsers = async (skip = 0, take = 10, search?: string) => {
-  return await userRepository.getAll(skip, take, search)
+export const getAllUsers = async (params: FetchParams) => {
+  return await userRepository.getAll(params)
 }
 
 export const deleteUserById = async (id: string) => {
