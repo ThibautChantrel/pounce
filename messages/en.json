@@ -90,7 +90,8 @@
       "files": "Files",
       "pois": "Points of interest",
       "tracks": "Tracks",
-      "challenges": "Challenges"
+      "challenges": "Challenges",
+      "feedbacks": "Feedbacks"
     },
 
     "Global": {
@@ -267,6 +268,21 @@
         "HARD": "Hard",
         "EXPERT": "Expert"
       }
+    },
+
+    "Feedbacks": {
+      "title": "Feedback Management",
+      "description": "View and manage user feedback and contact requests.",
+      "email": "Email",
+      "message": "Message",
+      "status": "Status",
+      "isRead": "Read",
+      "read": "Read",
+      "unread": "Unread",
+      "subscribe": "Subscribed to news",
+      "createdAt": "Date",
+      "markAsRead": "Mark as read",
+      "delete": "Delete"
     },
 
     "Results": {

@@ -7,6 +7,7 @@ import {
   Locate,
   Waypoints,
   Swords,
+  Form,
 } from 'lucide-react'
 import { Link } from '@/navigation'
 import { getTranslations } from 'next-intl/server'
@@ -58,6 +59,11 @@ export default async function AdminLayout({
             icon={<Swords size={18} />}
             label={(await t)('Navbar.challenges')}
           />
+          <AdminLink
+            href="/admin/feedbacks"
+            icon={<Form size={18} />}
+            label={(await t)('Navbar.feedbacks')}
+          />
         </nav>
 
         <div className="p-4 border-t">
@@ -69,7 +75,6 @@ export default async function AdminLayout({
         </div>
       </aside>
 
-      {/* --- CONTENU PRINCIPAL --- */}
       <main className="flex-1 overflow-y-auto bg-background p-4">
         {children}
       </main>

@@ -236,3 +236,14 @@ model Poi {
 
   @@map("pois")
 }
+
+model Feedback {
+  id                 String   @id @default(cuid())
+  email              String
+  message            String   @db.Text
+  isRead             Boolean  @default(false)
+  subscribeToUpdates Boolean  @default(false)
+  createdAt          DateTime @default(now())
+
+  @@map("feedbacks")
+}

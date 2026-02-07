@@ -99,7 +99,8 @@
       "files": "Fichiers",
       "pois": "Points d'intérêt",
       "tracks": "Parcours",
-      "challenges": "Challenges"
+      "challenges": "Challenges",
+      "feedbacks": "Feedbacks"
     },
 
     "Global": {
@@ -273,6 +274,21 @@
         "HARD": "Difficile",
         "EXPERT": "Expert"
       }
+    },
+
+    "Feedbacks": {
+      "title": "Gestion des Retours",
+      "description": "Consultez et gérez les avis utilisateurs et demandes de contact.",
+      "email": "Email",
+      "message": "Message",
+      "status": "Statut",
+      "isRead": "Lu",
+      "read": "Lu",
+      "unread": "Non lu",
+      "subscribe": "Abonné aux news",
+      "createdAt": "Date",
+      "markAsRead": "Marquer comme lu",
+      "delete": "Supprimer"
     },
 
     "Results": {
