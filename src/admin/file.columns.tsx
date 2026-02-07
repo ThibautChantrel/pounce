@@ -147,7 +147,7 @@ export const useFileColumns = () => {
         header: ({ column }) => (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            onClick={(e) => column.toggleSorting(undefined, e.shiftKey)}
           >
             {t('Files.size')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -160,11 +160,19 @@ export const useFileColumns = () => {
       },
       {
         accessorKey: 'createdAt',
-        header: t('Files.createdAt'),
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={(e) => column.toggleSorting(undefined, e.shiftKey)}
+          >
+            {t('Files.createdAt')}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
         cell: ({ row }) => {
           const date = new Date(row.getValue('createdAt'))
           return (
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {format.dateTime(date, {
                 year: 'numeric',
                 month: '2-digit',

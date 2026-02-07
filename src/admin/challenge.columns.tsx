@@ -185,7 +185,7 @@ export const useChallengeColumns = () => {
         header: ({ column }) => (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            onClick={(e) => column.toggleSorting(undefined, e.shiftKey)}
           >
             {tGlobal('createdAt')}
             <ArrowUpDown className="ml-2 h-4 w-4" />

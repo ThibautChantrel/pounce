@@ -10,6 +10,7 @@ import {
 } from '@/server/modules/file/services/file.admin.service'
 import { revalidatePath } from 'next/cache'
 import { FileData } from './file.admin.type'
+import { FetchParams } from '@/utils/fetch'
 
 export async function uploadFileAction(formData: FormData) {
   return await upload(formData)
@@ -23,8 +24,8 @@ export async function getFileInfos(id: string): Promise<FileData> {
   return await getFileInfosById(id)
 }
 
-export const fetchFiles = async (skip = 0, take = 10, search?: string) => {
-  return await getAllFiles(skip, take, search)
+export const fetchFiles = async (params: FetchParams) => {
+  return await getAllFiles(params)
 }
 
 export const removeFile = async (id: string) => {

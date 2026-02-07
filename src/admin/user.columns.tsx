@@ -110,7 +110,7 @@ export const useUserColumns = () => {
         header: ({ column }) => (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            onClick={(e) => column.toggleSorting(undefined, e.shiftKey)}
           >
             {t('Users.email')}
             <ArrowUpDown className="ml-2 h-4 w-4" />

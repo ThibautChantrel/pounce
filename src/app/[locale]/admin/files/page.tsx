@@ -1,21 +1,18 @@
 import { fetchFiles } from '@/actions/file/file.admin.actions'
 import FilesTable from '@/components/admin/files/FilesTable'
+import { parseTableParams } from '@/utils/fetch'
 import { getTranslations } from 'next-intl/server'
 
 interface PageProps {
-  params: Promise<{ locale: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function UsersPage(props: PageProps) {
-  const searchParams = await props.searchParams
+export default async function UsersPage({ searchParams }: PageProps) {
+  const rawParams = await searchParams
 
-  const page = Number(searchParams.page) || 1
-  const limit = Number(searchParams.limit) || 10
-  const search = (searchParams.search as string) || ''
-  const skip = (page - 1) * limit
+  const params = parseTableParams(rawParams)
 
-  const { data, total } = await fetchFiles(skip, limit, search)
+  const { data, total } = await fetchFiles(params)
 
   const t = await getTranslations('Admin.Files')
 

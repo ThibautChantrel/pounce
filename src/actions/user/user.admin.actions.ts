@@ -8,10 +8,11 @@ import {
   getUserById,
   updateUserById,
 } from '@/server/modules/user/services/user.admin.service'
+import { FetchParams } from '@/utils/fetch'
 import { revalidatePath } from 'next/cache'
 
-export const fetchUsers = async (skip = 0, take = 10, search?: string) => {
-  return await getAllUsers(skip, take, search)
+export const fetchUsers = async (params: FetchParams) => {
+  return await getAllUsers(params)
 }
 
 export const removeUser = async (id: string) => {

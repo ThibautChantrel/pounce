@@ -9,6 +9,7 @@ import {
   updateFile,
 } from '../repositories/file.repository'
 import { Prisma } from '@prisma/client'
+import { FetchParams } from '@/utils/fetch'
 
 export const upload = async (formData: FormData) => {
   const session = await auth()
@@ -53,8 +54,8 @@ export const getFileInfosById = async (id: string) => {
   return file
 }
 
-export const getAllFiles = async (skip = 0, take = 10, search?: string) => {
-  return await getAll(skip, take, search)
+export const getAllFiles = async (params: FetchParams) => {
+  return await getAll(params)
 }
 
 export const deleteFileById = async (id: string) => {

@@ -1,4 +1,5 @@
 import db from '@/server/db'
+import { FetchParams } from '@/utils/fetch'
 import { Prisma } from '@prisma/client'
 
 /**
@@ -20,31 +21,30 @@ export const createUser = async (data: Prisma.UserCreateInput) => {
   })
 }
 
-export const getAll = async (skip: number, take: number, search?: string) => {
+export const getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
   const where = search
     ? {
         OR: [
           { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
           { email: { contains: search, mode: Prisma.QueryMode.insensitive } },
-          { id: { contains: search, mode: Prisma.QueryMode.insensitive } },
         ],
       }
     : {}
+
+  const finalOrderBy = orderBy?.length ? orderBy : [{ createdAt: 'desc' }]
 
   const [users, count] = await db.$transaction([
     db.user.findMany({
       where,
       skip,
       take,
-      orderBy: { createdAt: 'desc' },
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
+      orderBy: finalOrderBy as any,
     }),
     db.user.count({ where }),
   ])
 
-  return {
-    data: users,
-    total: count,
-  }
+  return { data: users, total: count }
 }
 
 export const deleteUserById = async (id: string) => {

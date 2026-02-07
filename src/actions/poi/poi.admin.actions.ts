@@ -3,6 +3,7 @@
 import { BusinessError, ERROR_CODES } from '@/core/errors'
 import { CreatePoiInput, UpdatePoiInput } from '@/server/modules/poi/poi.types'
 import { poiService } from '@/server/modules/poi/services/poi.admin.service'
+import { FetchParams } from '@/utils/fetch'
 import { revalidatePath } from 'next/cache'
 
 type ActionResponse = {
@@ -84,6 +85,6 @@ export async function getPoiAction(id: string) {
   return user
 }
 
-export const fetchPois = async (skip = 0, take = 10, search?: string) => {
-  return await poiService.getAllPois(skip, take, search)
+export const fetchPois = async (params: FetchParams) => {
+  return await poiService.getAllPois(params)
 }

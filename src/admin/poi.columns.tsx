@@ -74,8 +74,6 @@ const PoiActions = ({ poi }: { poi: PoiColumn }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>{t('Actions.label')}</DropdownMenuLabel>
 
-          {/* Action Éditer */}
-          {/* Note: Ajuste l'URL selon ta structure de route */}
           <DropdownMenuItem asChild>
             <Link
               href={`/admin/pois/${poi.id}/edit`}
@@ -123,7 +121,15 @@ export const usePoiColumns = () => {
     () => [
       {
         accessorKey: 'name',
-        header: t('name'),
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={(e) => column.toggleSorting(undefined, e.shiftKey)}
+          >
+            {t('name')}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -163,7 +169,7 @@ export const usePoiColumns = () => {
         header: ({ column }) => (
           <Button
             variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            onClick={(e) => column.toggleSorting(undefined, e.shiftKey)}
           >
             {t('createdAt')}
             <ArrowUpDown className="ml-2 h-4 w-4" />

@@ -1,21 +1,18 @@
 import { fetchTracks } from '@/actions/track/track.admin.action'
 import TracksTable from '@/components/admin/tracks/TracksTable'
+import { parseTableParams } from '@/utils/fetch'
 import { getTranslations } from 'next-intl/server'
 
 interface PageProps {
-  params: Promise<{ locale: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function TracksPage(props: PageProps) {
-  const searchParams = await props.searchParams
+export default async function TracksPage({ searchParams }: PageProps) {
+  const rawParams = await searchParams
 
-  const page = Number(searchParams.page) || 1
-  const limit = Number(searchParams.limit) || 10
-  const search = (searchParams.search as string) || ''
-  const skip = (page - 1) * limit
+  const params = parseTableParams(rawParams)
 
-  const { data, total } = await fetchTracks(skip, limit, search)
+  const { data, total } = await fetchTracks(params)
 
   const t = await getTranslations('Admin.Tracks')
 
