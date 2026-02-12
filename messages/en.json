@@ -7,6 +7,17 @@
     "logoutButton": "Log Out"
   },
 
+  "hero": {
+    "title": {
+      "line1": "Make your",
+      "highlight": "mark"
+    },
+    "description": "Pounce is exploring a new way to experience sport: certified community challenges, without the logic of social networks. Your feedback helps us build the project !",
+    "cta": "Leave my mark",
+    "badge": "Project in progress · Join the first contributors",
+    "scrollAriaLabel": "Scroll to next section"
+  },
+
   "Auth": {
     "loginTitle": "Welcome back",
     "loginDesc": "Enter your credentials to log in.",
