@@ -9,6 +9,7 @@ import {
   ArrowRight,
   Lightbulb,
   AlertCircle,
+  X,
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -22,7 +23,6 @@ import { createFeedbackAction } from '@/actions/feedback/feedback.actions'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
-// On garde uniquement les IDs pour l'ordre d'affichage
 const QUESTION_IDS = [
   'sports',
   'frequency',
@@ -41,7 +41,6 @@ export function FeedbackForm() {
   const router = useRouter()
   const t = useTranslations('Feedbacks')
 
-  // Reconstruction dynamique des questions avec les traductions
   const questions = QUESTION_IDS.map((id) => ({
     id,
     label: t(`questions.${id}.label`),
@@ -76,6 +75,11 @@ export function FeedbackForm() {
 
   const handleNext = () => {
     setCurrentQIndex((prev) => (prev + 1) % questions.length)
+  }
+
+  // Fonction pour gérer le retour
+  const handleClose = () => {
+    router.back() // Retourne à la page précédente (plus intuitif que push('/'))
   }
 
   const validateForm = () => {
@@ -114,7 +118,7 @@ export function FeedbackForm() {
       })
 
       if (response.success) {
-        toast.success(t('successMessage')) // Utilisation de la traduction
+        toast.success(t('successMessage'))
         router.push('/')
       } else {
         toast.error(response.error || t('errorMessage'))
@@ -128,7 +132,7 @@ export function FeedbackForm() {
   }
 
   return (
-    <Card className="max-w-2xl mx-auto border shadow-sm dark:bg-zinc-900/60 backdrop-blur-sm overflow-hidden">
+    <Card className="max-w-2xl mx-auto border shadow-sm dark:bg-zinc-900/60 backdrop-blur-sm overflow-hidden relative">
       <style>{`
         @keyframes fill-progress {
           from { width: 0%; }
@@ -136,17 +140,28 @@ export function FeedbackForm() {
         }
       `}</style>
 
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute top-4 right-4 z-10 text-muted-foreground hover:text-foreground h-8 w-8"
+        onClick={handleClose}
+        aria-label="Fermer"
+      >
+        <X className="w-4 h-4" />
+      </Button>
+
       <div
-        className="p-6 relative border-b transition-colors hover:bg-muted/50"
+        className="p-6 relative border-b transition-colors hover:bg-muted/50 pt-10 sm:pt-6" // pt-10 pour laisser place au bouton sur mobile si besoin
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 pr-8">
+          {' '}
+          {/* pr-8 pour éviter que le texte touche le bouton X */}
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Lightbulb className="w-4 h-4" />
             <span>{t('inspirationLabel')}</span>
           </div>
-
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -207,7 +222,7 @@ export function FeedbackForm() {
               if (errors.message)
                 setErrors((prev) => ({ ...prev, message: undefined }))
             }}
-            placeholder={t('messageLabel')} // Traduction ici aussi si tu veux, sinon texte libre
+            placeholder={t('messageLabel')}
             className={cn(
               'min-h-50 resize-none text-base p-4',
               errors.message &&

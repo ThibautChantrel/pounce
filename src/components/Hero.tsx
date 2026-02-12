@@ -48,7 +48,7 @@ export default function Hero() {
           </Link>
         </Button>
 
-        <p className="text-sm text-white/70">{t('badge')}</p>
+        <p className="text-sm text-secondary">{t('badge')}</p>
       </div>
 
       <button
