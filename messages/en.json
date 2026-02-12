@@ -84,6 +84,21 @@
     "GpxAvailable": "GPX file available"
   },
 
+  "Feedbacks": {
+    "title": "Contact Us",
+    "description": "Your feedback matters! Send us your thoughts or questions.",
+    "emailLabel": "Your Email",
+    "messageLabel": "Your Message",
+    "submitButton": "Send",
+    "successMessage": "Thank you for your message! We'll get back to you as soon as possible.",
+    "errorMessage": "An error occurred. Please try again later.",
+    "validation": {
+      "emailInvalid": "Please enter a valid email address.",
+      "messageTooShort": "Your message must be at least 10 characters long.",
+      "toManyFeedbacks": "You have reached the feedback limit."
+    }
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Users",

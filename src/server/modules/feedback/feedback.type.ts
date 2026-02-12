@@ -10,7 +10,5 @@ export type Feedback = {
 export type CreateFeedbackInput = {
   email: string
   message: string
-  isRead: boolean
   subscribeToUpdates: boolean
-  createdAt: Date
 }

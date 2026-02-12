@@ -1,10 +1,10 @@
 import prisma from '@/server/db'
-import { Feedback } from '../feedback.type'
+import { CreateFeedbackInput } from '../feedback.type'
 import { FetchParams } from '@/utils/fetch'
 import { Prisma } from '@prisma/client'
 
 export class FeedBackRepository {
-  async create(data: Feedback) {
+  async create(data: CreateFeedbackInput) {
     return await prisma.feedback.create({
       data,
     })
@@ -23,8 +23,8 @@ export class FeedBackRepository {
     })
   }
 
-  async getByEmail(email: string) {
-    return prisma.feedback.findMany({
+  async getCountByEmail(email: string) {
+    return prisma.feedback.count({
       where: { email },
     })
   }

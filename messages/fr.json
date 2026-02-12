@@ -93,6 +93,21 @@
     "GpxAvailable": "GPX disponible"
   },
 
+  "Feedbacks": {
+    "title": "Nous contacter",
+    "description": "Votre avis compte ! Envoyez-nous vos retours ou questions.",
+    "emailLabel": "Votre email",
+    "messageLabel": "Votre message",
+    "submitButton": "Envoyer",
+    "successMessage": "Merci pour votre message ! Nous vous répondrons dès que possible.",
+    "errorMessage": "Une erreur est survenue. Veuillez réessayer plus tard.",
+    "validation": {
+      "emailInvalid": "Veuillez entrer une adresse email valide.",
+      "messageTooShort": "Votre message doit contenir au moins 10 caractères.",
+      "toManyFeedbacks": "Vous avez atteint la limite de feedbacks."
+    }
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Utilisateurs",
