@@ -9,11 +9,11 @@
 
   "Hero": {
     "title": {
-      "line1": "Marque ton",
+      "line1": "Marque ton ",
       "highlight": "empreinte"
     },
     "description": "Pounce explore une nouvelle façon de pratiquer le sport : des défis communautaires certifiés, sans logique de réseau social. Ton avis nous aide à construire le projet !",
-    "cta": "Je donne mon avis",
+    "cta": "Commence ici",
     "badge": "Projet en construction · Rejoins les premiers contributeurs",
     "scrollAriaLabel": "Défiler vers la section suivante"
   },
@@ -105,17 +105,59 @@
   },
 
   "Feedbacks": {
-    "title": "Nous contacter",
-    "description": "Votre avis compte ! Envoyez-nous vos retours ou questions.",
-    "emailLabel": "Votre email",
-    "messageLabel": "Votre message",
-    "submitButton": "Envoyer",
-    "successMessage": "Merci pour votre message ! Nous vous répondrons dès que possible.",
-    "errorMessage": "Une erreur est survenue. Veuillez réessayer plus tard.",
+    "title": "Explore ta pratique sportive",
+    "description": "Nous construisons Pounce autour des défis et des empreintes sportives. Aide-nous à comprendre ton profil, tes habitudes et ce que tu aimerais voir émerger :)",
+    "emailLabel": "Ton email",
+    "messageLabel": "Ta réponse",
+    "submitButton": "Envoyer mon empreinte",
+    "successMessage": "Merci d’avoir marqué ton empreinte. Nous construisons Pounce avec des sportifs comme toi.",
+    "errorMessage": "Une erreur est survenue. Réessaie dans quelques instants.",
+    "progressLabel": "Question {current} sur {total}",
+    "stayInformedLabel": "Reste informé des avancées de Pounce",
+    "stayInformedDesc": "En t’inscrivant, tu recevras des mises à jour sur le développement de Pounce, les nouveaux défis et les fonctionnalités à venir. Nous respectons ta vie privée et n’enverrons que des informations pertinentes.",
+    "inspirationLabel": "Besoin d’inspiration ?",
     "validation": {
-      "emailInvalid": "Veuillez entrer une adresse email valide.",
-      "messageTooShort": "Votre message doit contenir au moins 10 caractères.",
-      "toManyFeedbacks": "Vous avez atteint la limite de feedbacks."
+      "emailInvalid": "Entre une adresse email valide.",
+      "messageTooShort": "Ta réponse doit contenir au moins 10 caractères.",
+      "toManyFeedbacks": "Tu as atteint la limite de participations."
+    },
+    "questions": {
+      "sports": {
+        "label": "Quels sports pratiques-tu ?",
+        "inspiration": "Ex: course à pied, trail, natation, escalade…"
+      },
+      "frequency": {
+        "label": "Combien d’heures consacres-tu au sport chaque semaine ?",
+        "inspiration": "Ex: 3h le week-end, 1h par jour…"
+      },
+      "apps": {
+        "label": "Utilises-tu des applications sportives ? Lesquelles ?",
+        "inspiration": "Strava, Garmin, Nike Run Club…"
+      },
+      "likes": {
+        "label": "Qu’aimes-tu dans ces applications ?",
+        "inspiration": "Tracking précis, challenges, communauté…"
+      },
+      "frustrations": {
+        "label": "Qu’est-ce qui te frustre ou te manque ?",
+        "inspiration": "Trop social ? Pas assez immersif ?"
+      },
+      "challenges": {
+        "label": "As-tu déjà participé à des challenges sportifs ?",
+        "inspiration": "Courses virtuelles, défis mensuels…"
+      },
+      "metro": {
+        "label": "Que penses-tu du challenge Métro Paris ?",
+        "inspiration": "Concept intéressant ? Trop complexe ?"
+      },
+      "ideal": {
+        "label": "À quoi ressemblerait ton défi idéal ?",
+        "inspiration": "Lieu, durée, difficulté, récompense…"
+      },
+      "certification": {
+        "label": "Serais-tu intéressé par des défis certifiés ?",
+        "inspiration": "Pourquoi ? Qu’est-ce que ça t’apporterait ?"
+      }
     }
   },
 

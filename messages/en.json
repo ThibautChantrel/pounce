@@ -13,7 +13,7 @@
       "highlight": "mark"
     },
     "description": "Pounce is exploring a new way to experience sport: certified community challenges, without the logic of social networks. Your feedback helps us build the project !",
-    "cta": "Leave my mark",
+    "cta": "Start here",
     "badge": "Project in progress · Join the first contributors",
     "scrollAriaLabel": "Scroll to next section"
   },
@@ -96,17 +96,59 @@
   },
 
   "Feedbacks": {
-    "title": "Contact Us",
-    "description": "Your feedback matters! Send us your thoughts or questions.",
-    "emailLabel": "Your Email",
-    "messageLabel": "Your Message",
-    "submitButton": "Send",
-    "successMessage": "Thank you for your message! We'll get back to you as soon as possible.",
-    "errorMessage": "An error occurred. Please try again later.",
+    "title": "Explore your sport practice",
+    "description": "We are building Pounce around challenges and sport footprints. Help us understand your profile, habits and what you would like to see emerge :)",
+    "emailLabel": "Your email",
+    "messageLabel": "Your answer",
+    "submitButton": "Submit my footprint",
+    "successMessage": "Thanks for leaving your mark. We are building Pounce with athletes like you.",
+    "errorMessage": "Something went wrong. Please try again.",
+    "progressLabel": "Question {current} of {total}",
+    "stayInformedLabel": "Stay informed of Pounce's progress",
+    "stayInformedDesc": "Subscribe to our newsletter to receive updates on the project and be among the first to test the app.",
+    "inspirationLabel": "Need inspiration?",
     "validation": {
       "emailInvalid": "Please enter a valid email address.",
-      "messageTooShort": "Your message must be at least 10 characters long.",
-      "toManyFeedbacks": "You have reached the feedback limit."
+      "messageTooShort": "Your answer must contain at least 10 characters.",
+      "toManyFeedbacks": "You have reached the participation limit."
+    },
+    "questions": {
+      "sports": {
+        "label": "Which sports do you practice?",
+        "inspiration": "Ex: running, trail running, swimming, climbing…"
+      },
+      "frequency": {
+        "label": "How many hours do you dedicate to sport each week?",
+        "inspiration": "Ex: 3h on weekends, 1h per day…"
+      },
+      "apps": {
+        "label": "Do you use sports apps? Which ones?",
+        "inspiration": "Strava, Garmin, Nike Run Club…"
+      },
+      "likes": {
+        "label": "What do you like about these apps?",
+        "inspiration": "Precise tracking, challenges, community…"
+      },
+      "frustrations": {
+        "label": "What frustrates you or is missing?",
+        "inspiration": "Too social? Not immersive enough?"
+      },
+      "challenges": {
+        "label": "Have you ever participated in sports challenges?",
+        "inspiration": "Virtual races, monthly challenges…"
+      },
+      "metro": {
+        "label": "What do you think of the Paris Metro challenge?",
+        "inspiration": "Interesting concept? Too complex?"
+      },
+      "ideal": {
+        "label": "What would your ideal challenge look like?",
+        "inspiration": "Location, duration, difficulty, reward…"
+      },
+      "certification": {
+        "label": "Would you be interested in certified challenges?",
+        "inspiration": "Why? What would you get out of it?"
+      }
     }
   },
 

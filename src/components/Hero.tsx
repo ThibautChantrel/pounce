@@ -30,14 +30,14 @@ export default function Hero() {
       <div className="absolute inset-0 bg-black/60 z-10" />
 
       <div className="relative z-20 flex flex-col items-center justify-center min-h-screen text-center px-6 space-y-8">
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-secondary tracking-tight">
           {t('title.line1')}
           <span className="text-transparent bg-clip-text bg-linear-to-r from-white via-gray-200 to-gray-400">
             {t('title.highlight')}
           </span>
         </h1>
 
-        <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
+        <p className="text-lg md:text-xl text-secondary max-w-2xl leading-relaxed">
           {t('description')}
         </p>
 
