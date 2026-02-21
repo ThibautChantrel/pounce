@@ -345,15 +345,18 @@
     },
 
     "Feedbacks": {
-      "title": "Gestion des Retours",
-      "description": "Consultez et gérez les avis utilisateurs et demandes de contact.",
+      "title": "Gestion des retours",
+      "description": "Consultez et gérez les retours utilisateurs et les demandes de contact.",
       "email": "Email",
       "message": "Message",
       "status": "Statut",
-      "isRead": "Lu",
+      "isRead": "Statut de lecture",
       "read": "Lu",
       "unread": "Non lu",
-      "subscribe": "Abonné aux news",
+      "subscribe": "Abonné aux actualités",
+      "subscribeToUpdates": "Abonnement newsletter",
+      "subscribedYes": "Oui",
+      "subscribedNo": "Non",
       "createdAt": "Date",
       "markAsRead": "Marquer comme lu",
       "delete": "Supprimer"
