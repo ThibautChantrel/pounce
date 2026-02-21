@@ -161,6 +161,53 @@
     }
   },
 
+  "About": {
+    "hero": {
+      "title": "Et si on ajoutait l'exploration à nos entraînements ?",
+      "p1": "La performance, le chrono, le dépassement de soi : ces éléments sont les moteurs magnifiques de notre pratique sportive. Nous sommes nombreux à aimer analyser nos statistiques après une bonne course.",
+      "p2": "Mais parfois, l'envie de courir ne vient pas du besoin de battre un record. Elle vient de l'envie de découvrir, de s'aérer, de voir de nouveaux quartiers. Pounce est né d'une question simple : comment donner autant de valeur à l'exploration qu'à la performance ? Comment transformer nos villes et nos sentiers en de formidables terrains de jeu ?",
+      "p3": "Nous croyons que l'effort physique ne doit pas seulement se mesurer en chiffres, mais en territoires découverts et en expériences vécues. Le sport ne doit plus être un réseau social, mais un vecteur social de découverte."
+    },
+    "origin": {
+      "title": "Le point de départ : Une idée née sur le GR20",
+      "p1": "L'idée de ce projet a germé sur les sentiers du GR20, en Corse, avec mes compagnons de route : Bilal, Fares, Mathias, Hippolyte, Ethan, Anthony et Mathis.",
+      "p2": "Après des jours de marche intense pour terminer cette aventure mythique, une réflexion m'a frappé : au-delà des souvenirs et de la fatigue, j'aurais adoré garder une trace \"certifiée\" de cet accomplissement. Une petite médaille, même virtuelle, qui symbolise la conquête de ce chemin précis.",
+      "p3": "C'est l'essence de Pounce (l'élan, l'empreinte). La volonté de créer un espace qui ne remplace pas (actuellement) vos applications de tracking habituelles, mais qui vient s'y ajouter pour marquer d'une pierre blanche les parcours que vous avez accomplis."
+    },
+    "goals": {
+      "title": "Une nouvelle façon de fixer ses objectifs",
+      "subtitle": "Pounce est un projet naissant, un laboratoire d'idées pour ceux qui voient le sport comme un moyen de découvrir leur environnement. Notre approche se base sur quelques idées simples :",
+      "items": {
+        "tangible": {
+          "title": "Des défis tangibles",
+          "desc": "Nous sélectionnons et créons des parcours spécifiques. L'objectif n'est pas de courir le plus vite possible, mais de \"compléter\" une trace emblématique, comme l'infrastructure de votre ville."
+        },
+        "collection": {
+          "title": "La collection d'expériences",
+          "desc": "À terme, nous souhaitons que chaque parcours terminé vous permette d'obtenir une certification (des badges, des points), comme un carnet de voyage sportif."
+        },
+        "wallOfFame": {
+          "title": "Un \"Wall of Fame\" partagé",
+          "desc": "Pas de flux d'actualité où l'on se compare en permanence, mais un simple tableau d'honneur pour célébrer ceux qui ont relevé le défi, chacun à son rythme."
+        }
+      }
+    },
+    "future": {
+      "title": "Le Présent et l'Avenir",
+      "subtitle": "Le premier test : Les Métros Parisiens",
+      "p1": "Aujourd'hui, Pounce fait ses tout premiers pas. Pour tester le concept, nous lançons un premier défi d'exploration urbaine : les lignes du métro parisien.",
+      "p2": "Sortez des rames souterraines, téléchargez nos traces, et redécouvrez Paris en courant au-dessus de la Ligne 1 ou de la Ligne 6.",
+      "p3": "Si l'idée vous plaît, ce n'est que le début. Nous imaginons déjà la suite : les métros d'autres villes (Lyon...), des défis à vélo le long des Châteaux de la Loire, et bien sûr, la validation de grands sentiers de randonnée."
+    },
+    "cta": {
+      "title": "Le projet est entre vos mains",
+      "p1": "Pounce est un \"MVP\" (Produit Minimum Viable). C'est une première version, gratuite et en pleine évolution.",
+      "p2": "Parce que ce projet a été pensé pour les sportifs amateurs et les curieux, vos retours sont essentiels pour décider de la suite.",
+      "p3": "L'idée vous parle ? Il manque une fonctionnalité qui changerait tout ? Vous aimeriez voir un défi précis se créer près de chez vous ?",
+      "button": "Dites-nous ce que vous en pensez"
+    }
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Utilisateurs",

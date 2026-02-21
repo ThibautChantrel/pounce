@@ -152,6 +152,53 @@
     }
   },
 
+  "About": {
+    "hero": {
+      "title": "What if we added exploration to our workouts?",
+      "p1": "Performance, the stopwatch, pushing your limits: these are magnificent drivers of our sports practice. Many of us love analyzing our stats after a good run.",
+      "p2": "But sometimes, the urge to run doesn't come from the need to break a record. It comes from the desire to discover, to get some fresh air, to see new neighborhoods. Pounce was born from a simple question: how can we give as much value to exploration as we do to performance? How can we turn our cities and trails into incredible playgrounds?",
+      "p3": "We believe physical effort shouldn't just be measured in numbers, but in territories discovered and experiences lived. Sport should no longer be social network, but a social vector of discovery."
+    },
+    "origin": {
+      "title": "The starting point: An idea born on the GR20, with my hiking buddies: Bilal, Fares, Mathias, Hippolyte, Ethan, Anthony et Mathis.",
+      "p1": "The idea for this project took root on the trails of the GR20, in Corsica.",
+      "p2": "After days of intense hiking to finish this legendary adventure, a thought struck me: beyond the memories and the fatigue, I would have loved to keep a \"certified\" trace of this achievement. A small medal, even a virtual one, symbolizing the conquest of this specific path.",
+      "p3": "That is the essence of Pounce (the momentum, the footprint). The desire to create a space that doesn't replace (actualy) your usual tracking apps, but adds to them to mark the routes you've accomplished with a milestone."
+    },
+    "goals": {
+      "title": "A new way to set goals",
+      "subtitle": "Pounce is an emerging project, a laboratory of ideas for those who see sport as a way to discover their environment. Our approach is based on a few simple ideas:",
+      "items": {
+        "tangible": {
+          "title": "Tangible challenges",
+          "desc": "We select and create specific routes. The goal isn't to run as fast as possible, but to \"complete\" an iconic trace, like your city's infrastructure."
+        },
+        "collection": {
+          "title": "Collecting experiences",
+          "desc": "Eventually, we want each completed route to earn you a certification (badges, points), like a sports travel diary."
+        },
+        "wallOfFame": {
+          "title": "A shared \"Wall of Fame\"",
+          "desc": "No news feed where we constantly compare ourselves, just a simple honor roll to celebrate those who took up the challenge, each at their own pace."
+        }
+      }
+    },
+    "future": {
+      "title": "Present and Future",
+      "subtitle": "The first test: Parisian Metros",
+      "p1": "Today, Pounce is taking its very first steps. To test the concept, we are launching a first urban exploration challenge: the lines of the Paris metro.",
+      "p2": "Get out of the underground trains, download our tracks, and rediscover Paris by running above Line 1 or Line 6.",
+      "p3": "If you like the idea, this is just the beginning. We're already imagining what's next: subways in other cities (Lyon...), cycling challenges along the Châteaux de la Loire, and of course, the validation of major hiking trails."
+    },
+    "cta": {
+      "title": "The project is in your hands",
+      "p1": "Pounce is an \"MVP\" (Minimum Viable Product). It's a first version, free and constantly evolving.",
+      "p2": "Because this project was designed for amateur athletes and curious minds, your feedback is essential to decide what happens next.",
+      "p3": "Does the idea resonate with you? Is there a game-changing feature missing? Would you like to see a specific challenge created near you?",
+      "button": "Tell us what you think"
+    }
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Users",
