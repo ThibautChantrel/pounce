@@ -3,21 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from '@/navigation'
 import { toast } from 'sonner'
-import {
-  Loader2,
-  ArrowLeft,
-  ArrowRight,
-  Lightbulb,
-  AlertCircle,
-  X,
-} from 'lucide-react'
-
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Loader2, ArrowLeft, ArrowRight, Lightbulb, X } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 import { createFeedbackAction } from '@/actions/feedback/feedback.actions'
 import { cn } from '@/lib/utils'
@@ -41,6 +28,7 @@ export function FeedbackForm() {
   const router = useRouter()
   const t = useTranslations('Feedbacks')
 
+  // Génération dynamique des questions
   const questions = QUESTION_IDS.map((id) => ({
     id,
     label: t(`questions.${id}.label`),
@@ -57,8 +45,9 @@ export function FeedbackForm() {
   const [currentQIndex, setCurrentQIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
+  // Autoscroll des questions
   useEffect(() => {
-    if (isPaused) return
+    if (isPaused || questions.length === 0) return
 
     const timer = setInterval(() => {
       setCurrentQIndex((prev) => (prev + 1) % questions.length)
@@ -67,7 +56,10 @@ export function FeedbackForm() {
     return () => clearInterval(timer)
   }, [isPaused, questions.length])
 
-  const currentQuestion = questions[currentQIndex]
+  const currentQuestion = questions[currentQIndex] || {
+    label: '',
+    inspiration: '',
+  }
 
   const handlePrev = () => {
     setCurrentQIndex((prev) => (prev - 1 + questions.length) % questions.length)
@@ -77,9 +69,8 @@ export function FeedbackForm() {
     setCurrentQIndex((prev) => (prev + 1) % questions.length)
   }
 
-  // Fonction pour gérer le retour
   const handleClose = () => {
-    router.back() // Retourne à la page précédente (plus intuitif que push('/'))
+    router.back()
   }
 
   const validateForm = () => {
@@ -104,17 +95,15 @@ export function FeedbackForm() {
   }
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      return
-    }
+    if (!validateForm()) return
 
     setIsPending(true)
 
     try {
       const response = await createFeedbackAction({
         email,
-        message: message,
-        subscribeToUpdates: subscribeToUpdates,
+        message,
+        subscribeToUpdates,
       })
 
       if (response.success) {
@@ -132,7 +121,7 @@ export function FeedbackForm() {
   }
 
   return (
-    <Card className="max-w-2xl mx-auto border shadow-sm dark:bg-zinc-900/60 backdrop-blur-sm overflow-hidden relative">
+    <div className="relative max-w-2xl mx-auto">
       <style>{`
         @keyframes fill-progress {
           from { width: 0%; }
@@ -140,170 +129,174 @@ export function FeedbackForm() {
         }
       `}</style>
 
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute top-4 right-4 z-10 text-muted-foreground hover:text-foreground h-8 w-8"
-        onClick={handleClose}
-        aria-label="Fermer"
-      >
-        <X className="w-4 h-4" />
-      </Button>
+      {/* Conteneur principal avec le style de la 2ème version */}
+      <div className="border border-border/40 bg-background/70 backdrop-blur-xl rounded-3xl overflow-hidden shadow-[0_15px_50px_-20px_rgba(0,0,0,0.35)] relative flex flex-col">
+        {/* Bouton de fermeture */}
+        <button
+          onClick={handleClose}
+          className="absolute top-6 right-6 z-20 text-muted-foreground hover:text-foreground transition-colors"
+          aria-label="Fermer"
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-      <div
-        className="p-6 relative border-b transition-colors hover:bg-muted/50 pt-10 sm:pt-6" // pt-10 pour laisser place au bouton sur mobile si besoin
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-      >
-        <div className="flex items-center justify-between mb-4 pr-8">
-          {' '}
-          {/* pr-8 pour éviter que le texte touche le bouton X */}
-          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <Lightbulb className="w-4 h-4" />
-            <span>{t('inspirationLabel')}</span>
+        {/* SECTION INSPIRATION (Carrousel) */}
+        <div
+          className="p-8 md:p-10 pb-6 relative bg-muted/10 transition-colors"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div className="flex items-center justify-between mb-6 pr-8">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-wider font-medium text-muted-foreground">
+              <Lightbulb className="w-4 h-4" />
+              <span>{t('inspirationLabel')}</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handlePrev}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <span className="text-xs text-muted-foreground w-8 text-center tabular-nums">
+                {currentQIndex + 1}/{questions.length}
+              </span>
+              <button
+                onClick={handleNext}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
-              onClick={handlePrev}
+
+          <div className="space-y-2 min-h-[70px]">
+            <h3
+              key={currentQIndex + 'title'}
+              className="text-base md:text-lg font-medium leading-relaxed animate-in fade-in slide-in-from-right-4 duration-300"
             >
-              <ArrowLeft className="w-3 h-3" />
-            </Button>
-            <span className="text-xs text-muted-foreground w-12 text-center">
-              {currentQIndex + 1} / {questions.length}
-            </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
-              onClick={handleNext}
+              {currentQuestion.label}
+            </h3>
+            <p
+              key={currentQIndex + 'sub'}
+              className="text-sm text-muted-foreground font-light animate-in fade-in slide-in-from-right-8 duration-500"
             >
-              <ArrowRight className="w-3 h-3" />
-            </Button>
+              {currentQuestion.inspiration}
+            </p>
+          </div>
+
+          {/* Barre de progression du timer */}
+          <div className="absolute bottom-0 left-0 w-full h-[2px] bg-border/40">
+            <div
+              key={currentQIndex}
+              className="h-full bg-foreground"
+              style={{
+                animation: `fill-progress ${AUTOSCROLL_DELAY}ms linear forwards`,
+                animationPlayState: isPaused ? 'paused' : 'running',
+              }}
+            />
           </div>
         </div>
 
-        <div className="space-y-2 min-h-20">
-          <h3
-            key={currentQIndex + 'title'}
-            className="text-lg font-semibold leading-tight animate-in fade-in slide-in-from-right-4 duration-300"
-          >
-            {currentQuestion.label}
-          </h3>
-          <p
-            key={currentQIndex + 'sub'}
-            className="text-sm text-muted-foreground animate-in fade-in slide-in-from-right-8 duration-500"
-          >
-            {currentQuestion.inspiration}
-          </p>
-        </div>
-
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-muted">
-          <div
-            key={currentQIndex}
-            className="h-full bg-primary"
-            style={{
-              animation: `fill-progress ${AUTOSCROLL_DELAY}ms linear forwards`,
-              animationPlayState: isPaused ? 'paused' : 'running',
-            }}
+        {/* FORMULAIRE */}
+        <div className="p-8 md:p-10 space-y-10">
+          {/* Ligne animée (issue de l'ancienne version) */}
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: '60px' }}
+            transition={{ duration: 0.6 }}
+            className="h-px bg-foreground/40"
           />
+
+          <div className="space-y-8">
+            {/* TEXTAREA UNIQUE */}
+            <div className="space-y-2">
+              <textarea
+                rows={5}
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value)
+                  if (errors.message)
+                    setErrors((prev) => ({ ...prev, message: undefined }))
+                }}
+                className={cn(
+                  'w-full bg-transparent border-b outline-none text-sm md:text-base py-2 resize-none transition-colors',
+                  errors.message
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-border focus:border-foreground'
+                )}
+                placeholder={t('messageLabel')}
+              />
+              {errors.message && (
+                <p className="text-xs text-red-500 animate-in fade-in">
+                  {errors.message}
+                </p>
+              )}
+            </div>
+
+            {/* INPUT EMAIL */}
+            <div className="space-y-2">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  if (errors.email)
+                    setErrors((prev) => ({ ...prev, email: undefined }))
+                }}
+                className={cn(
+                  'w-full bg-transparent border-b outline-none text-sm md:text-base py-2 transition-colors',
+                  errors.email
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-border focus:border-foreground'
+                )}
+                placeholder={t('emailLabel')}
+              />
+              {errors.email && (
+                <p className="text-xs text-red-500 animate-in fade-in">
+                  {errors.email}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* CHECKBOX MINIMALISTE */}
+          <div className="flex items-start gap-3 pt-4">
+            <input
+              type="checkbox"
+              id="subscribe"
+              checked={subscribeToUpdates}
+              onChange={(e) => setSubscribeToUpdates(e.target.checked)}
+              disabled={isPending}
+              className="mt-1 accent-foreground w-4 h-4 cursor-pointer"
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="subscribe"
+                className="text-sm font-medium leading-none cursor-pointer"
+              >
+                {t('stayInformedLabel')}
+              </label>
+              <p className="text-xs text-muted-foreground font-light leading-relaxed">
+                {t('stayInformedDesc')}
+              </p>
+            </div>
+          </div>
+
+          {/* BOUTON SUBMIT (Style minimaliste) */}
+          <div className="flex justify-end pt-4">
+            <button
+              onClick={handleSubmit}
+              disabled={isPending}
+              className="flex items-center text-sm font-medium tracking-wide hover:opacity-60 transition disabled:opacity-40"
+            >
+              {isPending && <Loader2 className="mr-2 w-4 h-4 animate-spin" />}
+              {isPending ? '...' : t('submitButton')} {!isPending && '→'}
+            </button>
+          </div>
         </div>
       </div>
-
-      <CardContent className="p-4 space-y-6">
-        {/* MESSAGE */}
-        <div>
-          <Textarea
-            value={message}
-            onChange={(e) => {
-              setMessage(e.target.value)
-              if (errors.message)
-                setErrors((prev) => ({ ...prev, message: undefined }))
-            }}
-            placeholder={t('messageLabel')}
-            className={cn(
-              'min-h-50 resize-none text-base p-4',
-              errors.message &&
-                'border-destructive focus-visible:ring-destructive'
-            )}
-          />
-          {errors.message && (
-            <p className="text-sm text-destructive font-medium flex items-center gap-2 animate-in slide-in-from-top-1">
-              <AlertCircle className="w-4 h-4" />
-              {errors.message}
-            </p>
-          )}
-        </div>
-
-        {/* EMAIL */}
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium">
-            {t('emailLabel')}
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="ton@email.com"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value)
-              if (errors.email)
-                setErrors((prev) => ({ ...prev, email: undefined }))
-            }}
-            className={cn(
-              errors.email &&
-                'border-destructive focus-visible:ring-destructive'
-            )}
-          />
-          {errors.email && (
-            <p className="text-sm text-destructive font-medium flex items-center gap-2 animate-in slide-in-from-top-1">
-              <AlertCircle className="w-4 h-4" />
-              {errors.email}
-            </p>
-          )}
-        </div>
-
-        {/* CHECKBOX NEWSLETTER */}
-        <div className="flex items-start space-x-3 p-4 rounded-lg border bg-card/50">
-          <Checkbox
-            id="subscribe"
-            checked={subscribeToUpdates}
-            onCheckedChange={(checked) =>
-              setSubscribeToUpdates(checked as boolean)
-            }
-            disabled={isPending}
-          />
-          <div className="grid gap-1.5 leading-none">
-            <label
-              htmlFor="subscribe"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              {t('stayInformedLabel')}
-            </label>
-            <p className="text-sm text-muted-foreground">
-              {t('stayInformedDesc')}
-            </p>
-          </div>
-        </div>
-
-        <Button
-          onClick={handleSubmit}
-          disabled={isPending}
-          className="w-full"
-          size="lg"
-        >
-          {isPending ? (
-            <>
-              <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-              ...
-            </>
-          ) : (
-            t('submitButton')
-          )}
-        </Button>
-      </CardContent>
-    </Card>
+    </div>
   )
 }

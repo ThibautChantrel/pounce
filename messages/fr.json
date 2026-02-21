@@ -158,7 +158,16 @@
         "label": "Serais-tu intéressé par des défis certifiés ?",
         "inspiration": "Pourquoi ? Qu’est-ce que ça t’apporterait ?"
       }
-    }
+    },
+    "aboutCta": {
+      "title": "Découvrir la vision derrière Pounce",
+      "description": "Pounce n’est pas une application de plus. C’est une nouvelle manière d’explorer et de certifier nos pratiques sportives.",
+      "button": "Lire l’histoire du projet →"
+    },
+    "afterSubmitNote": "Chaque retour façonne l’avenir de Pounce. Merci de contribuer à quelque chose de différent.",
+    "badge": "Projet en construction",
+    "thankYou": "Merci d’avoir laissé ton empreinte.",
+    "next": "Suivant"
   },
 
   "About": {

@@ -1,22 +1,42 @@
-import { MessageSquareHeart } from 'lucide-react'
+'use client'
 
-interface FeedbackHeaderProps {
+import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
+
+interface Props {
   title: string
   description: string
 }
 
-export function FeedbackHeader({ title, description }: FeedbackHeaderProps) {
+export function FeedbackHeader({ title, description }: Props) {
+  const t = useTranslations('Feedbacks')
+
   return (
-    <div className="text-center space-y-2 mb-2">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-canopy/10 text-canopy mb-2">
-        <MessageSquareHeart className="w-8 h-8" />
+    <div className="text-center space-y-6">
+      {/* Badge */}
+      <div className="inline-flex items-center gap-2 text-xs tracking-widest uppercase text-muted-foreground">
+        <span className="w-6 h-px bg-muted-foreground/40" />
+        {t('badge')}
+        <span className="w-6 h-px bg-muted-foreground/40" />
       </div>
-      <h1 className="text-3xl md:text-4xl font-extrabold font-heading text-foreground">
+
+      {/* Title */}
+      <h1 className="text-2xl md:text-4xl font-medium tracking-tight leading-tight">
         {title}
       </h1>
-      <p className="text-muted-foreground text-lg max-w-lg mx-auto leading-relaxed">
+
+      {/* Description */}
+      <p className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto leading-relaxed font-light">
         {description}
       </p>
+
+      {/* Subtle animated line */}
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: '80px' }}
+        transition={{ duration: 0.8 }}
+        className="h-px bg-foreground/30 mx-auto mt-6"
+      />
     </div>
   )
 }
