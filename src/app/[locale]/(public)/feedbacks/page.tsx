@@ -11,7 +11,7 @@ export default async function FeedbackPage() {
   const t = await getTranslations('Feedbacks')
 
   return (
-    <main className="min-h-screen dark:bg-black py-12 md:py-24 px-4">
+    <main className="min-h-screen dark:bg-black py-4 md:py-24 px-4">
       <div className="container max-w-4xl mx-auto">
         <FeedbackHeader title={t('title')} description={t('description')} />
 

@@ -7,7 +7,7 @@ interface FeedbackHeaderProps {
 
 export function FeedbackHeader({ title, description }: FeedbackHeaderProps) {
   return (
-    <div className="text-center space-y-4 mb-8">
+    <div className="text-center space-y-2 mb-2">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-canopy/10 text-canopy mb-2">
         <MessageSquareHeart className="w-8 h-8" />
       </div>
