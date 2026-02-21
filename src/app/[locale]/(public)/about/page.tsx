@@ -3,9 +3,40 @@
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/navigation'
+import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { fetchChallengesForUser } from '@/actions/challenge/challenge.action'
 
 export default function AboutPage() {
   const t = useTranslations('About')
+
+  // 1. On stocke le lien du challenge dans un state
+  const [challengeMetro, setChallengeMetro] = useState<{
+    imageid: string | null
+    href: string
+  } | null>(null)
+
+  useEffect(() => {
+    const loadChallenge = async () => {
+      try {
+        const res = await fetchChallengesForUser(0, 1, 'Metro Parisien')
+        if (res?.data?.[0]) {
+          const challengeParis = res.data[0]
+          setChallengeMetro({
+            imageid: challengeParis.coverId,
+            href: `/challenges/${challengeParis.id}`,
+          })
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération du challenge:', error)
+      }
+    }
+
+    loadChallenge()
+  }, [])
+
+  const metroLink = challengeMetro?.href || '#'
 
   return (
     <div className="flex flex-col">
@@ -114,21 +145,27 @@ export default function AboutPage() {
               {t('future.p3')}
             </p>
 
-            <Link
-              href="/challenges/paris-metro"
-              className="inline-block pt-2 text-sm font-medium underline underline-offset-4 hover:opacity-70 transition"
-            >
-              Explore the challenge →
-            </Link>
+            {/* 3. On utilise metroLink ici */}
+            {challengeMetro && (
+              <Link
+                href={metroLink}
+                className="inline-block pt-2 text-sm font-medium underline underline-offset-4 hover:opacity-70 transition"
+              >
+                {t('future.cta')}
+              </Link>
+            )}
           </div>
 
           {/* IMAGE RIGHT */}
+          {/* 4. Et on utilise metroLink ici aussi */}
           <Link
-            href="/challenges/paris-metro"
-            className="relative group mx-auto md:mx-0 w-full max-w-sm sm:max-w-md md:max-w-full"
+            href={metroLink}
+            className={`relative group mx-auto md:mx-0 w-full max-w-sm sm:max-w-md md:max-w-full ${
+              !challengeMetro ? 'pointer-events-none opacity-50' : ''
+            }`}
           >
             <Image
-              src="/about.png"
+              src={`/api/files/${challengeMetro?.imageid || 'about.png'}`} // Si tu as une image dynamique, tu peux faire: src={challengeMetro?.imageid ? `/chemin/${challengeMetro.imageid}` : '/about.png'}
               alt="Paris Metro Challenge"
               width={700}
               height={900}
@@ -151,12 +188,12 @@ export default function AboutPage() {
             <p>{t('cta.p3')}</p>
           </div>
 
-          <Link
-            href="/feedbacks"
-            className="inline-block mt-4 border px-5 py-2.5 rounded-full text-sm hover:bg-black hover:text-white transition"
-          >
-            {t('cta.button')}
-          </Link>
+          <Button size="lg" variant="secondary" asChild className="group">
+            <Link href="/feedbacks">
+              {t('cta.button')}
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </Button>
         </div>
       </section>
     </div>
