@@ -8,6 +8,14 @@
     "about": "Notre vision"
   },
 
+  "Footer": {
+    "tagline": "Marquer son empreinte. Explorer le territoire. Construire le mouvement.",
+    "about": "À propos",
+    "feedback": "Feedback",
+    "instagram": "Instagram",
+    "footprint": "Chaque pas compte"
+  },
+
   "Hero": {
     "title": {
       "line1": "Marque ton ",

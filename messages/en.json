@@ -8,6 +8,14 @@
     "about": "Our vision"
   },
 
+  "Footer": {
+    "tagline": "Leave your mark. Explore the territory. Build the movement.",
+    "about": "About",
+    "feedback": "Feedback",
+    "instagram": "Instagram",
+    "footprint": "Every trace matters."
+  },
+
   "hero": {
     "title": {
       "line1": "Make your",
