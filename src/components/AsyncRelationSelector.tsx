@@ -89,6 +89,7 @@ export function AsyncRelationSelector({
         take,
         search: debouncedSearch || undefined,
       })
+      console.log('Received data:', res)
       setItems(res.data)
       setTotal(res.total)
     } catch (error) {
@@ -102,7 +103,7 @@ export function AsyncRelationSelector({
     if (open) {
       loadData()
     }
-  }, [open, loadData])
+  }, [open, loadData, debouncedSearch, page])
 
   useEffect(() => {
     setPage(0)
