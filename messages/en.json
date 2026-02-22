@@ -4,7 +4,27 @@
     "authButton": "Login / Sign Up",
     "loginModalTitle": "Welcome",
     "loginModalDesc": "Log in or create an account to continue.",
-    "logoutButton": "Log Out"
+    "logoutButton": "Log Out",
+    "about": "Our vision"
+  },
+
+  "Footer": {
+    "tagline": "Leave your mark. Explore the territory. Build the movement.",
+    "about": "About",
+    "feedback": "Feedback",
+    "instagram": "Instagram",
+    "footprint": "Every trace matters."
+  },
+
+  "hero": {
+    "title": {
+      "line1": "Make your",
+      "highlight": "mark"
+    },
+    "description": "Pounce is exploring a new way to experience sport: certified community challenges, without the logic of social networks. Your feedback helps us build the project !",
+    "cta": "Start here",
+    "badge": "Project in progress · Join the first contributors",
+    "scrollAriaLabel": "Scroll to next section"
   },
 
   "Auth": {
@@ -84,13 +104,116 @@
     "GpxAvailable": "GPX file available"
   },
 
+  "Feedbacks": {
+    "title": "Explore your sport practice",
+    "description": "We are building Pounce around challenges and sport footprints. Help us understand your profile, habits and what you would like to see emerge :)",
+    "emailLabel": "Your email",
+    "messageLabel": "Your answer",
+    "submitButton": "Submit my footprint",
+    "successMessage": "Thanks for leaving your mark. We are building Pounce with athletes like you.",
+    "errorMessage": "Something went wrong. Please try again.",
+    "progressLabel": "Question {current} of {total}",
+    "stayInformedLabel": "Stay informed of Pounce's progress",
+    "stayInformedDesc": "Subscribe to our newsletter to receive updates on the project and be among the first to test the app.",
+    "inspirationLabel": "Need inspiration?",
+    "visionReminder": "Before building, we want to listen.",
+    "learnMore": "Discover the vision",
+    "validation": {
+      "emailInvalid": "Please enter a valid email address.",
+      "messageTooShort": "Your answer must contain at least 10 characters.",
+      "toManyFeedbacks": "You have reached the participation limit."
+    },
+    "mindset": {
+      "label": "When you go for a run/ride, what is your primary goal?",
+      "inspiration": "Beating a personal record / Clearing my mind / Exploring new places / Socializing ..."
+    },
+    "current_apps": {
+      "label": "You probably use apps like Strava or Garmin. What's the main reason?",
+      "inspiration": "Tracking my stats / Sharing with friends / Keeping a memory of my routes ..."
+    },
+    "the_gap": {
+      "label": "Be honest: do you ever feel bored running the same routes around your home?",
+      "inspiration": "Yes, quite often / Sometimes / No, I love my routine ..."
+    },
+    "metro_concept": {
+      "label": "We are launching the 'Paris Metro Challenge' (running above the lines). Initial thought?",
+      "inspiration": "Love it, I'm in! / Good idea, but I prefer nature trails / Not for me ..."
+    },
+    "certification_value": {
+      "label": "If you complete a hard challenge (like the GR20 or Metro Line 6), how would you want to celebrate it?",
+      "inspiration": "A digital badge for my socials / Purchasing a real, certified physical medal / Just seeing my name on a Wall of Fame ..."
+    },
+    "magic_wand": {
+      "label": "If you could create one ultimate exploration challenge on Pounce, what would it be?",
+      "inspiration": "Cycling the Loire Castles, Running the bridges of Paris, A specific local trail ..."
+    },
+    "aboutCta": {
+      "title": "Discover the vision behind Pounce",
+      "description": "Pounce is not just another app. It's a new way to explore and certify our sports practices.",
+      "button": "Read the project story →"
+    },
+    "afterSubmitNote": "Each feedback shapes Pounce's future. Thank you for contributing to something different.",
+    "badge": "Project in progress",
+    "thankYou": "Thank you for leaving your footprint.",
+    "next": "Next"
+  },
+
+  "About": {
+    "hero": {
+      "title": "What if we added exploration to our workouts?",
+      "p1": "Performance, the stopwatch, pushing your limits: these are magnificent drivers of our sports practice. Many of us love analyzing our stats after a good run.",
+      "p2": "But sometimes, the urge to run doesn't come from the need to break a record. It comes from the desire to discover, to get some fresh air, to see new neighborhoods. Pounce was born from a simple question: how can we give as much value to exploration as we do to performance? How can we turn our cities and trails into incredible playgrounds?",
+      "p3": "We believe physical effort shouldn't just be measured in numbers, but in territories discovered and experiences lived. Sport should no longer be social network, but a social vector of discovery."
+    },
+    "origin": {
+      "title": "The starting point: An idea born on the GR20, with my hiking buddies: Bilal, Fares, Mathias, Hippolyte, Ethan, Anthony et Mathis.",
+      "p1": "The idea for this project took root on the trails of the GR20, in Corsica.",
+      "p2": "After days of intense hiking to finish this legendary adventure, a thought struck me: beyond the memories and the fatigue, I would have loved to keep a \"certified\" trace of this achievement. A small medal, even a virtual one, symbolizing the conquest of this specific path.",
+      "p3": "That is the essence of Pounce (the momentum, the footprint). The desire to create a space that doesn't replace (actualy) your usual tracking apps, but adds to them to mark the routes you've accomplished with a milestone."
+    },
+    "goals": {
+      "title": "A new way to set goals",
+      "subtitle": "Pounce is an emerging project, a laboratory of ideas for those who see sport as a way to discover their environment. Our approach is based on a few simple ideas:",
+      "items": {
+        "tangible": {
+          "title": "Tangible challenges",
+          "desc": "We select and create specific routes. The goal isn't to run as fast as possible, but to \"complete\" an iconic trace, like your city's infrastructure."
+        },
+        "collection": {
+          "title": "Collecting experiences",
+          "desc": "Eventually, we want each completed route to earn you a certification (badges, points), like a sports travel diary."
+        },
+        "wallOfFame": {
+          "title": "A shared \"Wall of Fame\"",
+          "desc": "No news feed where we constantly compare ourselves, just a simple honor roll to celebrate those who took up the challenge, each at their own pace."
+        }
+      }
+    },
+    "future": {
+      "title": "Present and Future",
+      "subtitle": "The first test: Parisian Metros",
+      "p1": "Today, Pounce is taking its very first steps. To test the concept, we are launching a first urban exploration challenge: the lines of the Paris metro.",
+      "p2": "Get out of the underground trains, download our tracks, and rediscover Paris by running above Line 1 or Line 6.",
+      "p3": "If you like the idea, this is just the beginning. We're already imagining what's next: subways in other cities (Lyon...), cycling challenges along the Châteaux de la Loire, and of course, the validation of major hiking trails.",
+      "cta": "Explore the Paris Metro Challenge →"
+    },
+    "cta": {
+      "title": "The project is in your hands",
+      "p1": "Pounce is an \"MVP\" (Minimum Viable Product). It's a first version, free and constantly evolving.",
+      "p2": "Because this project was designed for amateur athletes and curious minds, your feedback is essential to decide what happens next.",
+      "p3": "Does the idea resonate with you? Is there a game-changing feature missing? Would you like to see a specific challenge created near you?",
+      "button": "Tell us what you think"
+    }
+  },
+
   "Admin": {
     "Navbar": {
       "users": "Users",
       "files": "Files",
       "pois": "Points of interest",
       "tracks": "Tracks",
-      "challenges": "Challenges"
+      "challenges": "Challenges",
+      "feedbacks": "Feedbacks"
     },
 
     "Global": {
@@ -267,6 +390,24 @@
         "HARD": "Hard",
         "EXPERT": "Expert"
       }
+    },
+
+    "Feedbacks": {
+      "title": "Feedback Management",
+      "description": "View and manage user feedback and contact requests.",
+      "email": "Email",
+      "message": "Message",
+      "status": "Status",
+      "isRead": "Read status",
+      "read": "Read",
+      "unread": "Unread",
+      "subscribe": "Subscribed to news",
+      "subscribeToUpdates": "Newsletter subscription",
+      "subscribedYes": "Yes",
+      "subscribedNo": "No",
+      "createdAt": "Date",
+      "markAsRead": "Mark as read",
+      "delete": "Delete"
     },
 
     "Results": {

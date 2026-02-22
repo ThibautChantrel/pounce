@@ -34,7 +34,7 @@ export default async function TrackDetailPage(props: PageProps) {
     ? `/api/files/${track.bannerId}`
     : '/images/placeholder-track.jpg'
 
-  const gpxDownloadUrl = `/api/tracks/${track.id}/gpx`
+  const gpxDownloadUrl = `/api/files/${track.gpxFile?.id}`
 
   const gpxMapUrl = track.gpxFile ? `/api/files/${track.gpxFile.id}` : undefined
 
