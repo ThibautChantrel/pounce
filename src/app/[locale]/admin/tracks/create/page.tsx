@@ -43,7 +43,7 @@ export default function CreateTrackPage() {
     take: number
     search?: string
   }) => {
-    const res = await fetchFiles(params.skip, params.take, params.search)
+    const res = await fetchFiles(params)
     return {
       data: res.data.map((f) => ({ id: f.id, name: f.filename })),
       total: res.total,
@@ -55,7 +55,7 @@ export default function CreateTrackPage() {
     take: number
     search?: string
   }) => {
-    const res = await fetchPois(params.skip, params.take, params.search)
+    const res = await fetchPois(params)
     return {
       data: res.data.map((f) => ({ id: f.id, name: f.name })),
       total: res.total,

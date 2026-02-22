@@ -50,7 +50,7 @@ export default function CreateChallengePage() {
     take: number
     search?: string
   }) => {
-    const res = await fetchTracks(params.skip, params.take, params.search)
+    const res = await fetchTracks(params)
     return {
       data: res.data.map((t) => ({ id: t.id, name: t.title })),
       total: res.total,
@@ -63,7 +63,7 @@ export default function CreateChallengePage() {
     take: number
     search?: string
   }) => {
-    const res = await fetchFiles(params.skip, params.take, params.search)
+    const res = await fetchFiles(params)
     return {
       data: res.data.map((f) => ({ id: f.id, name: f.filename })),
       total: res.total,
