@@ -68,6 +68,7 @@
     "elevation": "Elevation",
     "km": "km",
     "m": "m",
+    "title": "Leave your mark",
     "ChallengeDetail": {
       "statsTitle": "Challenge Details",
       "totalDistance": "Total Distance",
@@ -168,7 +169,7 @@
     "origin": {
       "title": "The starting point: An idea born on the GR20, with my hiking buddies: Bilal, Fares, Mathias, Hippolyte, Ethan, Anthony et Mathis.",
       "p1": "The idea for this project took root on the trails of the GR20, in Corsica.",
-      "p2": "After days of intense hiking to finish this legendary adventure, a thought struck me: beyond the memories and the fatigue, I would have loved to keep a \"certified\" trace of this achievement. A small medal, even a virtual one, symbolizing the conquest of this specific path.",
+      "p2": "After days of intense hiking to finish this legendary adventure, a thought struck us: beyond the memories and the fatigue, we would have loved to keep a \"certified\" trace of this achievement. A small medal, even a virtual one, symbolizing the conquest of this specific path.",
       "p3": "That is the essence of Pounce (the momentum, the footprint). The desire to create a space that doesn't replace (actualy) your usual tracking apps, but adds to them to mark the routes you've accomplished with a milestone."
     },
     "goals": {

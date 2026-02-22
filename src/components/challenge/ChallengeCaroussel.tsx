@@ -106,7 +106,7 @@ export function ChallengeCarousel() {
               <PawPrint className="w-6 h-6" />
             </div>
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
-              Marquez votre empreinte {/* TODO */}
+              {t('title')}
             </h2>
           </div>
 

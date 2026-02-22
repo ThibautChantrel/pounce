@@ -77,6 +77,7 @@
     "elevation": "Dénivelé",
     "km": "km",
     "m": "m",
+    "title": "Marque ton empreinte",
     "ChallengeDetail": {
       "statsTitle": "Détails du Défi",
       "totalDistance": "Distance Totale",
@@ -179,7 +180,7 @@
     "origin": {
       "title": "Le point de départ : Une idée née sur le GR20",
       "p1": "L'idée de ce projet a germé sur les sentiers du GR20, en Corse, avec mes compagnons de route : Bilal, Fares, Mathias, Hippolyte, Ethan, Anthony et Mathis.",
-      "p2": "Après des jours de marche intense pour terminer cette aventure mythique, une réflexion m'a frappé : au-delà des souvenirs et de la fatigue, j'aurais adoré garder une trace \"certifiée\" de cet accomplissement. Une petite médaille, même virtuelle, qui symbolise la conquête de ce chemin précis.",
+      "p2": "Après des jours de marche intense pour terminer cette aventure mythique, une réflexion nous a frappé : au-delà des souvenirs et de la fatigue, on aurait adoré garder une trace \"certifiée\" de cet accomplissement. Une petite médaille, même virtuelle, qui symbolise la conquête de ce chemin précis.",
       "p3": "C'est l'essence de Pounce (l'élan, l'empreinte). La volonté de créer un espace qui ne remplace pas (actuellement) vos applications de tracking habituelles, mais qui vient s'y ajouter pour marquer d'une pierre blanche les parcours que vous avez accomplis."
     },
     "goals": {
