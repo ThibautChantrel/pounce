@@ -122,41 +122,29 @@
       "toManyFeedbacks": "Tu as atteint la limite de participations."
     },
     "questions": {
-      "sports": {
-        "label": "Quels sports pratiques-tu ?",
-        "inspiration": "Ex: course à pied, trail, natation, escalade…"
+      "mindset": {
+        "label": "Quand tu fais une course à pied, du vélo ... quel est ton objectif principal ?",
+        "inspiration": "Battre mon record personnel / Clarifier mon esprit / Explorer de nouveaux endroits / Me socialiser ..."
       },
-      "frequency": {
-        "label": "Combien d’heures consacres-tu au sport chaque semaine ?",
-        "inspiration": "Ex: 3h le week-end, 1h par jour…"
+      "current_apps": {
+        "label": "Tu utilises probablement des applications comme Strava ou Garmin. Quelle est la raison principale ?",
+        "inspiration": " Suivre mes statistiques / Partager avec mes amis / Garder un souvenir de mes itinéraires ..."
       },
-      "apps": {
-        "label": "Utilises-tu des applications sportives ? Lesquelles ?",
-        "inspiration": "Strava, Garmin, Nike Run Club…"
+      "the_gap": {
+        "label": "Sois honnête : as-tu déjà eu l'impression de t'ennuyer en faisant les mêmes itinéraires chez toi ?",
+        "inspiration": "Oui, assez souvent / Parfois / Non, j'aime ma routine ..."
       },
-      "likes": {
-        "label": "Qu’aimes-tu dans ces applications ?",
-        "inspiration": "Tracking précis, challenges, communauté…"
+      "metro_concept": {
+        "label": "Nous lançons le 'Paris Metro Challenge' (courir au-dessus des lignes). Première impression ?",
+        "inspiration": "J’adore, je suis dedans ! / Bonne idée, mais je préfère les sentiers naturels / Pas pour moi ..."
       },
-      "frustrations": {
-        "label": "Qu’est-ce qui te frustre ou te manque ?",
-        "inspiration": "Trop social ? Pas assez immersif ?"
+      "certification_value": {
+        "label": "Si tu completes un défi difficile (comme le GR20 ou la Ligne 6 du Métro), comment aimerais-tu le célébrer ?",
+        "inspiration": "Un badge numérique pour mes réseaux sociaux / Acheter un médaillon physique certifié / Juste voir mon nom sur une Muraille de la Gloire ..."
       },
-      "challenges": {
-        "label": "As-tu déjà participé à des challenges sportifs ?",
-        "inspiration": "Courses virtuelles, défis mensuels…"
-      },
-      "metro": {
-        "label": "Que penses-tu du challenge Métro Paris ?",
-        "inspiration": "Concept intéressant ? Trop complexe ?"
-      },
-      "ideal": {
-        "label": "À quoi ressemblerait ton défi idéal ?",
-        "inspiration": "Lieu, durée, difficulté, récompense…"
-      },
-      "certification": {
-        "label": "Serais-tu intéressé par des défis certifiés ?",
-        "inspiration": "Pourquoi ? Qu’est-ce que ça t’apporterait ?"
+      "magic_wand": {
+        "label": "Si tu pouvais créer un défi d'exploration ultime sur Pounce, quel serait-il ?",
+        "inspiration": "Courir les ponts de Paris, explorer les sentiers du Vercors, ou un défi local à ta ville."
       }
     },
     "aboutCta": {

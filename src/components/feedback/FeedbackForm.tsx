@@ -11,15 +11,12 @@ import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 
 const QUESTION_IDS = [
-  'sports',
-  'frequency',
-  'apps',
-  'likes',
-  'frustrations',
-  'challenges',
-  'metro',
-  'ideal',
-  'certification',
+  'mindset',
+  'current_apps',
+  'the_gap',
+  'metro_concept',
+  'certification_value',
+  'magic_wand',
 ]
 
 const AUTOSCROLL_DELAY = 3000
@@ -45,7 +42,6 @@ export function FeedbackForm() {
   const [currentQIndex, setCurrentQIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
-  // Autoscroll des questions
   useEffect(() => {
     if (isPaused || questions.length === 0) return
 
@@ -129,9 +125,7 @@ export function FeedbackForm() {
         }
       `}</style>
 
-      {/* Conteneur principal avec le style de la 2ème version */}
       <div className="border border-border/40 bg-background/70 backdrop-blur-xl rounded-3xl overflow-hidden shadow-[0_15px_50px_-20px_rgba(0,0,0,0.35)] relative flex flex-col">
-        {/* Bouton de fermeture */}
         <button
           onClick={handleClose}
           className="absolute top-6 right-6 z-20 text-muted-foreground hover:text-foreground transition-colors"
@@ -140,7 +134,6 @@ export function FeedbackForm() {
           <X className="w-5 h-5" />
         </button>
 
-        {/* SECTION INSPIRATION (Carrousel) */}
         <div
           className="p-8 md:p-10 pb-6 relative bg-muted/10 transition-colors"
           onMouseEnter={() => setIsPaused(true)}
@@ -187,10 +180,10 @@ export function FeedbackForm() {
           </div>
 
           {/* Barre de progression du timer */}
-          <div className="absolute bottom-0 left-0 w-full h-[2px] bg-border/40">
+          <div className="absolute bottom-0 left-0 w-full h-0.5 bg-border/40">
             <div
               key={currentQIndex}
-              className="h-full bg-foreground"
+              className="h-full bg-primary"
               style={{
                 animation: `fill-progress ${AUTOSCROLL_DELAY}ms linear forwards`,
                 animationPlayState: isPaused ? 'paused' : 'running',
@@ -201,16 +194,7 @@ export function FeedbackForm() {
 
         {/* FORMULAIRE */}
         <div className="p-8 md:p-10 space-y-10">
-          {/* Ligne animée (issue de l'ancienne version) */}
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: '60px' }}
-            transition={{ duration: 0.6 }}
-            className="h-px bg-foreground/40"
-          />
-
           <div className="space-y-8">
-            {/* TEXTAREA UNIQUE */}
             <div className="space-y-2">
               <textarea
                 rows={5}
@@ -221,10 +205,10 @@ export function FeedbackForm() {
                     setErrors((prev) => ({ ...prev, message: undefined }))
                 }}
                 className={cn(
-                  'w-full bg-transparent border-b outline-none text-sm md:text-base py-2 resize-none transition-colors',
+                  'w-full bg-transparent border rounded-md px-3 outline-none text-sm md:text-base py-2 resize-none transition-colors focus:ring-1 focus:ring-primary',
                   errors.message
-                    ? 'border-red-500 focus:border-red-500'
-                    : 'border-border focus:border-foreground'
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : 'border-border focus:border-primary'
                 )}
                 placeholder={t('messageLabel')}
               />
@@ -235,7 +219,6 @@ export function FeedbackForm() {
               )}
             </div>
 
-            {/* INPUT EMAIL */}
             <div className="space-y-2">
               <input
                 type="email"
@@ -246,10 +229,10 @@ export function FeedbackForm() {
                     setErrors((prev) => ({ ...prev, email: undefined }))
                 }}
                 className={cn(
-                  'w-full bg-transparent border-b outline-none text-sm md:text-base py-2 transition-colors',
+                  'w-full bg-transparent border rounded-md px-3 outline-none text-sm md:text-base py-2 transition-colors focus:ring-1 focus:ring-primary',
                   errors.email
-                    ? 'border-red-500 focus:border-red-500'
-                    : 'border-border focus:border-foreground'
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : 'border-border focus:border-primary'
                 )}
                 placeholder={t('emailLabel')}
               />
@@ -261,7 +244,6 @@ export function FeedbackForm() {
             </div>
           </div>
 
-          {/* CHECKBOX MINIMALISTE */}
           <div className="flex items-start gap-3 pt-4">
             <input
               type="checkbox"
@@ -269,7 +251,7 @@ export function FeedbackForm() {
               checked={subscribeToUpdates}
               onChange={(e) => setSubscribeToUpdates(e.target.checked)}
               disabled={isPending}
-              className="mt-1 accent-foreground w-4 h-4 cursor-pointer"
+              className="mt-1 accent-primary w-4 h-4 cursor-pointer"
             />
             <div className="grid gap-1.5 leading-none">
               <label
@@ -289,7 +271,7 @@ export function FeedbackForm() {
             <button
               onClick={handleSubmit}
               disabled={isPending}
-              className="flex items-center text-sm font-medium tracking-wide hover:opacity-60 transition disabled:opacity-40"
+              className="flex items-center text-sm font-medium tracking-wide hover:opacity-60 transition disabled:opacity-40 cursor-pointer"
             >
               {isPending && <Loader2 className="mr-2 w-4 h-4 animate-spin" />}
               {isPending ? '...' : t('submitButton')} {!isPending && '→'}

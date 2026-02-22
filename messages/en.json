@@ -112,43 +112,29 @@
       "messageTooShort": "Your answer must contain at least 10 characters.",
       "toManyFeedbacks": "You have reached the participation limit."
     },
-    "questions": {
-      "sports": {
-        "label": "Which sports do you practice?",
-        "inspiration": "Ex: running, trail running, swimming, climbing…"
-      },
-      "frequency": {
-        "label": "How many hours do you dedicate to sport each week?",
-        "inspiration": "Ex: 3h on weekends, 1h per day…"
-      },
-      "apps": {
-        "label": "Do you use sports apps? Which ones?",
-        "inspiration": "Strava, Garmin, Nike Run Club…"
-      },
-      "likes": {
-        "label": "What do you like about these apps?",
-        "inspiration": "Precise tracking, challenges, community…"
-      },
-      "frustrations": {
-        "label": "What frustrates you or is missing?",
-        "inspiration": "Too social? Not immersive enough?"
-      },
-      "challenges": {
-        "label": "Have you ever participated in sports challenges?",
-        "inspiration": "Virtual races, monthly challenges…"
-      },
-      "metro": {
-        "label": "What do you think of the Paris Metro challenge?",
-        "inspiration": "Interesting concept? Too complex?"
-      },
-      "ideal": {
-        "label": "What would your ideal challenge look like?",
-        "inspiration": "Location, duration, difficulty, reward…"
-      },
-      "certification": {
-        "label": "Would you be interested in certified challenges?",
-        "inspiration": "Why? What would you get out of it?"
-      }
+    "mindset": {
+      "label": "When you go for a run/ride, what is your primary goal?",
+      "inspiration": "Beating a personal record / Clearing my mind / Exploring new places / Socializing ..."
+    },
+    "current_apps": {
+      "label": "You probably use apps like Strava or Garmin. What's the main reason?",
+      "inspiration": "Tracking my stats / Sharing with friends / Keeping a memory of my routes ..."
+    },
+    "the_gap": {
+      "label": "Be honest: do you ever feel bored running the same routes around your home?",
+      "inspiration": "Yes, quite often / Sometimes / No, I love my routine ..."
+    },
+    "metro_concept": {
+      "label": "We are launching the 'Paris Metro Challenge' (running above the lines). Initial thought?",
+      "inspiration": "Love it, I'm in! / Good idea, but I prefer nature trails / Not for me ..."
+    },
+    "certification_value": {
+      "label": "If you complete a hard challenge (like the GR20 or Metro Line 6), how would you want to celebrate it?",
+      "inspiration": "A digital badge for my socials / Purchasing a real, certified physical medal / Just seeing my name on a Wall of Fame ..."
+    },
+    "magic_wand": {
+      "label": "If you could create one ultimate exploration challenge on Pounce, what would it be?",
+      "inspiration": "Cycling the Loire Castles, Running the bridges of Paris, A specific local trail ..."
     },
     "aboutCta": {
       "title": "Discover the vision behind Pounce",
