@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from '@/navigation'
 import { toast } from 'sonner'
 import { Loader2, ArrowLeft, ArrowRight, Lightbulb, X } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 import { createFeedbackAction } from '@/actions/feedback/feedback.actions'
 import { cn } from '@/lib/utils'

@@ -156,7 +156,7 @@ export function ChallengeCarousel() {
                 key={`skeleton-${i}`}
                 className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
               >
-                <div className="h-[450px] w-full rounded-2xl bg-muted/20 animate-pulse" />
+                <div className="h-112.5 w-full rounded-2xl bg-muted/20 animate-pulse" />
               </CarouselItem>
             ))}
 
@@ -165,7 +165,7 @@ export function ChallengeCarousel() {
             challenges.length > 0 &&
             challenges.length >= total && (
               <CarouselItem className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
-                <div className="h-[450px] w-full rounded-2xl border-2 border-dashed border-muted-foreground/20 bg-muted/10 flex flex-col items-center justify-center text-center p-6 text-muted-foreground hover:bg-muted/20 transition-colors cursor-default">
+                <div className="h-112.5 w-full rounded-2xl border-2 border-dashed border-muted-foreground/20 bg-muted/10 flex flex-col items-center justify-center text-center p-6 text-muted-foreground hover:bg-muted/20 transition-colors cursor-default">
                   <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
                     <Flag className="w-8 h-8 opacity-50" />
                   </div>
@@ -178,7 +178,7 @@ export function ChallengeCarousel() {
           {/* Pas de résultats */}
           {!isLoading && hasInitialized && challenges.length === 0 && (
             <CarouselItem className="pl-4 w-full">
-              <div className="h-[300px] w-full flex flex-col items-center justify-center text-muted-foreground">
+              <div className="h-75 w-full flex flex-col items-center justify-center text-muted-foreground">
                 <Search className="w-10 h-10 mb-4 opacity-20" />
                 <p>{t('noResults')}</p>
               </div>
