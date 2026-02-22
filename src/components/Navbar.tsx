@@ -28,7 +28,6 @@ export default async function Navbar({ showConnexionStatus = false }) {
           <Button variant="ghost">{t('about')}</Button>
         </Link>
 
-        {/* Le bloc de connexion (conditionnel) */}
         {showConnexionStatus && (
           <div className="flex items-center gap-4">
             {session ? (

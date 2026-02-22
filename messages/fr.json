@@ -117,6 +117,8 @@
     "stayInformedLabel": "Reste informé des avancées de Pounce",
     "stayInformedDesc": "En t’inscrivant, tu recevras des mises à jour sur le développement de Pounce, les nouveaux défis et les fonctionnalités à venir. Nous respectons ta vie privée et n’enverrons que des informations pertinentes.",
     "inspirationLabel": "Besoin d’inspiration ?",
+    "visionReminder": "Avant de construire, nous voulons écouter.",
+    "learnMore": "Découvrir la vision",
     "validation": {
       "emailInvalid": "Entre une adresse email valide.",
       "messageTooShort": "Ta réponse doit contenir au moins 10 caractères.",
@@ -150,7 +152,7 @@
     },
     "aboutCta": {
       "title": "Découvrir la vision derrière Pounce",
-      "description": "Pounce n’est pas une application de plus. C’est une nouvelle manière d’explorer et de certifier nos pratiques sportives.",
+      "description": "Donnez une nouvelle dimension à vos entraînements. Pounce est une approche pensée pour valoriser l'exploration et certifier vos accomplissements sportifs.",
       "button": "Lire l’histoire du projet →"
     },
     "afterSubmitNote": "Chaque retour façonne l’avenir de Pounce. Merci de contribuer à quelque chose de différent.",

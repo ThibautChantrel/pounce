@@ -163,7 +163,7 @@ export function FeedbackForm() {
             </div>
           </div>
 
-          <div className="space-y-2 min-h-[70px]">
+          <div className="space-y-2 min-h-17.5">
             <h3
               key={currentQIndex + 'title'}
               className="text-base md:text-lg font-medium leading-relaxed animate-in fade-in slide-in-from-right-4 duration-300"
@@ -206,13 +206,13 @@ export function FeedbackForm() {
                 className={cn(
                   'w-full bg-transparent border rounded-md px-3 outline-none text-sm md:text-base py-2 resize-none transition-colors focus:ring-1 focus:ring-primary',
                   errors.message
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    ? 'border-destructive focus:border-destructive focus:ring-destructive'
                     : 'border-border focus:border-primary'
                 )}
                 placeholder={t('messageLabel')}
               />
               {errors.message && (
-                <p className="text-xs text-red-500 animate-in fade-in">
+                <p className="text-xs text-destructive animate-in fade-in">
                   {errors.message}
                 </p>
               )}
@@ -230,13 +230,13 @@ export function FeedbackForm() {
                 className={cn(
                   'w-full bg-transparent border rounded-md px-3 outline-none text-sm md:text-base py-2 transition-colors focus:ring-1 focus:ring-primary',
                   errors.email
-                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    ? 'border-destructive focus:border-destructive focus:ring-destructive'
                     : 'border-border focus:border-primary'
                 )}
                 placeholder={t('emailLabel')}
               />
               {errors.email && (
-                <p className="text-xs text-red-500 animate-in fade-in">
+                <p className="text-xs text-destructive animate-in fade-in">
                   {errors.email}
                 </p>
               )}
@@ -270,7 +270,7 @@ export function FeedbackForm() {
             <button
               onClick={handleSubmit}
               disabled={isPending}
-              className="flex items-center text-sm font-medium tracking-wide hover:opacity-60 transition disabled:opacity-40 cursor-pointer"
+              className="flex items-center text-sm font-medium text-primary tracking-wide hover:opacity-60 transition disabled:opacity-40 cursor-pointer"
             >
               {isPending && <Loader2 className="mr-2 w-4 h-4 animate-spin" />}
               {isPending ? '...' : t('submitButton')} {!isPending && '→'}

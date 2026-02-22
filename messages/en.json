@@ -108,6 +108,8 @@
     "stayInformedLabel": "Stay informed of Pounce's progress",
     "stayInformedDesc": "Subscribe to our newsletter to receive updates on the project and be among the first to test the app.",
     "inspirationLabel": "Need inspiration?",
+    "visionReminder": "Before building, we want to listen.",
+    "learnMore": "Discover the vision",
     "validation": {
       "emailInvalid": "Please enter a valid email address.",
       "messageTooShort": "Your answer must contain at least 10 characters.",

@@ -12,26 +12,24 @@ export default async function FeedbackPage() {
   const t = await getTranslations('Feedbacks')
 
   return (
-    <main className="min-h-screen dark:bg-black py-12 md:py-20 px-4">
-      <div className="container max-w-4xl mx-auto space-y-16">
-        {/* ABOUT CTA */}
-        <section className="border rounded-2xl p-8 bg-muted/30 text-center space-y-4">
-          <h3 className="text-xl font-semibold">{t('aboutCta.title')}</h3>
+    <main className="min-h-screen dark:bg-black py-16 px-4">
+      <div className="container max-w-4xl mx-auto space-y-8">
+        {/* HEADER */}
+        <FeedbackHeader title={t('title')} description={t('description')} />
 
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            {t('aboutCta.description')}
+        {/* MICRO CONTEXT */}
+        <div className="text-center max-w-2xl mx-auto space-y-3">
+          <p className="text-sm text-muted-foreground font-light leading-relaxed">
+            {t('visionReminder')}
           </p>
 
           <Link
             href="/about"
-            className="inline-block text-sm font-medium underline underline-offset-4 hover:opacity-70 transition"
+            className="text-xs uppercase tracking-widest text-primary hover:text-foreground transition"
           >
-            {t('aboutCta.button')}
+            {t('learnMore')} →
           </Link>
-        </section>
-
-        {/* HEADER */}
-        <FeedbackHeader title={t('title')} description={t('description')} />
+        </div>
 
         {/* FORM */}
         <FeedbackForm />
