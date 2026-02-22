@@ -18,7 +18,7 @@ const QUESTION_IDS = [
   'magic_wand',
 ]
 
-const AUTOSCROLL_DELAY = 3000
+const AUTOSCROLL_DELAY = 5000
 
 export function FeedbackForm() {
   const router = useRouter()
