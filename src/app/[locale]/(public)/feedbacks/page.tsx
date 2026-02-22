@@ -14,17 +14,6 @@ export default async function FeedbackPage() {
   return (
     <main className="min-h-screen dark:bg-black py-12 md:py-20 px-4">
       <div className="container max-w-4xl mx-auto space-y-16">
-        {/* HEADER */}
-        <FeedbackHeader title={t('title')} description={t('description')} />
-
-        {/* FORM */}
-        <FeedbackForm />
-
-        {/* AFTER FORM NOTE */}
-        <div className="text-center text-sm text-muted-foreground max-w-xl mx-auto">
-          {t('afterSubmitNote')}
-        </div>
-
         {/* ABOUT CTA */}
         <section className="border rounded-2xl p-8 bg-muted/30 text-center space-y-4">
           <h3 className="text-xl font-semibold">{t('aboutCta.title')}</h3>
@@ -40,6 +29,17 @@ export default async function FeedbackPage() {
             {t('aboutCta.button')}
           </Link>
         </section>
+
+        {/* HEADER */}
+        <FeedbackHeader title={t('title')} description={t('description')} />
+
+        {/* FORM */}
+        <FeedbackForm />
+
+        {/* AFTER FORM NOTE */}
+        <div className="text-center text-sm text-muted-foreground max-w-xl mx-auto">
+          {t('afterSubmitNote')}
+        </div>
       </div>
     </main>
   )

@@ -4,7 +4,8 @@
     "authButton": "Connexion / Inscription",
     "loginModalTitle": "Bienvenue",
     "loginModalDesc": "Connectez-vous ou créez un compte pour continuer.",
-    "logoutButton": "Se déconnecter"
+    "logoutButton": "Se déconnecter",
+    "about": "Notre vision"
   },
 
   "Hero": {

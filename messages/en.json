@@ -4,7 +4,8 @@
     "authButton": "Login / Sign Up",
     "loginModalTitle": "Welcome",
     "loginModalDesc": "Log in or create an account to continue.",
-    "logoutButton": "Log Out"
+    "logoutButton": "Log Out",
+    "about": "Our vision"
   },
 
   "hero": {
