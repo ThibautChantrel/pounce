@@ -31,7 +31,7 @@ export function Footer() {
                 {t('about')}
               </Link>
               <Link
-                href="/feedback"
+                href="/feedbacks"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {t('feedback')}
