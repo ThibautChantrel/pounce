@@ -88,3 +88,22 @@ export async function getPoiAction(id: string) {
 export const fetchPois = async (params: FetchParams) => {
   return await poiService.getAllPois(params)
 }
+
+export async function bulkCreatePoiAction(data: CreatePoiInput[]): Promise<{
+  success: boolean
+  data?: { inserted: number; skipped: number }
+  error?: string
+}> {
+  try {
+    const result = await poiService.bulkCreate(data)
+    revalidatePath('/admin/pois')
+    return { success: true, data: result }
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.error('Erreur lors de l’import en masse :', error)
+    return {
+      success: false,
+      error: 'Une erreur est survenue lors de l’import.',
+    }
+  }
+}

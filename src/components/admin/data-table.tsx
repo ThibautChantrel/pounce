@@ -34,6 +34,7 @@ import {
   ChevronsRight,
   Search,
   Plus,
+  Upload,
 } from 'lucide-react'
 import { useDebouncedCallback } from 'use-debounce'
 import { useTranslations } from 'next-intl'
@@ -42,12 +43,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   totalItems: number
+  import?: boolean
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   totalItems,
+  import: showImport,
 }: DataTableProps<TData, TValue>) {
   const router = useRouter()
   const pathname = usePathname()
@@ -180,13 +183,25 @@ export function DataTable<TData, TValue>({
             />
           </div>
         </div>
-
-        <Button
-          variant="ghost"
-          onClick={() => router.push(`${pathname}/create`)}
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => router.push(`${pathname}/create`)}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+          {showImport && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push(`${pathname}/import`)}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Tableau */}
