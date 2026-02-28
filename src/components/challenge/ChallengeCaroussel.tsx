@@ -10,12 +10,14 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel'
 import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type'
-import { Flag, Search, Loader2, PawPrint } from 'lucide-react'
+import { Flag, Search, Loader2, PawPrint, ArrowRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from 'use-debounce'
 import { useTranslations } from 'next-intl'
 import { ChallengeCard } from './ChallengeCard'
 import { fetchChallengesForUser } from '@/actions/challenge/challenge.action'
+import { Button } from '../ui/button'
+import { Link } from '@/navigation'
 
 const ITEMS_PER_PAGE = 10
 
@@ -171,6 +173,17 @@ export function ChallengeCarousel() {
                   </div>
                   <h3 className="text-xl font-bold mb-2">{t('endTitle')}</h3>
                   <p className="text-sm max-w-50">{t('endDescription')}</p>
+                  <Button
+                    size="lg"
+                    variant="ghost"
+                    asChild
+                    className="group mt-6 border"
+                  >
+                    <Link href="/feedbacks">
+                      {t('ideasTitle')}
+                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
                 </div>
               </CarouselItem>
             )}

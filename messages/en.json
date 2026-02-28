@@ -13,7 +13,8 @@
     "about": "About",
     "feedback": "Feedback",
     "instagram": "Instagram",
-    "footprint": "Every trace matters."
+    "footprint": "Every trace matters.",
+    "copyright": "Pounce — ALL RIGHTS RESERVED"
   },
 
   "hero": {
@@ -60,6 +61,7 @@
     "searchPlaceholder": "Search for a challenge, a location...",
     "endTitle": "That's all for now!",
     "endDescription": "More legendary challenges are coming soon to Paris.",
+    "ideasTitle": "Got ideas?",
     "noResults": "No challenges match your search.",
     "defaultDescription": "Ready to accept the challenge?",
     "viewDetails": "View details",

@@ -55,7 +55,6 @@ export default function AboutPage() {
         {/* CONTENT */}
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-24 md:py-32 grow flex items-center">
           <div className="max-w-2xl text-white">
-            {/* Eyebrow */}
             <div className="text-xs tracking-[0.3em] uppercase text-white/60 mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
               {tGlobal('Navbar.brand')}
             </div>
@@ -64,16 +63,13 @@ export default function AboutPage() {
               {t('hero.title')}
             </h1>
 
-            {/* Ligne séparatrice élégante */}
             <div className="h-px w-12 bg-white/30 mb-8 animate-in fade-in zoom-in duration-700 delay-300 fill-mode-both" />
 
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both">
-              {/* Le premier paragraphe ressort plus (texte un peu plus grand et plus blanc) */}
               <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed font-light">
                 {t('hero.p1')}
               </p>
 
-              {/* Les suivants sont plus discrets */}
               <div className="space-y-4 text-sm sm:text-base text-white/60 leading-relaxed font-light">
                 <p>{t('hero.p2')}</p>
                 <p>{t('hero.p3')}</p>
@@ -82,7 +78,6 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* SCROLL INDICATOR */}
         <div className="relative z-10 w-full flex justify-center pb-8 animate-in fade-in duration-1000 delay-1000 fill-mode-both">
           <div className="flex flex-col items-center gap-2 text-white/40">
             <ChevronDown className="w-5 h-5 animate-bounce" />

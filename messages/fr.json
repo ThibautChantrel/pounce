@@ -13,7 +13,8 @@
     "about": "À propos",
     "feedback": "Feedback",
     "instagram": "Instagram",
-    "footprint": "Chaque pas compte"
+    "footprint": "Chaque pas compte",
+    "copyright": "Pounce — TOUS DROITS RÉSERVÉS"
   },
 
   "Hero": {
@@ -68,7 +69,8 @@
   "Challenges": {
     "searchPlaceholder": "Rechercher un challenge, un lieu...",
     "endTitle": "C'est tout pour le moment !",
-    "endDescription": "D'autres challenges légendaires arrivent bientôt à Paris.",
+    "endDescription": "D'autres challenges légendaires arrivent bientôt à Paris et ailleurs.",
+    "ideasTitle": "Des idées ?",
     "noResults": "Aucun challenge ne correspond à votre recherche.",
     "defaultDescription": "Prêt à relever le défi ?",
     "viewDetails": "Voir le détail",
