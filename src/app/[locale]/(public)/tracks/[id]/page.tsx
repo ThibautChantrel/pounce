@@ -95,7 +95,7 @@ export default async function TrackDetailPage(props: PageProps) {
         hasGpx={!!track.gpxFile}
       />
 
-      <div className="container max-w-5xl mx-auto py-4">
+      <div className="container max-w-5xl mx-auto px-4 sm:px-6 py-4">
         <TrackInlineStats
           distance={track.distance}
           elevationGain={track.elevationGain}
