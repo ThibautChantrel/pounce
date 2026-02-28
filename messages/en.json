@@ -82,6 +82,22 @@
       "distance": "Distance",
       "noDescription": "No description available for this challenge.",
       "noTrackDescription": "No description.",
+      "MagicSelect": {
+        "title": "Undecided?",
+        "subtitle": "Let destiny choose for you :)",
+        "searching": "Searching...",
+        "winner": "Do this track !",
+        "ctaDefault": "Magic Choice",
+        "ctaRetry": "Try again",
+        "phrases": [
+          "Let's see what we have here...",
+          "This one looks good...",
+          "Oh no, too easy.",
+          "Maybe this one?",
+          "Hmm, let me think...",
+          "Come on... let's decide."
+        ]
+      },
       "Difficulties": {
         "EASY": "Easy",
         "MEDIUM": "Medium",

@@ -4,6 +4,7 @@ import { ChallengeHeader } from '@/components/challenge/ChallengeHeader'
 import { ChallengeTrackList } from '@/components/challenge/ChallengeTrackList'
 import { Info } from 'lucide-react'
 import { getChallengeForUserAction } from '@/actions/challenge/challenge.action'
+import { MagicSelect } from '@/components/challenge/MagicSelect'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>
@@ -55,6 +56,8 @@ export default async function ChallengeDetailPage(props: PageProps) {
             </p>
           </div>
         </div>
+
+        <MagicSelect tracks={challenge.tracks} />
 
         <ChallengeTrackList tracks={challenge.tracks} />
       </div>

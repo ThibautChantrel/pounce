@@ -91,6 +91,22 @@
       "distance": "Distance",
       "noDescription": "Aucune description disponible pour ce challenge.",
       "noTrackDescription": "Pas de description.",
+      "MagicSelect": {
+        "title": "Indécis ?",
+        "subtitle": "Laisse le hasard décider pour toi :)",
+        "searching": "Recherche en cours...",
+        "winner": "Fais ce parcours !",
+        "ctaDefault": "Choix magique",
+        "ctaRetry": "Relancer",
+        "phrases": [
+          "Voyons voir ce qu'on a là...",
+          "Celle-ci me paraît pas mal...",
+          "Ah non, trop facile.",
+          "Peut-être celle-là ?",
+          "Hmm, laisse-moi réfléchir...",
+          "Allez... on se décide."
+        ]
+      },
       "Difficulties": {
         "EASY": "Facile",
         "MEDIUM": "Moyen",

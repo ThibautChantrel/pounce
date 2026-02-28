@@ -9,7 +9,7 @@ type TrackWithRelation = ChallengeTrack & { track: Track }
 
 interface TrackCardProps {
   item: TrackWithRelation
-  index: number
+  index?: number
   t: (key: string) => string
 }
 
@@ -41,10 +41,11 @@ export function TrackCard({ item, index, t }: TrackCardProps) {
                     </span>
                   </div>
                 )}
-
-                <div className="absolute top-0 left-0 bg-black/60 backdrop-blur-[2px] text-white px-2 py-1 rounded-br-lg text-[10px] font-bold uppercase tracking-wider z-10">
-                  #{index + 1}
-                </div>
+                {index !== undefined && (
+                  <div className="absolute top-0 left-0 bg-black/60 backdrop-blur-[2px] text-white px-2 py-1 rounded-br-lg text-[10px] font-bold uppercase tracking-wider z-10">
+                    #{index + 1}
+                  </div>
+                )}
               </div>
             </div>
           </div>
