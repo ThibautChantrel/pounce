@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from '@/navigation'
 import { toast } from 'sonner'
-import { Loader2, ArrowLeft, ArrowRight, Lightbulb, X } from 'lucide-react'
+import { Loader2, ArrowLeft, ArrowRight, Lightbulb } from 'lucide-react'
 
 import { createFeedbackAction } from '@/actions/feedback/feedback.actions'
 import { cn } from '@/lib/utils'
@@ -125,14 +125,6 @@ export function FeedbackForm() {
       `}</style>
 
       <div className="border border-border/40 bg-background/70 backdrop-blur-xl rounded-3xl overflow-hidden shadow-[0_15px_50px_-20px_rgba(0,0,0,0.35)] relative flex flex-col">
-        <button
-          onClick={handleClose}
-          className="absolute top-6 right-6 z-20 text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Fermer"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
         <div
           className="p-8 md:p-10 pb-6 relative bg-muted/10 transition-colors"
           onMouseEnter={() => setIsPaused(true)}
