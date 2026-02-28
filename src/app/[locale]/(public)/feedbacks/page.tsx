@@ -4,8 +4,9 @@ import { FeedbackForm } from '@/components/feedback/FeedbackForm'
 import { Link } from '@/navigation'
 
 export const metadata = {
-  title: 'Contact & Feedback | Pounce',
-  description: 'Envoyez-nous vos retours et aidez-nous à améliorer Pounce.',
+  title: 'Laisse ton empreinte | Pounce',
+  description:
+    'Partage tes habitudes sportives et aide-nous à bâtir le futur de l’exploration sportive.',
 }
 
 export default async function FeedbackPage() {

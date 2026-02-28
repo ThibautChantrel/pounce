@@ -5,9 +5,45 @@ import { ChallengeTrackList } from '@/components/challenge/ChallengeTrackList'
 import { Info } from 'lucide-react'
 import { getChallengeForUserAction } from '@/actions/challenge/challenge.action'
 import { MagicSelect } from '@/components/challenge/MagicSelect'
+import { getChallengeAction } from '@/actions/challenge/challenge.admin.action'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { id } = await params
+  const challenge = await getChallengeAction(id)
+
+  if (!challenge) {
+    return { title: 'Challenge non trouvé | Pounce' }
+  }
+
+  const imageUrl = challenge.bannerId
+    ? `/api/files/${challenge.bannerId}`
+    : '/default-banner.png'
+
+  const totalDistance = challenge.tracks.reduce(
+    (acc, t) => acc + t.track.distance,
+    0
+  )
+
+  return {
+    title: `${challenge.title} - Défi Sportif à ${challenge.location} | Pounce`,
+    description: `${challenge.tracks.length} étapes, ${totalDistance}km. ${challenge.description?.slice(0, 150) || 'Relevez le défi !'}`,
+    openGraph: {
+      title: `${challenge.title} - Pounce`,
+      description: `Relève ce challenge de ${totalDistance}km à ${challenge.location}.`,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `Bannière du challenge ${challenge.title}`,
+        },
+      ],
+    },
+  }
 }
 
 export default async function ChallengeDetailPage(props: PageProps) {

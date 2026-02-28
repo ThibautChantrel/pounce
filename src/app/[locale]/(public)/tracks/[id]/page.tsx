@@ -20,6 +20,40 @@ type PageProps = {
   params: Promise<{ id: string; locale: string }>
 }
 
+export async function generateMetadata({ params }: PageProps) {
+  const { id } = await params
+  const track = await getTrackAction(id)
+
+  if (!track) {
+    return { title: 'Parcours non trouvé | Pounce' }
+  }
+
+  const description = `${track.distance} km et ${track.elevationGain || 0}m de dénivelé. ${
+    track.pois.length
+  } points d'intérêt à découvrir sur ce tracé. ${track.description?.slice(0, 100)}...`
+
+  const imageUrl = track.bannerId
+    ? `/api/files/${track.bannerId}`
+    : '/images/placeholder-track.jpg'
+
+  return {
+    title: `${track.title} | Parcours Pounce`,
+    description: description,
+    openGraph: {
+      title: `${track.title} - Exploration Sportive`,
+      description: description,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: `Aperçu du parcours ${track.title}`,
+        },
+      ],
+    },
+  }
+}
+
 export default async function TrackDetailPage(props: PageProps) {
   const { id } = await props.params
   const t = await getTranslations('Tracks')
@@ -114,7 +148,7 @@ export default async function TrackDetailPage(props: PageProps) {
                     </Popover>
                   )}
 
-                  <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider tetx-muted-foreground">
+                  <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">
                     {poi.type}
                   </div>
                 </>

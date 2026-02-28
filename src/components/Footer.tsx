@@ -54,7 +54,9 @@ export function Footer() {
 
         {/* BOTTOM : Copyright */}
         <div className="mt-10 pt-6 border-t border-border/40 text-xs text-muted-foreground flex flex-col sm:flex-row justify-between items-center gap-3">
-          <span>© {year} Pounce</span>
+          <span>
+            © {year} {t('copyright')}
+          </span>
           <span>{t('footprint')}</span>
         </div>
       </div>
