@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { Link } from '@/navigation'
 import { Button } from '@/components/ui/button'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ChevronDown } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { fetchChallengesForUser } from '@/actions/challenge/challenge.action'
 import { ChallengeCard } from '@/components/challenge/ChallengeCard'
@@ -12,6 +12,7 @@ import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type
 
 export default function AboutPage() {
   const t = useTranslations('About')
+  const tGlobal = useTranslations('')
 
   const [challengeMetro, setChallengeMetro] =
     useState<ChallengeWithRelations | null>(null)
@@ -36,28 +37,55 @@ export default function AboutPage() {
 
   return (
     <div className="flex flex-col">
-      {/* ================= HERO FULLSCREEN ================= */}
-      <section className="relative min-h-screen w-full flex items-center justify-center text-center overflow-hidden">
+      <section className="relative min-h-screen w-full overflow-hidden flex flex-col">
+        {/* IMAGE & OVERLAYS */}
         <div className="absolute inset-0">
           <Image
             src="/about.png"
             alt="Mountain trail"
             fill
             priority
-            className="object-cover"
+            className="object-cover animate-in zoom-in-[1.03] duration-2000 ease-out"
+            // ^ Un très léger zoom arrière au chargement pour le dynamisme
           />
-          <div className="absolute inset-0 bg-black/45" />
+          {/* Dégradé optimisé : Assombrit le bas sur mobile, et la gauche sur desktop */}
+          <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/10 md:bg-linear-to-r md:from-black/80 md:via-black/40 md:to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-2xl px-5 sm:px-6 text-white">
-          <h1 className="text-2xl sm:text-3xl md:text-5xl font-semibold tracking-tight leading-tight mb-6">
-            {t('hero.title')}
-          </h1>
+        {/* CONTENT */}
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-24 md:py-32 grow flex items-center">
+          <div className="max-w-2xl text-white">
+            {/* Eyebrow */}
+            <div className="text-xs tracking-[0.3em] uppercase text-white/60 mb-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+              {tGlobal('Navbar.brand')}
+            </div>
 
-          <div className="space-y-4 sm:space-y-5 text-sm sm:text-base md:text-lg text-white/80 leading-relaxed font-light">
-            <p>{t('hero.p1')}</p>
-            <p>{t('hero.p2')}</p>
-            <p>{t('hero.p3')}</p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.1] mb-8 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-150 fill-mode-both">
+              {t('hero.title')}
+            </h1>
+
+            {/* Ligne séparatrice élégante */}
+            <div className="h-px w-12 bg-white/30 mb-8 animate-in fade-in zoom-in duration-700 delay-300 fill-mode-both" />
+
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-both">
+              {/* Le premier paragraphe ressort plus (texte un peu plus grand et plus blanc) */}
+              <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed font-light">
+                {t('hero.p1')}
+              </p>
+
+              {/* Les suivants sont plus discrets */}
+              <div className="space-y-4 text-sm sm:text-base text-white/60 leading-relaxed font-light">
+                <p>{t('hero.p2')}</p>
+                <p>{t('hero.p3')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SCROLL INDICATOR */}
+        <div className="relative z-10 w-full flex justify-center pb-8 animate-in fade-in duration-1000 delay-1000 fill-mode-both">
+          <div className="flex flex-col items-center gap-2 text-white/40">
+            <ChevronDown className="w-5 h-5 animate-bounce" />
           </div>
         </div>
       </section>

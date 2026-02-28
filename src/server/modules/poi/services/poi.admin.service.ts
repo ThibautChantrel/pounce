@@ -1,7 +1,12 @@
 import { auth } from '@/server/modules/auth/auth.config'
 import { BusinessError, ERROR_CODES } from '@/core/errors'
 import { poiRepository } from '../repositories/poi.repository'
-import { CreatePoiInput, Poi, UpdatePoiInput } from '../poi.types'
+import {
+  CreateManyPoiInput,
+  CreatePoiInput,
+  Poi,
+  UpdatePoiInput,
+} from '../poi.types'
 import { FetchParams } from '@/utils/fetch'
 
 export class PoiService {
@@ -53,6 +58,51 @@ export class PoiService {
 
   async get(id: string): Promise<Poi | null> {
     return await poiRepository.findById(id)
+  }
+  async bulkCreate(poisData: CreatePoiInput[], userId?: string) {
+    const existingPois = await poiRepository.getExistingForValidation()
+
+    const existingNames = new Set(existingPois.map((p) => p.name.toLowerCase()))
+    const existingCoords = new Set(
+      existingPois.map(
+        (p) => `${p.latitude.toFixed(5)},${p.longitude.toFixed(5)}`
+      )
+    )
+
+    // 2. Filtrer les données entrantes (En mémoire, instantané)
+    const validPoisToInsert: CreateManyPoiInput[] = []
+    let skippedCount = 0
+
+    for (const poi of poisData) {
+      const nameKey = poi.name.toLowerCase()
+      const coordKey = `${Number(poi.latitude).toFixed(5)},${Number(poi.longitude).toFixed(5)}`
+
+      // Vérification des doublons
+      if (existingNames.has(nameKey) || existingCoords.has(coordKey)) {
+        skippedCount++
+        continue
+      }
+
+      // Ajout à la liste d'insertion
+      validPoisToInsert.push({
+        ...poi,
+        createdById: userId || null, // On passe la FK directement pour createMany
+      })
+
+      // Mise à jour des Sets pour empêcher les doublons au sein du fichier Excel
+      existingNames.add(nameKey)
+      existingCoords.add(coordKey)
+    }
+
+    // 3. Interaction BD N°2 : Insertion en masse via le Repo
+    if (validPoisToInsert.length > 0) {
+      await poiRepository.createMany(validPoisToInsert)
+    }
+
+    return {
+      inserted: validPoisToInsert.length,
+      skipped: skippedCount,
+    }
   }
 }
 

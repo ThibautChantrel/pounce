@@ -11,5 +11,12 @@ interface PoisTableProps {
 export default function PoisTable({ data, totalItems }: PoisTableProps) {
   const columns = usePoiColumns()
 
-  return <DataTable columns={columns} data={data} totalItems={totalItems} />
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      totalItems={totalItems}
+      import={true}
+    />
+  )
 }

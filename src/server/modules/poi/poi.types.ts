@@ -33,3 +33,7 @@ export type Poi = {
   createdById: string | null
   updatedById: string | null
 }
+
+export type CreateManyPoiInput = CreatePoiInput & {
+  createdById?: string | null
+}

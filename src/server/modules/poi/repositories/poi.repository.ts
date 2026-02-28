@@ -79,6 +79,19 @@ export class PoiRepository {
     ])
     return { data, total }
   }
+
+  async getExistingForValidation() {
+    return await prisma.poi.findMany({
+      select: { name: true, latitude: true, longitude: true },
+    })
+  }
+
+  async createMany(data: Prisma.PoiCreateManyInput[]) {
+    return await prisma.poi.createMany({
+      data,
+      skipDuplicates: true,
+    })
+  }
 }
 
 export const poiRepository = new PoiRepository()

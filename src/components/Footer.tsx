@@ -31,7 +31,7 @@ export function Footer() {
                 {t('about')}
               </Link>
               <Link
-                href="/feedback"
+                href="/feedbacks"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {t('feedback')}
@@ -40,7 +40,7 @@ export function Footer() {
 
             <div className="flex flex-col space-y-3 font-medium">
               <a
-                href="https://instagram.com/toncompte"
+                href="https://www.instagram.com/thibautboulotdodo/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
