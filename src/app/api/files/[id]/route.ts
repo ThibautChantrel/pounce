@@ -1,14 +1,18 @@
 import { getFileById } from '@/server/modules/file/services/file.admin.service'
+import { isFileRequestFromApp } from '@/utils/file-request'
 import { NextResponse } from 'next/server'
 
 export async function GET(
-  _: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    if (!isFileRequestFromApp(request)) {
+      return new NextResponse('Forbidden', { status: 403 })
+    }
+
     const { id } = await params
 
-    // Cette fonction retourne bien 'data' (le Buffer), c'est parfait pour ici.
     const file = await getFileById(id)
 
     const encodedFilename = encodeURIComponent(file.filename)
