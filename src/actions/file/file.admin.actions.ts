@@ -25,16 +25,11 @@ export async function getFileInfos(id: string): Promise<FileData> {
 }
 
 export const fetchFiles = async (params: FetchParams) => {
-  console.log('Fetching files with params:', params)
   return await getAllFiles(params)
 }
 
 export const removeFile = async (id: string) => {
   return await deleteFileById(id)
-}
-
-export const updateFile = async (id: string, formData: FormData) => {
-  return await upload(formData)
 }
 
 export async function updateFileAction(id: string, formData: FormData) {

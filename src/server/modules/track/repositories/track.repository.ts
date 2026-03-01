@@ -117,6 +117,13 @@ export class TrackRepository {
     })
   }
 
+  async findVisibleForSitemap() {
+    return await prisma.track.findMany({
+      where: { visible: true },
+      select: { id: true, updatedAt: true },
+    })
+  }
+
   async findGpxContent(trackId: string) {
     const track = await prisma.track.findUnique({
       where: { id: trackId },

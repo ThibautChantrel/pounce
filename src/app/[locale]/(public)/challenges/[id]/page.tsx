@@ -11,8 +11,10 @@ type PageProps = {
   params: Promise<{ id: string; locale: string }>
 }
 
+const BASE_URL = process.env.NEXTAUTH_URL || 'https://pounce.app'
+
 export async function generateMetadata({ params }: PageProps) {
-  const { id } = await params
+  const { id, locale } = await params
   const challenge = await getChallengeAction(id)
 
   if (!challenge) {
@@ -20,17 +22,26 @@ export async function generateMetadata({ params }: PageProps) {
   }
 
   const imageUrl = challenge.bannerId
-    ? `/api/files/${challenge.bannerId}`
-    : '/default-banner.png'
+    ? `${BASE_URL}/api/files/${challenge.bannerId}`
+    : `${BASE_URL}/default-banner.png`
 
   const totalDistance = challenge.tracks.reduce(
     (acc, t) => acc + t.track.distance,
     0
   )
 
+  const path = `/challenges/${id}`
+
   return {
     title: `${challenge.title} - Défi Sportif à ${challenge.location} | Pounce`,
     description: `${challenge.tracks.length} étapes, ${totalDistance}km. ${challenge.description?.slice(0, 150) || 'Relevez le défi !'}`,
+    alternates: {
+      canonical: `${BASE_URL}/${locale}${path}`,
+      languages: {
+        fr: `${BASE_URL}/fr${path}`,
+        en: `${BASE_URL}/en${path}`,
+      },
+    },
     openGraph: {
       title: `${challenge.title} - Pounce`,
       description: `Relève ce challenge de ${totalDistance}km à ${challenge.location}.`,

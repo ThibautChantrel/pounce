@@ -47,6 +47,13 @@ export const getFileById = async (id: string) => {
 }
 
 export const getFileInfosById = async (id: string) => {
+  const session = await auth()
+  if (!session?.user || session.user.role !== 'ADMIN') {
+    throw new BusinessError(
+      ERROR_CODES.UNAUTHORIZED,
+      'Admin access required to view file info'
+    )
+  }
   const file = await getOneInfo(id)
   if (!file) {
     throw new BusinessError(ERROR_CODES.NOT_FOUND, 'File not found')
@@ -55,10 +62,24 @@ export const getFileInfosById = async (id: string) => {
 }
 
 export const getAllFiles = async (params: FetchParams) => {
+  const session = await auth()
+  if (!session?.user || session.user.role !== 'ADMIN') {
+    throw new BusinessError(
+      ERROR_CODES.UNAUTHORIZED,
+      'Admin access required to list files'
+    )
+  }
   return await getAll(params)
 }
 
 export const deleteFileById = async (id: string) => {
+  const session = await auth()
+  if (!session?.user || session.user.role !== 'ADMIN') {
+    throw new BusinessError(
+      ERROR_CODES.UNAUTHORIZED,
+      'Admin access required to delete files'
+    )
+  }
   const file = await getOne(id)
   if (!file) {
     throw new BusinessError(ERROR_CODES.NOT_FOUND, 'File not found')
@@ -67,6 +88,13 @@ export const deleteFileById = async (id: string) => {
 }
 
 export const updateFileById = async (id: string, formData: FormData) => {
+  const session = await auth()
+  if (!session?.user || session.user.role !== 'ADMIN') {
+    throw new BusinessError(
+      ERROR_CODES.UNAUTHORIZED,
+      'Admin access required to update files'
+    )
+  }
   const existingFile = await getOne(id)
   if (!existingFile) {
     throw new BusinessError(ERROR_CODES.NOT_FOUND, 'File not found')

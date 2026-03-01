@@ -20,8 +20,10 @@ type PageProps = {
   params: Promise<{ id: string; locale: string }>
 }
 
+const BASE_URL = process.env.NEXTAUTH_URL || 'https://pounce.app'
+
 export async function generateMetadata({ params }: PageProps) {
-  const { id } = await params
+  const { id, locale } = await params
   const track = await getTrackAction(id)
 
   if (!track) {
@@ -30,15 +32,24 @@ export async function generateMetadata({ params }: PageProps) {
 
   const description = `${track.distance} km et ${track.elevationGain || 0}m de dénivelé. ${
     track.pois.length
-  } points d'intérêt à découvrir sur ce tracé. ${track.description?.slice(0, 100)}...`
+  } points d'intérêt à découvrir sur ce tracé. ${(track.description ?? '').slice(0, 100)}...`
 
   const imageUrl = track.bannerId
-    ? `/api/files/${track.bannerId}`
-    : '/images/placeholder-track.jpg'
+    ? `${BASE_URL}/api/files/${track.bannerId}`
+    : `${BASE_URL}/images/placeholder-track.jpg`
+
+  const path = `/tracks/${id}`
 
   return {
     title: `${track.title} | Parcours Pounce`,
     description: description,
+    alternates: {
+      canonical: `${BASE_URL}/${locale}${path}`,
+      languages: {
+        fr: `${BASE_URL}/fr${path}`,
+        en: `${BASE_URL}/en${path}`,
+      },
+    },
     openGraph: {
       title: `${track.title} - Exploration Sportive`,
       description: description,
@@ -104,7 +115,7 @@ export default async function TrackDetailPage(props: PageProps) {
         />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <TrackDescription description={track.description!} />
+            <TrackDescription description={track.description ?? undefined} />
 
             <div className="sticky top-24">
               <TrackGpxMap
