@@ -22,6 +22,12 @@ function getAllowedOrigins(): string[] {
     origins.push('https://pounce.app')
   }
 
+  // Vercel: allow deployment URL (production + preview deployments)
+  const vercelUrl = process.env.VERCEL_URL
+  if (vercelUrl) {
+    origins.push(`https://${vercelUrl}`)
+  }
+
   // Allow localhost in development
   if (process.env.NODE_ENV === 'development') {
     origins.push('http://localhost:3000', 'http://127.0.0.1:3000')
