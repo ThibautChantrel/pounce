@@ -31,6 +31,11 @@ export const metadata: Metadata = {
   verification: {
     google: '1lN6IVYcZqNbKIS3R4yMt50t4Ly27oCSDX56cu_2z68',
   },
+  icons: {
+    icon: '/paw.svg',
+    shortcut: '/paw.svg',
+    apple: '/paw.svg',
+  },
 }
 
 export default async function LocaleLayout({
