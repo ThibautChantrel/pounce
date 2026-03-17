@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL('https://pounce.app'),
   openGraph: {
     siteName: 'Pounce',
@@ -27,6 +27,9 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     site: '@pounce_app',
+  },
+  verification: {
+    google: '1lN6IVYcZqNbKIS3R4yMt50t4Ly27oCSDX56cu_2z68',
   },
 }
 
