@@ -2,7 +2,8 @@ import { MetadataRoute } from 'next'
 import { fetchChallengesForUser } from '@/actions/challenge/challenge.action'
 import { trackRepository } from '@/server/modules/track/repositories/track.repository'
 
-const BASE_URL = 'https://pounce.app'
+const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL || 'https://pounce-app.vercel.app'
 const LOCALES = ['fr', 'en'] as const
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -10,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Pages statiques pour chaque locale
   const staticPages = [
-    { path: '', priority: 1 },
+    { path: '', priority: 1.0 },
     { path: 'about', priority: 0.7 },
     { path: 'feedbacks', priority: 0.5 },
   ]
