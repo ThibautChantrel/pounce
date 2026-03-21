@@ -1,5 +1,10 @@
 import { MetadataRoute } from 'next'
 
+const BASE_URL =
+  process.env.NEXTAUTH_URL ||
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  'https://pounce-app.vercel.app'
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
@@ -14,6 +19,6 @@ export default function robots(): MetadataRoute.Robots {
         '/*/connex!on', // Optionnel : bloque les pages de connexion
       ],
     },
-    sitemap: 'https://pounce.app/sitemap.xml',
+    sitemap: `${BASE_URL}/sitemap.xml`,
   }
 }

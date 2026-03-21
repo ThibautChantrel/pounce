@@ -17,8 +17,13 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const BASE_URL =
+  process.env.NEXTAUTH_URL ||
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  'https://pounce-app.vercel.app'
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://pounce.app'),
+  metadataBase: new URL(BASE_URL),
   openGraph: {
     siteName: 'Pounce',
     type: 'website',
