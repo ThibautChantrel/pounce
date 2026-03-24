@@ -24,22 +24,34 @@ const BASE_URL =
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
+  title: {
+    default: 'Pounce — Marque ton empreinte',
+    template: '%s | Pounce',
+  },
+  description:
+    'Pounce explore une nouvelle façon de pratiquer le sport : des défis communautaires certifiés, sans logique de réseau social.',
   openGraph: {
     siteName: 'Pounce',
     type: 'website',
     locale: 'fr_FR',
+    title: 'Pounce — Marque ton empreinte',
+    description:
+      'Des défis sportifs communautaires certifiés, sans réseau social. Rejoins Pounce et marque ton empreinte.',
   },
   twitter: {
     card: 'summary_large_image',
     site: '@pounce_app',
+    title: 'Pounce — Marque ton empreinte',
+    description:
+      'Des défis sportifs communautaires certifiés, sans réseau social.',
   },
   verification: {
     google: '1lN6IVYcZqNbKIS3R4yMt50t4Ly27oCSDX56cu_2z68',
   },
   icons: {
-    icon: '/paw.svg',
-    shortcut: '/paw.svg',
-    apple: '/paw.svg',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
 }
 
