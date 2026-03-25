@@ -13,9 +13,14 @@ export default function Hero() {
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
-    video.play().catch(() => {
-      // Autoplay bloqué (Low Power Mode, etc.) — on affiche juste le poster
-    })
+
+    const tryPlay = () => video.play().catch(() => {})
+
+    tryPlay()
+
+    // iOS bloque l'autoplay sans interaction — on relance au premier touch
+    document.addEventListener('touchstart', tryPlay, { once: true })
+    return () => document.removeEventListener('touchstart', tryPlay)
   }, [])
 
   const scrollToNextSection = () => {
@@ -36,7 +41,6 @@ export default function Hero() {
         muted
         playsInline
         preload="auto"
-        poster="/hero-poster.jpg"
       />
 
       <div className="absolute inset-0 bg-black/60 z-10" />
