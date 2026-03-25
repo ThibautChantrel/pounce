@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronDown, ArrowRight } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { Button } from './ui/button'
 import { Link } from '@/navigation'
 import { useTranslations } from 'next-intl'
@@ -9,19 +9,6 @@ import { useTranslations } from 'next-intl'
 export default function Hero() {
   const t = useTranslations('Hero')
   const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
-
-    const tryPlay = () => video.play().catch(() => {})
-
-    tryPlay()
-
-    // iOS bloque l'autoplay sans interaction — on relance au premier touch
-    document.addEventListener('touchstart', tryPlay, { once: true })
-    return () => document.removeEventListener('touchstart', tryPlay)
-  }, [])
 
   const scrollToNextSection = () => {
     window.scrollTo({
@@ -41,6 +28,7 @@ export default function Hero() {
         muted
         playsInline
         preload="auto"
+        onCanPlay={() => videoRef.current?.play()}
       />
 
       <div className="absolute inset-0 bg-black/60 z-10" />
