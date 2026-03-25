@@ -1,12 +1,23 @@
 'use client'
 
 import { ChevronDown, ArrowRight } from 'lucide-react'
+import { useEffect, useRef } from 'react'
 import { Button } from './ui/button'
 import { Link } from '@/navigation'
 import { useTranslations } from 'next-intl'
 
 export default function Hero() {
   const t = useTranslations('Hero')
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+    video.play().catch(() => {
+      // Autoplay bloqué (Low Power Mode, etc.) — on affiche juste le poster
+    })
+  }, [])
+
   const scrollToNextSection = () => {
     window.scrollTo({
       top: window.innerHeight,
@@ -17,13 +28,14 @@ export default function Hero() {
   return (
     <section className="relative w-full min-h-screen overflow-hidden">
       <video
+        ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover z-0"
         src="/hero.mp4"
         autoPlay
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
         poster="/hero-poster.jpg"
       />
 
