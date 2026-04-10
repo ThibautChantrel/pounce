@@ -88,6 +88,7 @@ export default async function ChallengeDetailPage(props: PageProps) {
         totalElevation={totalElevation}
         tracksCount={challenge.tracks.length}
         createdAt={challenge.createdAt}
+        categories={challenge.categories}
       />
 
       <div className="container max-w-5xl mx-auto px-4">

@@ -9,6 +9,7 @@ export type TrackWithRelations = Track & {
   challenges?: (ChallengeTrack & {
     challenge: { title: string }
   })[]
+  categories?: { category: { id: string; value: string } }[]
   _count?: {
     pois: number
   }
@@ -36,6 +37,7 @@ export type UpdateTrackInput = Partial<CreateTrackInput> & {
   bannerId?: string | null
   gpxFileId?: string | null
   poiIds?: string[]
+  categoryIds?: string[]
 }
 
 export type PoiWithDistance = Poi & { distanceFromStart: number }

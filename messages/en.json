@@ -232,7 +232,8 @@
       "pois": "Points of interest",
       "tracks": "Tracks",
       "challenges": "Challenges",
-      "feedbacks": "Feedbacks"
+      "feedbacks": "Feedbacks",
+      "categories": "Categories"
     },
 
     "Global": {
@@ -427,6 +428,24 @@
       "createdAt": "Date",
       "markAsRead": "Mark as read",
       "delete": "Delete"
+    },
+
+    "Categories": {
+      "title": "Categories Management",
+      "description": "Manage the {count} track and challenge categories.",
+      "value": "Value",
+      "createTitle": "Create a Category",
+      "createSubtitle": "Define a new category (trail, running, cycling...).",
+      "updateTitle": "Update Category",
+      "updateSubtitle": "Modification of: {value}",
+      "createSuccess": "Category created successfully",
+      "updateSuccess": "Category updated successfully",
+      "createError": "Error creating category",
+      "updateError": "Error updating category",
+      "chooseCategories": "Choose categories...",
+      "validation": {
+        "valueTooShort": "Value must be at least 2 characters."
+      }
     },
 
     "Results": {

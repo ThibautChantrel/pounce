@@ -66,6 +66,24 @@ export default async function TrackShowPage(props: PageProps) {
       ),
     },
     {
+      label: tAdmin('Navbar.categories'),
+      key: 'categories',
+      type: 'custom',
+      getValue: (item) => {
+        if (!item.categories || item.categories.length === 0)
+          return <span className="text-muted-foreground text-sm">-</span>
+        return (
+          <div className="flex flex-wrap gap-1">
+            {item.categories.map((c) => (
+              <Badge key={c.category.id} variant="secondary">
+                {c.category.value}
+              </Badge>
+            ))}
+          </div>
+        )
+      },
+    },
+    {
       label: tAdmin('Navbar.pois'),
       key: 'pois',
       type: 'link-list',

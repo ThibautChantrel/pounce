@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Link } from '@/navigation'
 import { Map, Mountain, Trophy, ArrowRight } from 'lucide-react'
 import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type'
-// 👇 Import de la traduction
+import { getCategoryIcon } from '@/utils/category-icons'
 import { useTranslations } from 'next-intl'
 
 interface ChallengeCardProps {
@@ -51,6 +51,24 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
         <div className="absolute inset-0 bg-secondary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         <div className="relative h-full flex flex-col justify-between p-6 text-white group-hover:text-primary transition-colors duration-300">
+          {/* Icônes catégories en haut à droite */}
+          {challenge.categories && challenge.categories.length > 0 && (
+            <div className="absolute top-4 right-4 z-10 flex gap-1.5">
+              {challenge.categories.map((c) => {
+                const Icon = getCategoryIcon(c.category.value)
+                return (
+                  <div
+                    key={c.category.id}
+                    title={c.category.value}
+                    className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
+                  >
+                    <Icon className="w-4 h-4 text-white" />
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
           <div className="z-10">
             <h3 className="text-2xl font-bold uppercase tracking-wider font-heading">
               {challenge.title}

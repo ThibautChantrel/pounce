@@ -10,6 +10,7 @@ import { fetchFiles } from '@/actions/file/file.admin.actions'
 import { Difficulty } from '@prisma/client'
 import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type'
 import { updateChallengeAction } from '@/actions/challenge/challenge.admin.action'
+import { fetchCategoriesForSelect } from '@/actions/category/category.admin.action'
 
 interface ChallengeEditPageProps {
   challenge: ChallengeWithRelations
@@ -35,6 +36,7 @@ export default function ChallengeEdit({ challenge }: ChallengeEditPageProps) {
     coverId: z.string().optional().nullable(),
     bannerId: z.string().optional().nullable(),
     trackIds: z.array(z.string()).optional(),
+    categoryIds: z.array(z.string()).optional(),
   })
 
   // Types déduits
@@ -63,6 +65,18 @@ export default function ChallengeEdit({ challenge }: ChallengeEditPageProps) {
     const res = await fetchFiles(params)
     return {
       data: res.data.map((f) => ({ id: f.id, name: f.filename })),
+      total: res.total,
+    }
+  }
+
+  const fetchCategoriesForAssociation = async (params: {
+    skip: number
+    take: number
+    search?: string
+  }) => {
+    const res = await fetchCategoriesForSelect(params)
+    return {
+      data: res.data.map((c) => ({ id: c.id, name: c.value })),
       total: res.total,
     }
   }
@@ -124,6 +138,20 @@ export default function ChallengeEdit({ challenge }: ChallengeEditPageProps) {
       type: 'textarea',
       placeholder: 'Description du challenge...',
     },
+    {
+      name: 'categoryIds',
+      label: t('Navbar.categories'),
+      type: 'relation',
+      relationFetch: fetchCategoriesForAssociation,
+      relationMode: 'multiple',
+      relationInitialData: challenge.categories
+        ? challenge.categories.map((c) => ({
+            id: c.category.id,
+            name: c.category.value,
+          }))
+        : [],
+      placeholder: t('Categories.chooseCategories'),
+    },
     // Fichiers
     {
       name: 'coverId',
@@ -159,6 +187,7 @@ export default function ChallengeEdit({ challenge }: ChallengeEditPageProps) {
         coverId: values.coverId || null, // null pour supprimer si désélectionné
         bannerId: values.bannerId || null,
         trackIds: values.trackIds || [],
+        categoryIds: values.categoryIds || [],
       })
 
       if (!result.success) {
@@ -197,6 +226,9 @@ export default function ChallengeEdit({ challenge }: ChallengeEditPageProps) {
             visible: challenge.visible,
             // On map les tracks existants vers un tableau d'IDs simple pour le formulaire
             trackIds: sortedTracks.map((t) => t.trackId),
+            categoryIds: challenge.categories
+              ? challenge.categories.map((c) => c.category.id)
+              : [],
             coverId: challenge.coverId,
             bannerId: challenge.bannerId,
           }}

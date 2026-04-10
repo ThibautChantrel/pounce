@@ -2,10 +2,14 @@ import Image from 'next/image'
 import { Link } from '@/navigation'
 import { Map, Mountain, ArrowRight, ImageOff } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { ChallengeTrack } from '@/actions/challenge/challenge.admin.type'
 import { Track } from '@/actions/track/track.types'
 
-type TrackWithRelation = ChallengeTrack & { track: Track }
+type TrackWithCategories = Track & {
+  categories?: { category: { id: string; value: string } }[]
+}
+type TrackWithRelation = ChallengeTrack & { track: TrackWithCategories }
 
 interface TrackCardProps {
   item: TrackWithRelation
@@ -65,6 +69,19 @@ export function TrackCard({ item, index, t }: TrackCardProps) {
               <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed min-h-10">
                 {item.track.description || t('noTrackDescription')}
               </p>
+              {item.track.categories && item.track.categories.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {item.track.categories.map((c) => (
+                    <Badge
+                      key={c.category.id}
+                      variant="secondary"
+                      className="text-xs"
+                    >
+                      {c.category.value}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-4 text-sm shrink-0 mt-2 md:mt-0">

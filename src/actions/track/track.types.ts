@@ -25,6 +25,7 @@ export type TrackWithRelations = Track & {
   challenges?: (ChallengeTrack & {
     challenge: { title: string }
   })[]
+  categories?: { category: { id: string; value: string } }[]
   _count?: {
     pois: number
   }

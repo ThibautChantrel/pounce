@@ -38,7 +38,7 @@ export class TrackRepository {
   }
 
   async update(data: UpdateTrackInput, userId: string) {
-    const { id, poiIds, ...fields } = data
+    const { id, poiIds, categoryIds, ...fields } = data
 
     return await prisma.track.update({
       where: { id },
@@ -50,6 +50,15 @@ export class TrackRepository {
         pois: poiIds
           ? {
               set: poiIds.map((pId: string) => ({ id: pId })),
+            }
+          : undefined,
+
+        categories: categoryIds
+          ? {
+              deleteMany: {},
+              create: categoryIds.map((categoryId) => ({
+                category: { connect: { id: categoryId } },
+              })),
             }
           : undefined,
       },
@@ -72,6 +81,11 @@ export class TrackRepository {
         challenges: {
           include: {
             challenge: true,
+          },
+        },
+        categories: {
+          include: {
+            category: true,
           },
         },
       },

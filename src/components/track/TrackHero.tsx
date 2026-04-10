@@ -8,9 +8,16 @@ type Props = {
   bannerUrl: string
   createdAt: string
   hasGpx: boolean
+  categories?: { category: { id: string; value: string } }[]
 }
 
-export function TrackHero({ title, bannerUrl, createdAt, hasGpx }: Props) {
+export function TrackHero({
+  title,
+  bannerUrl,
+  createdAt,
+  hasGpx,
+  categories,
+}: Props) {
   const t = useTranslations('Tracks')
 
   return (
@@ -34,6 +41,15 @@ export function TrackHero({ title, bannerUrl, createdAt, hasGpx }: Props) {
               {t('GpxAvailable')}
             </Badge>
           )}
+          {categories?.map((c) => (
+            <Badge
+              key={c.category.id}
+              variant="outline"
+              className="text-white border-white/40"
+            >
+              {c.category.value}
+            </Badge>
+          ))}
         </div>
 
         <h1 className="text-4xl md:text-5xl font-extrabold text-white uppercase mb-2">

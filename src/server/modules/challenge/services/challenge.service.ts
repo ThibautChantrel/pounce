@@ -10,13 +10,19 @@ class ChallengeUserService {
     )
   }
 
-  async getAllChallengesForUser(skip: number, take: number, search?: string) {
+  async getAllChallengesForUser(
+    skip: number,
+    take: number,
+    search?: string,
+    categoryIds?: string[]
+  ) {
     const session = await auth()
     return await challengeRepository.getAllForUser(
       skip,
       take,
       search,
-      !!session?.user.role && session.user.role === 'ADMIN'
+      !!session?.user.role && session.user.role === 'ADMIN',
+      categoryIds
     )
   }
 }
