@@ -6,8 +6,8 @@ import {
   MoreHorizontal,
   ArrowUpDown,
   Trash,
-  MapPin,
   Pencil,
+  MapPinned,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,23 +21,17 @@ import {
 import { toast } from 'sonner'
 import { useFormatter, useTranslations } from 'next-intl'
 import { Link, useRouter } from '@/navigation'
-import { deletePoiAction } from '@/actions/poi/poi.admin.actions'
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
-import { Badge } from '@/components/ui/badge'
-import { getPoiTypeVariant } from '@/utils/pois'
+import { deletePoiTypeAction } from '@/actions/poi-type/poi-type.admin.action'
 
-export type PoiColumn = {
+export type PoiTypeColumn = {
   id: string
-  name: string
+  value: string
   description?: string | null
-  typeId: string | null
-  type: { id: string; value: string } | null
-  latitude: number
-  longitude: number
   createdAt: Date
 }
 
-const PoiActions = ({ poi }: { poi: PoiColumn }) => {
+const PoiTypeActions = ({ poiType }: { poiType: PoiTypeColumn }) => {
   const t = useTranslations('Admin')
   const [openDelete, setOpenDelete] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -46,8 +40,7 @@ const PoiActions = ({ poi }: { poi: PoiColumn }) => {
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      const res = await deletePoiAction(poi.id)
-
+      const res = await deletePoiTypeAction(poiType.id)
       if (res.success) {
         toast.success(t('Actions.deleted'))
         router.refresh()
@@ -76,7 +69,7 @@ const PoiActions = ({ poi }: { poi: PoiColumn }) => {
 
           <DropdownMenuItem asChild>
             <Link
-              href={`/admin/pois/${poi.id}/edit`}
+              href={`/admin/poi-types/${poiType.id}/edit`}
               className="cursor-pointer"
             >
               <Pencil className="mr-2 h-4 w-4" /> {t('Actions.edit')}
@@ -85,7 +78,6 @@ const PoiActions = ({ poi }: { poi: PoiColumn }) => {
 
           <DropdownMenuSeparator />
 
-          {/* Action Supprimer */}
           <DropdownMenuItem
             onClick={() => setOpenDelete(true)}
             className="text-red-600 focus:text-red-600 cursor-pointer"
@@ -105,7 +97,7 @@ const PoiActions = ({ poi }: { poi: PoiColumn }) => {
         actionLabel={t('Actions.confirm')}
         cancelLabel={t('Actions.cancel')}
         description={t.rich('Actions.AlertDialog.description', {
-          item: poi.name,
+          item: poiType.value,
           bold: (chunks) => <strong>{chunks}</strong>,
         })}
       />
@@ -113,59 +105,36 @@ const PoiActions = ({ poi }: { poi: PoiColumn }) => {
   )
 }
 
-export const usePoiColumns = () => {
-  const t = useTranslations('Admin.Pois')
+export const usePoiTypeColumns = () => {
+  const t = useTranslations('Admin.PoiTypes')
+  const tGlobal = useTranslations('Admin.Global')
   const format = useFormatter()
 
-  return useMemo<ColumnDef<PoiColumn>[]>(
+  return useMemo<ColumnDef<PoiTypeColumn>[]>(
     () => [
       {
-        accessorKey: 'name',
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={(e) => column.toggleSorting(undefined, e.shiftKey)}
-          >
-            {t('name')}
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        ),
+        accessorKey: 'value',
+        header: t('value'),
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-muted-foreground" />
+            <MapPinned className="h-4 w-4 text-muted-foreground" />
             <Link
-              href={`/admin/pois/${row.original.id}`}
+              href={`/admin/poi-types/${row.original.id}`}
               className="font-medium hover:underline hover:text-blue-600"
             >
-              {row.getValue('name')}
+              {row.getValue('value')}
             </Link>
           </div>
         ),
       },
       {
-        accessorKey: 'type',
-        header: t('type'),
-        cell: ({ row }) => {
-          const typeValue = row.original.type?.value
-          return (
-            <Badge variant={getPoiTypeVariant(typeValue)}>
-              {typeValue || '-'}
-            </Badge>
-          )
-        },
-      },
-      {
-        id: 'coordinates',
-        header: t('coordinates'),
-        cell: ({ row }) => {
-          const lat = row.original.latitude.toFixed(4)
-          const lng = row.original.longitude.toFixed(4)
-          return (
-            <span className="font-mono text-xs text-muted-foreground">
-              {lat}, {lng}
-            </span>
-          )
-        },
+        accessorKey: 'description',
+        header: tGlobal('description'),
+        cell: ({ row }) => (
+          <span className="text-muted-foreground text-sm truncate max-w-xs block">
+            {row.original.description || '-'}
+          </span>
+        ),
       },
       {
         accessorKey: 'createdAt',
@@ -174,7 +143,7 @@ export const usePoiColumns = () => {
             variant="ghost"
             onClick={(e) => column.toggleSorting(undefined, e.shiftKey)}
           >
-            {t('createdAt')}
+            {tGlobal('createdAt')}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         ),
@@ -193,9 +162,9 @@ export const usePoiColumns = () => {
       },
       {
         id: 'actions',
-        cell: ({ row }) => <PoiActions poi={row.original} />,
+        cell: ({ row }) => <PoiTypeActions poiType={row.original} />,
       },
     ],
-    [t, format]
+    [t, tGlobal, format]
   )
 }

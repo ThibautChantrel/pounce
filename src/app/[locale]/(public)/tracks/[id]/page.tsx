@@ -161,7 +161,7 @@ export default async function TrackDetailPage(props: PageProps) {
                   )}
 
                   <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">
-                    {poi.type}
+                    {poi.type?.value || '-'}
                   </div>
                 </>
               )}

@@ -1,11 +1,25 @@
-import { Track, Poi, ChallengeTrack } from '@prisma/client'
+import { Track, ChallengeTrack } from '@prisma/client'
 import { fileWithoutData } from '../file/file.types'
+
+type PoiWithType = {
+  id: string
+  name: string
+  description: string | null
+  typeId: string | null
+  type?: { id: string; value: string } | null
+  latitude: number
+  longitude: number
+  createdAt: Date
+  updatedAt: Date
+  createdById: string | null
+  updatedById: string | null
+}
 
 export type TrackWithRelations = Track & {
   cover: fileWithoutData | null
   banner: fileWithoutData | null
   gpxFile: fileWithoutData | null
-  pois?: Poi[]
+  pois?: PoiWithType[]
   challenges?: (ChallengeTrack & {
     challenge: { title: string }
   })[]
@@ -40,7 +54,7 @@ export type UpdateTrackInput = Partial<CreateTrackInput> & {
   categoryIds?: string[]
 }
 
-export type PoiWithDistance = Poi & { distanceFromStart: number }
+export type PoiWithDistance = PoiWithType & { distanceFromStart: number }
 export type TrackWithPoisDistance = Omit<TrackWithRelations, 'pois'> & {
   pois: PoiWithDistance[]
 }

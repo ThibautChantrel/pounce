@@ -18,7 +18,7 @@ export async function createPoiAction(
 ): Promise<ActionResponse> {
   try {
     const res = await poiService.create(data)
-    revalidatePath(`/admin/poids/${res.id}`)
+    revalidatePath(`/admin/pois/${res.id}`)
     return { success: true, data: res.id }
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

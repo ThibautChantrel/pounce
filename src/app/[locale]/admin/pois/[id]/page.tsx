@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { DataDetails, FieldConfig } from '@/components/admin/data-details'
 import { getTranslations } from 'next-intl/server'
 import { getPoiAction } from '@/actions/poi/poi.admin.actions'
-import { PoiTypeVariants } from '@/utils/pois'
+import { getPoiTypeVariant } from '@/utils/pois'
 import { Poi } from '@/actions/poi/poi.admin.type'
 
 type PageProps = {
@@ -29,9 +29,15 @@ export default async function PoiShowPage(props: PageProps) {
     },
     {
       label: t('type'),
-      key: 'type',
-      type: 'badge',
-      badgeVariants: PoiTypeVariants,
+      type: 'custom',
+      getValue: (p: Poi) => {
+        const typeValue = p.type?.value
+        return (
+          <Badge variant={getPoiTypeVariant(typeValue)}>
+            {typeValue || '-'}
+          </Badge>
+        )
+      },
     },
     {
       label: t('coordinates'),

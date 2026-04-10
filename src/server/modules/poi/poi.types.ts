@@ -1,18 +1,7 @@
-import { PoiType } from '@prisma/client'
-
-export enum PoiTypeEnum {
-  Metro = 'METRO',
-  Monument = 'MONUMENT',
-  Park = 'PARK',
-  Restaurant = 'RESTAURANT',
-  Viewpoint = 'VIEWPOINT',
-  Other = 'OTHER',
-}
-
 export type CreatePoiInput = {
   name: string
   description?: string
-  type: PoiType
+  typeId?: string | null
   latitude: number
   longitude: number
 }
@@ -21,10 +10,11 @@ export type UpdatePoiInput = Partial<CreatePoiInput> & {
   id: string
 }
 
-export type Poi = {
+export type PoiWithType = {
   id: string
   name: string
-  type: PoiType
+  typeId: string | null
+  type: { id: string; value: string } | null
   latitude: number
   longitude: number
   createdAt: Date

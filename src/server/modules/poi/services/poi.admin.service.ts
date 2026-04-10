@@ -4,7 +4,7 @@ import { poiRepository } from '../repositories/poi.repository'
 import {
   CreateManyPoiInput,
   CreatePoiInput,
-  Poi,
+  PoiWithType,
   UpdatePoiInput,
 } from '../poi.types'
 import { FetchParams } from '@/utils/fetch'
@@ -19,7 +19,6 @@ export class PoiService {
 
   async create(data: CreatePoiInput) {
     const userId = await this.getAuthenticatedUserId()
-    console.log('OKOKOK')
 
     const duplicate = await poiRepository.findByName(data.name)
 
@@ -38,7 +37,7 @@ export class PoiService {
       throw new BusinessError(ERROR_CODES.NOT_FOUND, 'POI introuvable')
     if (data.name && data.name != existing.name) {
       const duplicates = await poiRepository.findMultipleByName(data.name)
-      if (duplicates.length > 2)
+      if (duplicates.length > 0)
         throw new BusinessError(
           ERROR_CODES.POI_SAME_NAME_ALREADY_EXISTS,
           'Action Impossible, il existe déjà un poi avec le même name'
@@ -56,7 +55,7 @@ export class PoiService {
     return await poiRepository.getAll(params)
   }
 
-  async get(id: string): Promise<Poi | null> {
+  async get(id: string): Promise<PoiWithType | null> {
     return await poiRepository.findById(id)
   }
   async bulkCreate(poisData: CreatePoiInput[], userId?: string) {
