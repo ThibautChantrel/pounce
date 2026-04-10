@@ -18,14 +18,6 @@ enum Role {
   ADMIN
 }
 
-enum PoiType {
-  METRO
-  MONUMENT
-  PARK
-  RESTAURANT
-  VIEWPOINT
-  OTHER
-}
 
 enum Difficulty {
   EASY
@@ -60,6 +52,9 @@ model User {
 
   createdPois Poi[] @relation("CreatedPois")
   updatedPois Poi[] @relation("UpdatedPois")
+
+  createdPoiTypes PoiType[] @relation("CreatedPoiTypes")
+  updatedPoiTypes PoiType[] @relation("UpdatedPoiTypes")
 
   createdCategories Category[] @relation("CreatedCategories")
   updatedCategories Category[] @relation("UpdatedCategories")
@@ -225,10 +220,11 @@ model Track {
 // --- POI MODULE ---
 
 model Poi {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
-  description String? @db.Text
-  type        PoiType
+  description String?  @db.Text
+  typeId      String?
+  type        PoiType? @relation(fields: [typeId], references: [id], onDelete: SetNull)
   latitude    Float
   longitude   Float
 
@@ -297,4 +293,24 @@ model ChallengeCategory {
 
   @@id([challengeId, categoryId])
   @@map("challenge_categories")
+}
+
+// --- POI TYPE MODULE ---
+
+model PoiType {
+  id          String  @id @default(cuid())
+  value       String  @unique
+  description String? @db.Text
+
+  pois Poi[]
+
+  // Audit
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String?
+  createdBy   User?    @relation("CreatedPoiTypes", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?    @relation("UpdatedPoiTypes", fields: [updatedById], references: [id])
+
+  @@map("poi_types")
 }

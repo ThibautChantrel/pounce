@@ -230,6 +230,7 @@
       "users": "Users",
       "files": "Files",
       "pois": "Points of interest",
+      "poiTypes": "POI Types",
       "tracks": "Tracks",
       "challenges": "Challenges",
       "feedbacks": "Feedbacks",
@@ -373,6 +374,7 @@
       "edit": "Edit",
       "delete": "Delete",
       "save": "Save",
+      "create": "Create",
       "cancel": "Cancel",
       "back": "Back",
       "update": "Update",
@@ -443,6 +445,22 @@
       "createError": "Error creating category",
       "updateError": "Error updating category",
       "chooseCategories": "Choose categories...",
+      "validation": {
+        "valueTooShort": "Value must be at least 2 characters."
+      }
+    },
+    "PoiTypes": {
+      "title": "POI Types Management",
+      "description": "Manage {count} point-of-interest types.",
+      "value": "Value",
+      "createTitle": "Create a POI type",
+      "createSubtitle": "Add a new point-of-interest type.",
+      "updateTitle": "Update POI type",
+      "updateSubtitle": "Editing: {value}",
+      "createSuccess": "POI type created successfully",
+      "updateSuccess": "POI type updated successfully",
+      "createError": "Error while creating",
+      "updateError": "Error while updating",
       "validation": {
         "valueTooShort": "Value must be at least 2 characters."
       }

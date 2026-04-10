@@ -77,7 +77,13 @@ export class TrackRepository {
       where: { id },
       include: {
         ...defaultInclude,
-        pois: true,
+        pois: {
+          include: {
+            type: {
+              select: { id: true, value: true },
+            },
+          },
+        },
         challenges: {
           include: {
             challenge: true,

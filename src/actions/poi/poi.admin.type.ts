@@ -1,9 +1,8 @@
-import { PoiType } from '@prisma/client'
-
 export type Poi = {
   id: string
   name: string
-  type: PoiType
+  typeId: string | null
+  type?: { id: string; value: string } | null
   latitude: number
   longitude: number
   createdAt: Date

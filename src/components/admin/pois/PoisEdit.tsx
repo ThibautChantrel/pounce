@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { DataUpdate, UpdateFieldConfig } from '@/components/admin/data-update'
 import { useTranslations } from 'next-intl'
-import { PoiType } from '@prisma/client'
-import { getPoiTypeOptions } from '@/utils/pois' // L'utilitaire créé précédemment
 import { updatePoiAction } from '@/actions/poi/poi.admin.actions'
 import { Poi } from '@/actions/poi/poi.admin.type'
+import { fetchPoiTypesForSelect } from '@/actions/poi-type/poi-type.admin.action'
 
 interface PoiEditPageProps {
   poi: Poi
@@ -20,9 +19,7 @@ export default function PoiEdit({ poi }: PoiEditPageProps) {
 
   const poiFormSchema = z.object({
     name: z.string().min(2, { message: t('Pois.validation.nameTooShort') }),
-    type: z.nativeEnum(PoiType, {
-      message: t('Pois.validation.typeInvalid'),
-    }),
+    typeId: z.string().nullable().optional(),
     description: z.string().optional(),
     latitude: z
       .number({ message: t('Pois.validation.invalidNumber') })
@@ -46,10 +43,21 @@ export default function PoiEdit({ poi }: PoiEditPageProps) {
       placeholder: 'Ex: Tour Eiffel',
     },
     {
-      name: 'type',
+      name: 'typeId',
       label: t('Pois.type'),
-      type: 'select',
-      options: getPoiTypeOptions(),
+      type: 'relation',
+      relationMode: 'single',
+      placeholder: 'Sélectionner un type (optionnel)',
+      relationFetch: async (params) => {
+        const res = await fetchPoiTypesForSelect(params)
+        return {
+          data: res.data.map((item) => ({ id: item.id, name: item.value })),
+          total: res.total,
+        }
+      },
+      relationInitialData: poi.type
+        ? [{ id: poi.type.id, name: poi.type.value }]
+        : undefined,
     },
     {
       name: 'latitude',
@@ -114,8 +122,8 @@ export default function PoiEdit({ poi }: PoiEditPageProps) {
           fields={fields}
           defaultValues={{
             name: poi.name,
-            type: poi.type,
-            description: poi.description!,
+            typeId: poi.typeId,
+            description: poi.description ?? '',
             latitude: poi.latitude,
             longitude: poi.longitude,
           }}

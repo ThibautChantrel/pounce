@@ -9,6 +9,7 @@ import {
   Swords,
   Form,
   Tag,
+  MapPinned,
 } from 'lucide-react'
 import { Link } from '@/navigation'
 import { getTranslations } from 'next-intl/server'
@@ -49,6 +50,11 @@ export default async function AdminLayout({
             href="/admin/pois"
             icon={<Locate size={18} />}
             label={(await t)('Navbar.pois')}
+          />
+          <AdminLink
+            href="/admin/poi-types"
+            icon={<MapPinned size={18} />}
+            label={(await t)('Navbar.poiTypes')}
           />
           <AdminLink
             href="/admin/tracks"

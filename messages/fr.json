@@ -241,6 +241,7 @@
       "users": "Utilisateurs",
       "files": "Fichiers",
       "pois": "Points d'intérêt",
+      "poiTypes": "Types de POI",
       "tracks": "Parcours",
       "challenges": "Challenges",
       "feedbacks": "Feedbacks",
@@ -361,6 +362,7 @@
       "edit": "Modifier",
       "delete": "Supprimer",
       "save": "Enregistrer",
+      "create": "Créer",
       "cancel": "Annuler",
       "confirm": "Confirmer",
       "back": "Retour",
@@ -451,6 +453,22 @@
       "createError": "Erreur lors de la création",
       "updateError": "Erreur lors de la mise à jour",
       "chooseCategories": "Choisissez des catégories...",
+      "validation": {
+        "valueTooShort": "La valeur doit contenir au moins 2 caractères."
+      }
+    },
+    "PoiTypes": {
+      "title": "Gestion des Types de POI",
+      "description": "Gérez les {count} types de points d'intérêt.",
+      "value": "Valeur",
+      "createTitle": "Créer un type de POI",
+      "createSubtitle": "Ajoutez un nouveau type de point d'intérêt.",
+      "updateTitle": "Modifier le type de POI",
+      "updateSubtitle": "Modification de : {value}",
+      "createSuccess": "Type de POI créé avec succès",
+      "updateSuccess": "Type de POI mis à jour avec succès",
+      "createError": "Erreur lors de la création",
+      "updateError": "Erreur lors de la mise à jour",
       "validation": {
         "valueTooShort": "La valeur doit contenir au moins 2 caractères."
       }
