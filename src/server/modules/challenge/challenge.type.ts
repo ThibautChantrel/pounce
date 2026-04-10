@@ -7,6 +7,7 @@ export type ChallengeWithRelations = Challenge & {
   tracks: (ChallengeTrack & {
     track: Track
   })[]
+  categories?: { category: { id: string; value: string } }[]
 }
 
 export type CreateChallengeInput = {
@@ -19,6 +20,7 @@ export type CreateChallengeInput = {
   bannerId?: string | null
 
   trackIds?: string[]
+  categoryIds?: string[]
 }
 
 // Input de mise à jour
@@ -28,4 +30,5 @@ export type UpdateChallengeInput = Partial<CreateChallengeInput> & {
   coverId?: string | null
   bannerId?: string | null
   trackIds?: string[]
+  categoryIds?: string[]
 }

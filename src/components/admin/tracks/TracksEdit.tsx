@@ -9,6 +9,7 @@ import { updateTrackAction } from '@/actions/track/track.admin.action'
 import { fetchFiles } from '@/actions/file/file.admin.actions'
 import { TrackWithRelations } from '@/server/modules/track/track.types'
 import { fetchPois } from '@/actions/poi/poi.admin.actions'
+import { fetchCategoriesForSelect } from '@/actions/category/category.admin.action'
 
 interface TrackEditPageProps {
   track: TrackWithRelations
@@ -21,6 +22,7 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
   const tAction = useTranslations('Admin.Actions')
   const tFile = useTranslations('Admin.Files')
   const tPois = useTranslations('Admin.Pois')
+  const tCategories = useTranslations('Admin.Categories')
 
   const trackFormSchema = z.object({
     title: z
@@ -43,6 +45,7 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
     bannerId: z.string().optional().nullable(),
     gpxFileId: z.string().optional().nullable(),
     poiIds: z.array(z.string()).optional(),
+    categoryIds: z.array(z.string()).optional(),
   })
 
   type TrackFormSchema = typeof trackFormSchema
@@ -69,6 +72,18 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
     const res = await fetchPois(params)
     return {
       data: res.data.map((f) => ({ id: f.id, name: f.name })),
+      total: res.total,
+    }
+  }
+
+  const fetchCategoriesForAssociation = async (params: {
+    skip: number
+    take: number
+    search?: string
+  }) => {
+    const res = await fetchCategoriesForSelect(params)
+    return {
+      data: res.data.map((c) => ({ id: c.id, name: c.value })),
       total: res.total,
     }
   }
@@ -148,6 +163,20 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
         : [],
       placeholder: tPois('choosePois'),
     },
+    {
+      name: 'categoryIds',
+      label: tCategories('title'),
+      type: 'relation',
+      relationFetch: fetchCategoriesForAssociation,
+      relationMode: 'multiple',
+      relationInitialData: track.categories
+        ? track.categories.map((c) => ({
+            id: c.category.id,
+            name: c.category.value,
+          }))
+        : [],
+      placeholder: tCategories('chooseCategories'),
+    },
   ]
 
   const handleSubmit = async (values: TrackFormOutput) => {
@@ -159,6 +188,7 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
         coverId: values.coverId ?? undefined,
         bannerId: values.bannerId ?? undefined,
         gpxFileId: values.gpxFileId ?? undefined,
+        categoryIds: values.categoryIds,
       })
 
       if (!result.success) {
@@ -199,6 +229,9 @@ export default function TrackEditPage({ track }: TrackEditPageProps) {
             bannerId: track.bannerId,
             gpxFileId: track.gpxFileId,
             poiIds: track.pois ? track.pois.map((p) => p.id) : [],
+            categoryIds: track.categories
+              ? track.categories.map((c) => c.category.id)
+              : [],
           }}
           onSubmit={handleSubmit}
           onCancel={() => router.back()}

@@ -6,9 +6,15 @@ import { ChallengeWithRelations } from './challenge.admin.type'
 export async function fetchChallengesForUser(
   skip = 0,
   take = 10,
-  search?: string
+  search?: string,
+  categoryIds?: string[]
 ): Promise<{ data: ChallengeWithRelations[]; total: number }> {
-  return await challengeUserService.getAllChallengesForUser(skip, take, search)
+  return await challengeUserService.getAllChallengesForUser(
+    skip,
+    take,
+    search,
+    categoryIds
+  )
 }
 
 export async function getChallengeForUserAction(id: string) {
