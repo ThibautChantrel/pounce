@@ -53,6 +53,7 @@ export type FieldType =
   | 'number'
   | 'textarea'
   | 'date'
+  | 'date-only'
   | 'boolean'
   | 'select'
   | 'file'
@@ -199,6 +200,19 @@ export function DataUpdate<TSchema extends z.ZodObject<any>>({
                 e.target.value ? new Date(e.target.value).toISOString() : null
               )
             }
+          />
+        )
+      }
+
+      case 'date-only': {
+        const value = typeof field.value === 'string' ? field.value : null
+
+        return (
+          <Input
+            type="date"
+            disabled={isDisabled}
+            value={value ? new Date(value).toISOString().slice(0, 10) : ''}
+            onChange={(e) => field.onChange(e.target.value || null)}
           />
         )
       }

@@ -329,7 +329,14 @@
       "weight": "Poids",
       "isVerified": "Compte vérifié",
       "isCertified": "Certifié",
-      "stravaConnected": "Strava connecté"
+      "stravaConnected": "Strava connecté",
+      "passwordReset": "Réinitialiser le mot de passe",
+      "passwordResetSubtitle": "Définir un nouveau mot de passe pour cet utilisateur",
+      "newPasswordPlaceholder": "Nouveau mot de passe",
+      "generatePassword": "Générer",
+      "resetPasswordBtn": "Réinitialiser",
+      "passwordResetSuccess": "Mot de passe réinitialisé avec succès",
+      "passwordResetUnlock": "Déverrouiller la modification du mot de passe"
     },
     "Pois": {
       "title": "Gestion des Lieux",

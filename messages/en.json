@@ -320,7 +320,14 @@
       "weight": "Weight",
       "isVerified": "Verified account",
       "isCertified": "Certified",
-      "stravaConnected": "Strava connected"
+      "stravaConnected": "Strava connected",
+      "passwordReset": "Reset password",
+      "passwordResetSubtitle": "Set a new password for this user",
+      "newPasswordPlaceholder": "New password",
+      "generatePassword": "Generate",
+      "resetPasswordBtn": "Reset",
+      "passwordResetSuccess": "Password reset successfully",
+      "passwordResetUnlock": "Unlock password editing"
     },
     "Pois": {
       "title": "POIs Management",
