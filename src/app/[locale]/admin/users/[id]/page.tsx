@@ -11,16 +11,18 @@ type PageProps = {
 
 type UserType = Awaited<ReturnType<typeof getUser>>
 
-const GENDER_LABELS: Record<string, string> = {
-  MALE: 'Homme',
-  FEMALE: 'Femme',
-  NON_BINARY: 'Non binaire',
-  OTHER: 'Autre',
-}
-
 export default async function UserShowPage(props: PageProps) {
   const params = await props.params
   const t = await getTranslations('Admin.Users')
+  const tAuth = await getTranslations('Auth')
+  const tGlobal = await getTranslations('Admin.Global')
+
+  const GENDER_LABELS: Record<string, string> = {
+    MALE: tAuth('genderMale'),
+    FEMALE: tAuth('genderFemale'),
+    NON_BINARY: tAuth('genderNonBinary'),
+    OTHER: tAuth('genderOther'),
+  }
 
   const user = await getUser(params.id)
   if (!user) notFound()
@@ -113,14 +115,16 @@ export default async function UserShowPage(props: PageProps) {
             variant="outline"
             className="text-green-600 bg-green-50 border-green-200"
           >
-            Vérifié le {new Date(u.emailVerified).toLocaleDateString('fr-FR')}
+            {t('emailVerifiedOn', {
+              date: new Date(u.emailVerified).toLocaleDateString('fr-FR'),
+            })}
           </Badge>
         ) : (
           <Badge
             variant="outline"
             className="text-amber-600 bg-amber-50 border-amber-200"
           >
-            Non vérifié
+            {t('emailNotVerified')}
           </Badge>
         ),
     },
@@ -135,7 +139,7 @@ export default async function UserShowPage(props: PageProps) {
             u.isVerified ? 'text-green-600 bg-green-50 border-green-200' : ''
           }
         >
-          {u.isVerified ? 'Oui' : 'Non'}
+          {u.isVerified ? tGlobal('yes') : tGlobal('no')}
         </Badge>
       ),
     },
@@ -145,7 +149,7 @@ export default async function UserShowPage(props: PageProps) {
       type: 'custom',
       getValue: (u: UserType) => (
         <Badge variant={u.isCertified ? 'default' : 'secondary'}>
-          {u.isCertified ? 'Certifié' : 'Non certifié'}
+          {u.isCertified ? t('certified') : t('notCertified')}
         </Badge>
       ),
     },
@@ -160,7 +164,9 @@ export default async function UserShowPage(props: PageProps) {
             u.stravaId ? 'text-orange-600 bg-orange-50 border-orange-200' : ''
           }
         >
-          {u.stravaId ? `Connecté (${u.stravaId})` : 'Non connecté'}
+          {u.stravaId
+            ? t('stravaConnectedId', { id: u.stravaId })
+            : t('stravaNotConnected')}
         </Badge>
       ),
     },

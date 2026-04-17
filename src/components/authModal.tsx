@@ -166,15 +166,15 @@ export default function AuthModal({ trigger }: AuthModalProps) {
       >
         <DialogContent className="sm:max-w-md p-0 bg-background border-0 rounded-2xl shadow-2xl">
           <VisuallyHidden.Root>
-            <DialogTitle>Rejoindre Pounce</DialogTitle>
+            <DialogTitle>{t('modalTitle')}</DialogTitle>
           </VisuallyHidden.Root>
           {/* Header */}
           <div className="px-7 pt-7 pb-4">
             <h2 className="text-2xl font-bold text-foreground tracking-tight">
-              Rejoindre Pounce
+              {t('modalTitle')}
             </h2>
             <p className="text-muted-foreground text-sm mt-0.5">
-              Certifie tes explorations.
+              {t('modalSubtitle')}
             </p>
           </div>
 
@@ -194,7 +194,7 @@ export default function AuthModal({ trigger }: AuthModalProps) {
                       : 'text-muted-foreground hover:text-foreground hover:bg-transparent'
                   )}
                 >
-                  {v === 'login' ? 'Connexion' : 'Inscription'}
+                  {v === 'login' ? t('tabLogin') : t('tabRegister')}
                 </Button>
               ))}
             </div>
@@ -323,7 +323,7 @@ export default function AuthModal({ trigger }: AuthModalProps) {
                       required
                       value={pseudo}
                       onChange={(e) => setPseudo(e.target.value)}
-                      placeholder="ex: titou_trail"
+                      placeholder={t('pseudoPlaceholder')}
                       className="rounded-full bg-muted border-0 h-11 px-4 pr-28"
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -336,7 +336,7 @@ export default function AuthModal({ trigger }: AuthModalProps) {
                   <Input
                     name="nationality"
                     required
-                    placeholder="ex: Française"
+                    placeholder={t('nationalityPlaceholder')}
                     className="rounded-full bg-muted border-0 h-11 px-4"
                   />
                 </FormField>
@@ -346,7 +346,7 @@ export default function AuthModal({ trigger }: AuthModalProps) {
                   <FormField label={t('genderLabel')} required>
                     <Select name="gender" required>
                       <SelectTrigger className="rounded-full bg-muted border-0 h-11 px-4">
-                        <SelectValue placeholder="Sélectionner" />
+                        <SelectValue placeholder={t('selectPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="MALE">{t('genderMale')}</SelectItem>
@@ -405,7 +405,6 @@ export default function AuthModal({ trigger }: AuthModalProps) {
 
                 <Button
                   type="submit"
-                  variant="sienna"
                   size="lg"
                   disabled={
                     pending ||

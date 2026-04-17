@@ -56,6 +56,13 @@
     "pseudoTaken": "Ce pseudo est déjà pris",
     "pseudoAvailable": "Disponible",
     "pseudoChecking": "Vérification...",
+    "modalTitle": "Rejoindre Pounce",
+    "modalSubtitle": "Certifie tes explorations.",
+    "tabLogin": "Connexion",
+    "tabRegister": "Inscription",
+    "pseudoPlaceholder": "ex: tonton_trail",
+    "nationalityPlaceholder": "ex: Française",
+    "selectPlaceholder": "Sélectionner",
     "validation": {
       "emailInvalid": "Email invalide",
       "passwordTooShort": "Le mot de passe doit faire au moins 6 caractères",
@@ -258,6 +265,31 @@
       "button": "Dites-nous ce que vous en pensez"
     }
   },
+  "UserMenu": {
+    "profile": "Mon profil",
+    "admin": "Administration",
+    "logout": "Se déconnecter"
+  },
+  "Profile": {
+    "logout": "Se déconnecter",
+    "personalInfo": "Informations personnelles",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "pseudo": "Pseudo",
+    "email": "Email",
+    "nationality": "Nationalité",
+    "gender": "Genre",
+    "birthDate": "Date de naissance",
+    "height": "Taille",
+    "weight": "Poids",
+    "stravaTitle": "Connecter Strava",
+    "stravaDesc": "Synchronise automatiquement tes activités Strava avec Pounce. Aucune action manuelle : tes parcours sont certifiés dès qu'ils correspondent à un défi.",
+    "stravaFeature1": "Synchronisation automatique des activités",
+    "stravaFeature2": "Détection automatique des parcours complétés",
+    "stravaFeature3": "Statistiques enrichies (allure, dénivelé, FC)",
+    "stravaNotConnected": "Non connecté",
+    "stravaConnectBtn": "Connecter Strava"
+  },
   "Admin": {
     "Navbar": {
       "users": "Utilisateurs",
@@ -268,6 +300,10 @@
       "challenges": "Challenges",
       "feedbacks": "Feedbacks",
       "categories": "Catégories"
+    },
+    "Panel": {
+      "title": "Admin Panel",
+      "subtitle": "Pounce Manager"
     },
     "Global": {
       "name": "Nom",
@@ -287,7 +323,18 @@
       "actions": "Actions",
       "yes": "Oui",
       "no": "Non",
-      "empty": "Non renseigné"
+      "empty": "Non renseigné",
+      "notDefined": "Non défini",
+      "noFile": "Aucun fichier"
+    },
+    "Table": {
+      "search": "Rechercher...",
+      "rowsPerPage": "Lignes par page",
+      "pageOf": "Page {page} sur {total}",
+      "firstPage": "Première page",
+      "previousPage": "Précédent",
+      "nextPage": "Suivant",
+      "lastPage": "Dernière page"
     },
     "Users": {
       "title": "Gestion des utilisateurs",
@@ -330,6 +377,12 @@
       "isVerified": "Compte vérifié",
       "isCertified": "Certifié",
       "stravaConnected": "Strava connecté",
+      "emailVerifiedOn": "Vérifié le {date}",
+      "emailNotVerified": "Non vérifié",
+      "certified": "Certifié",
+      "notCertified": "Non certifié",
+      "stravaConnectedId": "Connecté ({id})",
+      "stravaNotConnected": "Non connecté",
       "passwordReset": "Réinitialiser le mot de passe",
       "passwordResetSubtitle": "Définir un nouveau mot de passe pour cet utilisateur",
       "newPasswordPlaceholder": "Nouveau mot de passe",

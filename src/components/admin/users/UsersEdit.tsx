@@ -16,13 +16,6 @@ import { Input } from '@/components/ui/input'
 import { Loader2, Pencil, RefreshCw, Eye, EyeOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const GENDER_OPTIONS = [
-  { label: 'Homme', value: 'MALE' },
-  { label: 'Femme', value: 'FEMALE' },
-  { label: 'Non binaire', value: 'NON_BINARY' },
-  { label: 'Autre', value: 'OTHER' },
-]
-
 function generatePassword(): string {
   const chars =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*'
@@ -79,6 +72,14 @@ interface UserEditPageProps {
 export default function UserEditPage({ user }: UserEditPageProps) {
   const router = useRouter()
   const t = useTranslations('Admin')
+  const tAuth = useTranslations('Auth')
+
+  const GENDER_OPTIONS = [
+    { label: tAuth('genderMale'), value: 'MALE' },
+    { label: tAuth('genderFemale'), value: 'FEMALE' },
+    { label: tAuth('genderNonBinary'), value: 'NON_BINARY' },
+    { label: tAuth('genderOther'), value: 'OTHER' },
+  ]
 
   const [passwordUnlocked, setPasswordUnlocked] = useState(false)
   const [newPassword, setNewPassword] = useState('')

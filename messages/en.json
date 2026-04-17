@@ -57,6 +57,13 @@
     "pseudoTaken": "This username is already taken",
     "pseudoAvailable": "Available",
     "pseudoChecking": "Checking...",
+    "modalTitle": "Join Pounce",
+    "modalSubtitle": "Certify your explorations.",
+    "tabLogin": "Login",
+    "tabRegister": "Sign up",
+    "pseudoPlaceholder": "e.g.: trail_runner",
+    "nationalityPlaceholder": "e.g.: French",
+    "selectPlaceholder": "Select",
     "validation": {
       "emailInvalid": "Invalid email",
       "passwordTooShort": "Password must be at least 6 characters",
@@ -249,6 +256,31 @@
       "button": "Tell us what you think"
     }
   },
+  "UserMenu": {
+    "profile": "My profile",
+    "admin": "Administration",
+    "logout": "Log out"
+  },
+  "Profile": {
+    "logout": "Log out",
+    "personalInfo": "Personal information",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "pseudo": "Username",
+    "email": "Email",
+    "nationality": "Nationality",
+    "gender": "Gender",
+    "birthDate": "Date of birth",
+    "height": "Height",
+    "weight": "Weight",
+    "stravaTitle": "Connect Strava",
+    "stravaDesc": "Automatically sync your Strava activities with Pounce. No manual action needed: your routes are certified as soon as they match a challenge.",
+    "stravaFeature1": "Automatic activity synchronization",
+    "stravaFeature2": "Automatic detection of completed routes",
+    "stravaFeature3": "Enhanced stats (pace, elevation, HR)",
+    "stravaNotConnected": "Not connected",
+    "stravaConnectBtn": "Connect Strava"
+  },
   "Admin": {
     "Navbar": {
       "users": "Users",
@@ -259,6 +291,10 @@
       "challenges": "Challenges",
       "feedbacks": "Feedbacks",
       "categories": "Categories"
+    },
+    "Panel": {
+      "title": "Admin Panel",
+      "subtitle": "Pounce Manager"
     },
     "Global": {
       "name": "Name",
@@ -278,7 +314,18 @@
       "actions": "Actions",
       "yes": "Yes",
       "no": "No",
-      "empty": "Not specified"
+      "empty": "Not specified",
+      "notDefined": "Not defined",
+      "noFile": "No file"
+    },
+    "Table": {
+      "search": "Search...",
+      "rowsPerPage": "Rows per page",
+      "pageOf": "Page {page} of {total}",
+      "firstPage": "First page",
+      "previousPage": "Previous",
+      "nextPage": "Next",
+      "lastPage": "Last page"
     },
     "Users": {
       "title": "User Management",
@@ -321,6 +368,12 @@
       "isVerified": "Verified account",
       "isCertified": "Certified",
       "stravaConnected": "Strava connected",
+      "emailVerifiedOn": "Verified on {date}",
+      "emailNotVerified": "Not verified",
+      "certified": "Certified",
+      "notCertified": "Not certified",
+      "stravaConnectedId": "Connected ({id})",
+      "stravaNotConnected": "Not connected",
       "passwordReset": "Reset password",
       "passwordResetSubtitle": "Set a new password for this user",
       "newPasswordPlaceholder": "New password",

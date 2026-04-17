@@ -176,7 +176,7 @@ export function DataTable<TData, TValue>({
           <div className="relative w-full">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Rechercher..."
+              placeholder={t('Table.search')}
               defaultValue={search}
               onChange={(e) => handleSearch(e.target.value)}
               className="pl-8"
@@ -259,12 +259,12 @@ export function DataTable<TData, TValue>({
       {/* Pagination */}
       <div className="flex items-center justify-between px-2">
         <div className="flex-1 text-sm text-muted-foreground">
-          {t('Results.total')} : {totalItems} résultats
+          {t('Results.total')} : {totalItems} {t('Results.results')}
         </div>
 
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium">Lignes par page</p>
+            <p className="text-sm font-medium">{t('Table.rowsPerPage')}</p>
             <Select value={`${per_page}`} onValueChange={handlePageSizeChange}>
               <SelectTrigger className="h-8 w-17.5">
                 <SelectValue placeholder={per_page} />
@@ -280,7 +280,7 @@ export function DataTable<TData, TValue>({
           </div>
 
           <div className="flex w-25 items-center justify-center text-sm font-medium">
-            Page {page} sur {pageCount}
+            {t('Table.pageOf', { page, total: pageCount })}
           </div>
 
           <div className="flex items-center space-x-2">
@@ -290,7 +290,7 @@ export function DataTable<TData, TValue>({
               onClick={() => handlePageChange(1)}
               disabled={page === 1}
             >
-              <span className="sr-only">Première page</span>
+              <span className="sr-only">{t('Table.firstPage')}</span>
               <ChevronsLeft className="h-4 w-4" />
             </Button>
             <Button
@@ -299,7 +299,7 @@ export function DataTable<TData, TValue>({
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 1}
             >
-              <span className="sr-only">Précédent</span>
+              <span className="sr-only">{t('Table.previousPage')}</span>
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
@@ -308,7 +308,7 @@ export function DataTable<TData, TValue>({
               onClick={() => handlePageChange(page + 1)}
               disabled={page === pageCount}
             >
-              <span className="sr-only">Suivant</span>
+              <span className="sr-only">{t('Table.nextPage')}</span>
               <ChevronRight className="h-4 w-4" />
             </Button>
             <Button
@@ -317,7 +317,7 @@ export function DataTable<TData, TValue>({
               onClick={() => handlePageChange(pageCount)}
               disabled={page === pageCount}
             >
-              <span className="sr-only">Dernière page</span>
+              <span className="sr-only">{t('Table.lastPage')}</span>
               <ChevronsRight className="h-4 w-4" />
             </Button>
           </div>

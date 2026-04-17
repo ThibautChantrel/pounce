@@ -20,6 +20,7 @@ import { fetchCategoriesForSelect } from '@/actions/category/category.admin.acti
 import { Button } from '../ui/button'
 import { Link } from '@/navigation'
 import { getCategoryIcon } from '@/utils/category-icons'
+import { cn } from '@/lib/utils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -156,18 +157,20 @@ export function ChallengeCarousel() {
                   const Icon = getCategoryIcon(cat.value)
                   const isActive = selectedCategoryIds.includes(cat.id)
                   return (
-                    <button
+                    <Button
                       key={cat.id}
+                      variant="ghost"
                       onClick={() => toggleCategory(cat.id)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                      className={cn(
+                        'h-auto rounded-full border px-3 py-1.5 text-sm font-medium transition-all',
                         isActive
-                          ? 'bg-primary text-primary-foreground border-primary'
-                          : 'bg-background/50 text-muted-foreground border-border hover:border-primary/50 hover:text-foreground'
-                      }`}
+                          ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                          : 'bg-background/50 text-muted-foreground border-border hover:bg-background/50 hover:border-primary/50 hover:text-foreground'
+                      )}
                     >
                       <Icon className="w-3.5 h-3.5" />
                       {cat.value}
-                    </button>
+                    </Button>
                   )
                 })}
               </div>

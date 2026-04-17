@@ -31,8 +31,12 @@ export default async function AdminLayout({
     <div className="flex h-screen bg-muted/20">
       <aside className="w-64 bg-card border-r hidden md:flex flex-col">
         <div className="p-6 border-b">
-          <h2 className="text-xl font-bold tracking-tight">Admin Panel</h2>
-          <p className="text-xs text-muted-foreground">Pounce Manager</p>
+          <h2 className="text-xl font-bold tracking-tight">
+            {(await t)('Panel.title')}
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            {(await t)('Panel.subtitle')}
+          </p>
         </div>
 
         <nav className="flex-1 p-4 space-y-2">

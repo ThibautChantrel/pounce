@@ -7,6 +7,7 @@ import { logoutAction } from '@/actions/auth/auth.actions'
 import { Link } from '@/navigation'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface UserMenuProps {
   userId: string
@@ -36,6 +37,7 @@ export default function UserMenu({
   isAdmin,
 }: UserMenuProps) {
   const router = useRouter()
+  const t = useTranslations('UserMenu')
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -91,7 +93,7 @@ export default function UserMenu({
                 className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
               >
                 <User className="w-4 h-4 text-muted-foreground" />
-                Mon profil
+                {t('profile')}
               </Link>
 
               {isAdmin && (
@@ -101,7 +103,7 @@ export default function UserMenu({
                   className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
                 >
                   <Settings className="w-4 h-4 text-muted-foreground" />
-                  Administration
+                  {t('admin')}
                 </Link>
               )}
             </div>
@@ -114,7 +116,7 @@ export default function UserMenu({
                 className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-foreground w-full justify-start h-auto rounded-none"
               >
                 <LogOut className="w-4 h-4 text-muted-foreground" />
-                Se déconnecter
+                {t('logout')}
               </Button>
             </div>
           </div>
