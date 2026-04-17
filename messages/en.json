@@ -7,7 +7,6 @@
     "logoutButton": "Log Out",
     "about": "Our vision"
   },
-
   "Footer": {
     "tagline": "Leave your mark. Explore the territory. Build the movement.",
     "about": "About",
@@ -16,7 +15,6 @@
     "footprint": "Every trace matters.",
     "copyright": "Pounce — ALL RIGHTS RESERVED"
   },
-
   "hero": {
     "title": {
       "line1": "Make your",
@@ -27,7 +25,6 @@
     "badge": "Project in progress · Join the first contributors",
     "scrollAriaLabel": "Scroll to next section"
   },
-
   "Auth": {
     "loginTitle": "Welcome back",
     "loginDesc": "Enter your credentials to log in.",
@@ -35,18 +32,50 @@
     "registerDesc": "Join Pounce today.",
     "emailLabel": "Email",
     "passwordLabel": "Password",
-    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordLabel": "Confirm",
     "passwordMismatch": "Passwords do not match",
     "nameLabel": "Name (Optional)",
     "loginBtn": "Log In",
-    "registerBtn": "Sign Up",
+    "registerBtn": "Create my account",
     "switchLogin": "Already have an account? Log In",
     "switchRegister": "Don't have an account? Sign Up",
     "successRegister": "Account created successfully! You are now logged in.",
     "googleAuth": "Continue with Google",
-    "successLogin": "Login successful!"
+    "successLogin": "Login successful!",
+    "pseudoLabel": "Username",
+    "firstNameLabel": "First name",
+    "lastNameLabel": "Last name",
+    "nationalityLabel": "Nationality",
+    "genderLabel": "Gender",
+    "birthDateLabel": "Date of birth",
+    "heightLabel": "Height (cm)",
+    "weightLabel": "Weight (kg)",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderNonBinary": "Non-binary",
+    "genderOther": "Other",
+    "pseudoTaken": "This username is already taken",
+    "pseudoAvailable": "Available",
+    "pseudoChecking": "Checking...",
+    "validation": {
+      "emailInvalid": "Invalid email",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordRequired": "Password is required",
+      "passwordMismatch": "Passwords do not match",
+      "pseudoTooShort": "Username must be at least 3 characters",
+      "pseudoTooLong": "Username cannot exceed 30 characters",
+      "pseudoInvalidChars": "Username can only contain letters, numbers, spaces, dashes and underscores",
+      "pseudoForbidden": "This username is not allowed",
+      "pseudoTaken": "This username is already taken",
+      "pseudoAvailable": "Available",
+      "pseudoChecking": "Checking...",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "nationalityRequired": "Nationality is required",
+      "genderRequired": "Gender is required",
+      "birthDateRequired": "Date of birth is required"
+    }
   },
-
   "HomePage": {
     "title": "Turn your runs into legends",
     "subtitle": "Join the Paris Metro Challenge.",
@@ -56,7 +85,6 @@
     "participants": "{count} participants",
     "completed": "{pct}% Completed"
   },
-
   "Challenges": {
     "searchPlaceholder": "Search for a challenge, a location...",
     "endTitle": "That's all for now!",
@@ -108,7 +136,6 @@
       }
     }
   },
-
   "Tracks": {
     "track": "Track",
     "distance": "Distance",
@@ -122,7 +149,6 @@
     "Arrival": "Arrival",
     "GpxAvailable": "GPX file available"
   },
-
   "Feedbacks": {
     "title": "Explore your sport practice",
     "description": "We are building Pounce around challenges and sport footprints. Help us understand your profile, habits and what you would like to see emerge :)",
@@ -176,7 +202,6 @@
     "thankYou": "Thank you for leaving your footprint.",
     "next": "Next"
   },
-
   "About": {
     "hero": {
       "title": "What if we added exploration to our workouts?",
@@ -224,7 +249,6 @@
       "button": "Tell us what you think"
     }
   },
-
   "Admin": {
     "Navbar": {
       "users": "Users",
@@ -236,7 +260,6 @@
       "feedbacks": "Feedbacks",
       "categories": "Categories"
     },
-
     "Global": {
       "name": "Name",
       "title": "Title",
@@ -257,7 +280,6 @@
       "no": "No",
       "empty": "Not specified"
     },
-
     "Users": {
       "title": "User Management",
       "description": "Manage all registered users.",
@@ -287,9 +309,19 @@
         "roleInvalid": "Invalid role",
         "passwordTooShort": "Password is too short",
         "passwordMismatch": "Passwords do not match"
-      }
+      },
+      "pseudo": "Username",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "nationality": "Nationality",
+      "gender": "Gender",
+      "birthDate": "Date of birth",
+      "height": "Height",
+      "weight": "Weight",
+      "isVerified": "Verified account",
+      "isCertified": "Certified",
+      "stravaConnected": "Strava connected"
     },
-
     "Pois": {
       "title": "POIs Management",
       "description": "Manage all Points of Interest in database",
@@ -317,7 +349,6 @@
         "invalidNumber": "Please enter a valid number."
       }
     },
-
     "Files": {
       "title": "File Management",
       "description": "Manage all uploaded files.",
@@ -349,7 +380,6 @@
       "placeholderCover": "Choose a cover",
       "placeholderGpxFile": "Choose a GPX File"
     },
-
     "Tracks": {
       "title": "Tracks Management",
       "description": "Manage routes and challenge sections.",
@@ -369,7 +399,6 @@
         "distanceNegative": "Distance must be positive."
       }
     },
-
     "Actions": {
       "edit": "Edit",
       "delete": "Delete",
@@ -389,7 +418,6 @@
         "description": "Are you sure you want to delete this item? This action cannot be undone. The item {item} will be permanently removed."
       }
     },
-
     "Challenges": {
       "title": "Challenges Management",
       "description": "Manage global challenges and their associated tracks.",
@@ -413,7 +441,6 @@
         "EXPERT": "Expert"
       }
     },
-
     "Feedbacks": {
       "title": "Feedback Management",
       "description": "View and manage user feedback and contact requests.",
@@ -431,7 +458,6 @@
       "markAsRead": "Mark as read",
       "delete": "Delete"
     },
-
     "Categories": {
       "title": "Categories Management",
       "description": "Manage the {count} track and challenge categories.",
@@ -465,7 +491,6 @@
         "valueTooShort": "Value must be at least 2 characters."
       }
     },
-
     "Results": {
       "noResults": "No results found.",
       "total": "Total",

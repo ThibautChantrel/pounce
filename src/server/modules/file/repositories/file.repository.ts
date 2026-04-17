@@ -95,7 +95,9 @@ export const getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
         createdBy: {
           select: {
             id: true,
-            name: true,
+            pseudo: true,
+            firstName: true,
+            lastName: true,
             email: true,
           },
         },

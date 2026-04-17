@@ -9,22 +9,19 @@ import { updateUserAction } from '@/actions/user/user.admin.actions'
 import { RoleOptions, RoleValues } from '@/utils/users'
 
 const userFormSchema = z.object({
-  name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  pseudo: z.string().optional().nullable(),
   email: z.string().email('Adresse email invalide'),
   role: z.enum([RoleValues.Admin, RoleValues.User]),
   emailVerified: z.date().nullable().optional(),
-
-  /*   isActive: z.boolean().default(true), */
 })
 
 type UserFormSchema = typeof userFormSchema
-
 type UserFormInput = z.input<UserFormSchema>
-
 type UserFormOutput = z.output<UserFormSchema>
+
 interface UserData {
   id: string
-  name: string | null
+  pseudo: string | null
   email: string
   role: 'ADMIN' | 'USER'
 }
@@ -39,10 +36,10 @@ export default function UserEditPage({ user }: UserEditPageProps) {
 
   const fields: UpdateFieldConfig<UserFormInput>[] = [
     {
-      name: 'name',
+      name: 'pseudo',
       label: t('Users.name'),
       type: 'text',
-      placeholder: 'Ex: Jean Dupont',
+      placeholder: 'Ex: jean_dupont',
     },
     {
       name: 'email',
@@ -61,24 +58,15 @@ export default function UserEditPage({ user }: UserEditPageProps) {
       type: 'date',
       description: t('Users.VerifiedEmpty'),
     },
-    /*     {
-      name: 'isActive',
-      label: 'Compte actif',
-      type: 'boolean'
-    } */
   ]
 
   const handleSubmit = async (values: UserFormOutput) => {
     try {
       const formData = new FormData()
-
       formData.append('id', user.id)
-
-      formData.append('name', values.name)
+      formData.append('pseudo', values.pseudo || '')
       formData.append('email', values.email)
       formData.append('role', values.role)
-      /* formData.append('isActive', String(values.isActive)) */
-
       if (values.emailVerified) {
         formData.append('emailVerified', values.emailVerified.toISOString())
       }
@@ -105,7 +93,7 @@ export default function UserEditPage({ user }: UserEditPageProps) {
           {t('Users.updateTitle')}
         </h1>
         <p className="text-muted-foreground mt-2">
-          {t('Users.updateSubtitle', { userName: user.name || user.email })}
+          {t('Users.updateSubtitle', { userName: user.pseudo || user.email })}
         </p>
       </div>
 
@@ -114,7 +102,7 @@ export default function UserEditPage({ user }: UserEditPageProps) {
           schema={userFormSchema}
           fields={fields}
           defaultValues={{
-            name: user.name || '',
+            pseudo: user.pseudo || '',
             email: user.email,
             role: user.role,
           }}

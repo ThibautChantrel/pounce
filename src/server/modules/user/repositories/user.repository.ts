@@ -2,30 +2,29 @@ import db from '@/server/db'
 import { FetchParams } from '@/utils/fetch'
 import { Prisma } from '@prisma/client'
 
-/**
- * Trouve un utilisateur par son email.
- * Retourne null si aucun utilisateur n'est trouvé.
- */
 export const findUserByEmail = async (email: string) => {
-  return await db.user.findUnique({
-    where: { email },
-  })
+  return await db.user.findUnique({ where: { email } })
 }
 
-/**
- * Crée un nouvel utilisateur en base.
- */
+export const findUserByPseudo = async (pseudo: string) => {
+  return await db.user.findUnique({ where: { pseudo } })
+}
+
 export const createUser = async (data: Prisma.UserCreateInput) => {
-  return await db.user.create({
-    data,
-  })
+  return await db.user.create({ data })
 }
 
 export const getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
   const where = search
     ? {
         OR: [
-          { name: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          { pseudo: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          {
+            firstName: { contains: search, mode: Prisma.QueryMode.insensitive },
+          },
+          {
+            lastName: { contains: search, mode: Prisma.QueryMode.insensitive },
+          },
           { email: { contains: search, mode: Prisma.QueryMode.insensitive } },
         ],
       }
@@ -48,20 +47,13 @@ export const getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
 }
 
 export const deleteUserById = async (id: string) => {
-  return await db.user.delete({
-    where: { id },
-  })
+  return await db.user.delete({ where: { id } })
 }
 
 export const getOne = async (id: string) => {
-  return await db.user.findUnique({
-    where: { id },
-  })
+  return await db.user.findUnique({ where: { id } })
 }
 
 export const updateUser = async (id: string, data: Prisma.UserUpdateInput) => {
-  return await db.user.update({
-    where: { id },
-    data,
-  })
+  return await db.user.update({ where: { id }, data })
 }

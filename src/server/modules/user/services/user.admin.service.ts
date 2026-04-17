@@ -16,18 +16,16 @@ export const getUserById = async (id: string) => {
 
 export const updateUserById = async (id: string, formData: FormData) => {
   const user = await userRepository.getOne(id)
-  if (!user) {
-    throw new Error('User not found')
-  }
+  if (!user) throw new Error('User not found')
 
   const email = formData.get('email') as string
-  const name = formData.get('name') as string
-  const role = formData.get('role') as string as 'USER' | 'ADMIN'
+  const pseudo = formData.get('pseudo') as string
+  const role = formData.get('role') as 'USER' | 'ADMIN'
   const emailVerified = formData.get('verifiedAt') as string | null
 
   return await userRepository.updateUser(id, {
     email,
-    name,
+    pseudo: pseudo || null,
     role,
     emailVerified: emailVerified ? new Date(emailVerified) : null,
   })
@@ -35,8 +33,8 @@ export const updateUserById = async (id: string, formData: FormData) => {
 
 export const createUser = async (formData: FormData) => {
   const email = formData.get('email') as string
-  const name = formData.get('name') as string
-  const role = formData.get('role') as string as 'USER' | 'ADMIN'
+  const pseudo = formData.get('pseudo') as string
+  const role = formData.get('role') as 'USER' | 'ADMIN'
 
   const existingUser = await userRepository.findUserByEmail(email)
   if (existingUser) {
@@ -46,9 +44,5 @@ export const createUser = async (formData: FormData) => {
     )
   }
 
-  return await userRepository.createUser({
-    email,
-    name,
-    role,
-  })
+  return await userRepository.createUser({ email, pseudo, role })
 }

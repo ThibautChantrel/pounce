@@ -7,7 +7,6 @@
     "logoutButton": "Se déconnecter",
     "about": "Notre vision"
   },
-
   "Footer": {
     "tagline": "Marquer son empreinte. Explorer le territoire. Construire le mouvement.",
     "about": "À propos",
@@ -16,7 +15,6 @@
     "footprint": "Chaque pas compte",
     "copyright": "Pounce — TOUS DROITS RÉSERVÉS"
   },
-
   "Hero": {
     "title": {
       "line1": "Marque ton ",
@@ -27,7 +25,6 @@
     "badge": "Projet en construction · Rejoins les premiers contributeurs",
     "scrollAriaLabel": "Défiler vers la section suivante"
   },
-
   "Auth": {
     "loginTitle": "Bon retour",
     "loginDesc": "Entrez vos identifiants pour vous connecter.",
@@ -35,18 +32,49 @@
     "registerDesc": "Rejoignez Pounce dès aujourd'hui.",
     "emailLabel": "Email",
     "passwordLabel": "Mot de passe",
-    "confirmPasswordLabel": "Confirmer le mot de passe",
+    "confirmPasswordLabel": "Confirmer",
     "passwordMismatch": "Les mots de passe ne correspondent pas",
-    "nameLabel": "Nom (Optionnel)",
+    "pseudoLabel": "Pseudo",
+    "firstNameLabel": "Prénom",
+    "lastNameLabel": "Nom",
+    "nationalityLabel": "Nationalité",
+    "genderLabel": "Genre",
+    "birthDateLabel": "Date de naissance",
+    "heightLabel": "Taille (cm)",
+    "weightLabel": "Poids (kg)",
+    "genderMale": "Homme",
+    "genderFemale": "Femme",
+    "genderNonBinary": "Non binaire",
+    "genderOther": "Autre",
     "loginBtn": "Se connecter",
-    "registerBtn": "S'inscrire",
+    "registerBtn": "Créer mon compte",
     "switchLogin": "Déjà un compte ? Se connecter",
     "switchRegister": "Pas de compte ? S'inscrire",
     "successRegister": "Compte créé avec succès ! Vous êtes maintenant connecté.",
     "googleAuth": "Continuer avec Google",
-    "successLogin": "Connexion réussie !"
+    "successLogin": "Connexion réussie !",
+    "pseudoTaken": "Ce pseudo est déjà pris",
+    "pseudoAvailable": "Disponible",
+    "pseudoChecking": "Vérification...",
+    "validation": {
+      "emailInvalid": "Email invalide",
+      "passwordTooShort": "Le mot de passe doit faire au moins 6 caractères",
+      "passwordRequired": "Mot de passe requis",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "pseudoTooShort": "Le pseudo doit faire au moins 3 caractères",
+      "pseudoTooLong": "Le pseudo ne peut pas dépasser 30 caractères",
+      "pseudoInvalidChars": "Le pseudo ne peut contenir que des lettres, chiffres, espaces, tirets et underscores",
+      "pseudoForbidden": "Ce pseudo n'est pas autorisé",
+      "pseudoTaken": "Ce pseudo est déjà pris",
+      "pseudoAvailable": "Disponible",
+      "pseudoChecking": "Vérification...",
+      "firstNameRequired": "Le prénom est requis",
+      "lastNameRequired": "Le nom est requis",
+      "nationalityRequired": "La nationalité est requise",
+      "genderRequired": "Le genre est requis",
+      "birthDateRequired": "La date de naissance est requise"
+    }
   },
-
   "HomePage": {
     "title": "Transformez vos trajets en légendes",
     "subtitle": "Rejoignez le défi du Métro Parisien.",
@@ -56,7 +84,6 @@
     "participants": "{count} participants",
     "completed": "{pct}% Complété"
   },
-
   "File": {
     "uploadButton": "Télécharger le fichier",
     "uploading": "Téléchargement...",
@@ -65,7 +92,6 @@
     "selectFile": "Sélectionnez un fichier à télécharger",
     "noFileSelected": "Aucun fichier sélectionné."
   },
-
   "Challenges": {
     "searchPlaceholder": "Rechercher un challenge, un lieu...",
     "endTitle": "C'est tout pour le moment !",
@@ -117,7 +143,6 @@
       }
     }
   },
-
   "Tracks": {
     "track": "Parcours",
     "distance": "Distance",
@@ -131,7 +156,6 @@
     "Arrival": "Arrivée",
     "GpxAvailable": "GPX disponible"
   },
-
   "Feedbacks": {
     "title": "Explore ta pratique sportive",
     "description": "Nous construisons Pounce autour des défis et des empreintes sportives. Aide-nous à comprendre ton profil, tes habitudes et ce que tu aimerais voir émerger :)",
@@ -187,7 +211,6 @@
     "thankYou": "Merci d’avoir laissé ton empreinte.",
     "next": "Suivant"
   },
-
   "About": {
     "hero": {
       "title": "Et si on ajoutait l'exploration à nos entraînements ?",
@@ -235,7 +258,6 @@
       "button": "Dites-nous ce que vous en pensez"
     }
   },
-
   "Admin": {
     "Navbar": {
       "users": "Utilisateurs",
@@ -247,7 +269,6 @@
       "feedbacks": "Feedbacks",
       "categories": "Catégories"
     },
-
     "Global": {
       "name": "Nom",
       "title": "Titre",
@@ -268,7 +289,6 @@
       "no": "Non",
       "empty": "Non renseigné"
     },
-
     "Users": {
       "title": "Gestion des utilisateurs",
       "description": "Gérez tous les utilisateurs enregistrés.",
@@ -298,7 +318,18 @@
         "roleInvalid": "Rôle invalide",
         "passwordTooShort": "Le mot de passe est trop court",
         "passwordMismatch": "Les mots de passe ne correspondent pas"
-      }
+      },
+      "pseudo": "Pseudo",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "nationality": "Nationalité",
+      "gender": "Genre",
+      "birthDate": "Date de naissance",
+      "height": "Taille",
+      "weight": "Poids",
+      "isVerified": "Compte vérifié",
+      "isCertified": "Certifié",
+      "stravaConnected": "Strava connecté"
     },
     "Pois": {
       "title": "Gestion des Lieux",
@@ -377,7 +408,6 @@
         "description": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.L'élément {item} sera définitivement supprimé."
       }
     },
-
     "Tracks": {
       "title": "Gestion des Parcours",
       "description": "Gérez les itinéraires et les sections des challenges.",
@@ -397,7 +427,6 @@
         "distanceNegative": "La distance doit être positive."
       }
     },
-
     "Challenges": {
       "title": "Gestion des Challenges",
       "description": "Gérez les défis globaux et les parcours associés.",
@@ -421,7 +450,6 @@
         "EXPERT": "Expert"
       }
     },
-
     "Feedbacks": {
       "title": "Gestion des retours",
       "description": "Consultez et gérez les retours utilisateurs et les demandes de contact.",
@@ -439,7 +467,6 @@
       "markAsRead": "Marquer comme lu",
       "delete": "Supprimer"
     },
-
     "Categories": {
       "title": "Gestion des Catégories",
       "description": "Gérez les {count} catégories de parcours et challenges.",
@@ -473,7 +500,6 @@
         "valueTooShort": "La valeur doit contenir au moins 2 caractères."
       }
     },
-
     "Results": {
       "noResults": "Aucun résultat trouvé.",
       "total": "Total",

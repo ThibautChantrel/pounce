@@ -18,6 +18,12 @@ enum Role {
   ADMIN
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  OTHER
+}
 
 enum Difficulty {
   EASY
@@ -30,12 +36,29 @@ enum Difficulty {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
+  pseudo        String?   @unique
+  firstName     String?
+  lastName      String?
   email         String    @unique
   emailVerified DateTime?
   image         String?
   password      String?
   role          Role      @default(USER)
+
+  // Profile fields
+  nationality   String?
+  gender        Gender?
+  birthDate     DateTime?
+  height        Int?
+  weight        Float?
+
+  // Status flags
+  isVerified    Boolean   @default(true)
+  isCertified   Boolean   @default(false)
+
+  // Strava
+  stravaId      String?   @unique
+  stravaToken   String?
 
   // Auth Relations
   accounts Account[]

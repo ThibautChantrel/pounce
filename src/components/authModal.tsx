@@ -1,30 +1,73 @@
 'use client'
 
-import { useState, useActionState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
-import { Modal } from '@/components/ui/custom/modal'
+import { useState, useActionState, useEffect, useCallback } from 'react'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Loader2 } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Loader2, CheckCircle2, XCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTranslations } from 'next-intl'
 import { loginAction, registerAction } from '@/actions/auth/auth.actions'
+import { checkPseudoAvailability } from '@/actions/auth/check-pseudo.action'
 import { useRouter } from 'next/navigation'
+import { cn } from '@/lib/utils'
 
 interface AuthModalProps {
   trigger: React.ReactNode
 }
 
+type PseudoStatus = 'idle' | 'checking' | 'available' | 'taken' | 'invalid'
+
+function FormField({
+  label,
+  required,
+  error,
+  children,
+}: {
+  label: string
+  required?: boolean
+  error?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label className="text-sm font-medium text-foreground">
+        {label}
+        {required && <span className="text-destructive ml-0.5">*</span>}
+      </Label>
+      {error && (
+        <p className="text-xs text-destructive flex items-center gap-1">
+          <XCircle className="w-3 h-3 shrink-0" />
+          {error}
+        </p>
+      )}
+      {children}
+    </div>
+  )
+}
+
 export default function AuthModal({ trigger }: AuthModalProps) {
-  const t = useTranslations('Auth')
   const router = useRouter()
+  const t = useTranslations('Auth')
 
   const [open, setOpen] = useState(false)
-  const [isLoginMode, setIsLoginMode] = useState(true)
+  const [tab, setTab] = useState<'login' | 'register'>('login')
 
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordError, setPasswordError] = useState<string | null>(null)
+
+  const [pseudo, setPseudo] = useState('')
+  const [pseudoStatus, setPseudoStatus] = useState<PseudoStatus>('idle')
 
   const [regState, regAction, regPending] = useActionState(registerAction, {
     success: false,
@@ -38,7 +81,16 @@ export default function AuthModal({ trigger }: AuthModalProps) {
   })
 
   const pending = regPending || logPending
-  const error = isLoginMode ? loginState?.error : regState?.error
+
+  const handleClose = useCallback(() => {
+    setOpen(false)
+    setTab('login')
+    setPassword('')
+    setConfirmPassword('')
+    setPasswordError(null)
+    setPseudo('')
+    setPseudoStatus('idle')
+  }, [])
 
   useEffect(() => {
     if (open && regState?.success) {
@@ -58,131 +110,320 @@ export default function AuthModal({ trigger }: AuthModalProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginState?.success])
 
-  const handleClose = () => {
-    setOpen(false)
-    setIsLoginMode(true)
-    setPassword('')
-    setConfirmPassword('')
-    setPasswordError(null)
-  }
+  useEffect(() => {
+    if (loginState?.error) toast.error(loginState.error)
+  }, [loginState?.error])
+
+  useEffect(() => {
+    if (!pseudo || pseudo.length < 3) {
+      setPseudoStatus(pseudo.length > 0 ? 'invalid' : 'idle')
+      return
+    }
+    const forbidden = ['admin', 'pounce']
+    if (forbidden.some((w) => pseudo.toLowerCase().includes(w))) {
+      setPseudoStatus('invalid')
+      return
+    }
+    setPseudoStatus('checking')
+    const timer = setTimeout(async () => {
+      const { available } = await checkPseudoAvailability(pseudo)
+      setPseudoStatus(available ? 'available' : 'taken')
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [pseudo])
 
   const handleRegisterSubmit = (formData: FormData) => {
     if (password !== confirmPassword) {
-      setPasswordError(t('passwordMismatch'))
+      setPasswordError(t('validation.passwordMismatch'))
       return
     }
-
     setPasswordError(null)
+    formData.set('pseudo', pseudo)
     regAction(formData)
   }
 
-  useEffect(() => {
-    if (loginState?.error) {
-      toast.error(loginState.error)
-    }
-  }, [loginState?.error])
+  const pseudoHint =
+    pseudoStatus === 'checking' ? (
+      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+        <Loader2 className="w-3 h-3 animate-spin" />
+        {t('validation.pseudoChecking')}
+      </span>
+    ) : pseudoStatus === 'available' ? (
+      <span className="flex items-center gap-1 text-xs text-emerald-600">
+        <CheckCircle2 className="w-3 h-3" />
+        {t('validation.pseudoAvailable')}
+      </span>
+    ) : null
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={(v) => (v ? setOpen(true) : handleClose())}
-      title={isLoginMode ? t('loginTitle') : t('registerTitle')}
-      description={isLoginMode ? t('loginDesc') : t('registerDesc')}
-      trigger={trigger}
-    >
-      <div className="flex flex-col gap-4 py-2">
-        {/*<Button variant="outline" type="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path
-              d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
-              fill="currentColor"
-            />
-          </svg>
-          {t('googleAuth')}
-        </Button>
-        <Separator className="*:data-[slot=field-separator-content]:bg-card" />*/}
-        <form
-          action={isLoginMode ? logAction : handleRegisterSubmit}
-          className="flex flex-col gap-4"
-        >
-          {/* EMAIL */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">{t('emailLabel')}</Label>
-            <Input id="email" name="email" type="email" required />
+    <>
+      <span onClick={() => setOpen(true)} className="cursor-pointer">
+        {trigger}
+      </span>
+      <Dialog
+        open={open}
+        onOpenChange={(v) => (v ? setOpen(true) : handleClose())}
+      >
+        <DialogContent className="sm:max-w-md p-0 bg-background border-0 rounded-2xl shadow-2xl">
+          <VisuallyHidden.Root>
+            <DialogTitle>Rejoindre Pounce</DialogTitle>
+          </VisuallyHidden.Root>
+          {/* Header */}
+          <div className="px-7 pt-7 pb-4">
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">
+              Rejoindre Pounce
+            </h2>
+            <p className="text-muted-foreground text-sm mt-0.5">
+              Certifie tes explorations.
+            </p>
           </div>
 
-          {/* NAME */}
-          {!isLoginMode && (
-            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
-              <Label htmlFor="name">{t('nameLabel')}</Label>
-              <Input id="name" name="name" />
+          {/* Tab switcher */}
+          <div className="px-7">
+            <div className="flex bg-muted rounded-full p-1">
+              {(['login', 'register'] as const).map((v) => (
+                <Button
+                  key={v}
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setTab(v)}
+                  className={cn(
+                    'flex-1 h-9 text-sm font-medium rounded-full transition-all duration-200',
+                    tab === v
+                      ? 'bg-card text-foreground shadow-sm hover:bg-card'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-transparent'
+                  )}
+                >
+                  {v === 'login' ? 'Connexion' : 'Inscription'}
+                </Button>
+              ))}
             </div>
-          )}
-
-          {/* PASSWORD */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="password">{t('passwordLabel')}</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
           </div>
 
-          {/* CONFIRM PASSWORD */}
-          {!isLoginMode && (
-            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
-              <Label htmlFor="confirmPassword">
-                {t('confirmPasswordLabel')}
-              </Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-          )}
+          {/* Forms */}
+          <div className="px-7 pb-7 pt-4 max-h-[70vh] overflow-y-auto">
+            {tab === 'login' ? (
+              <form action={logAction} className="flex flex-col gap-4">
+                <FormField label={t('emailLabel')} required>
+                  <Input
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    className="rounded-full bg-muted border-0 h-11 px-4"
+                  />
+                </FormField>
 
-          {/* ERRORS */}
-          {passwordError && (
-            <div className="text-sm text-red-500 bg-red-50 p-2 rounded">
-              {passwordError}
-            </div>
-          )}
+                <FormField label={t('passwordLabel')} required>
+                  <Input
+                    name="password"
+                    type="password"
+                    required
+                    autoComplete="current-password"
+                    className="rounded-full bg-muted border-0 h-11 px-4"
+                  />
+                </FormField>
 
-          {error && (
-            <div className="text-sm text-red-500 bg-red-50 p-2 rounded">
-              {error}
-            </div>
-          )}
+                {loginState?.error && (
+                  <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+                    {loginState.error}
+                  </p>
+                )}
 
-          <Button
-            type="submit"
-            disabled={pending}
-            variant={isLoginMode ? 'default' : 'primary'}
-          >
-            {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoginMode ? t('loginBtn') : t('registerBtn')}
-          </Button>
-        </form>
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={pending}
+                  className="w-full rounded-full mt-1 h-12 text-base"
+                >
+                  {logPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {t('loginBtn')}
+                </Button>
+              </form>
+            ) : (
+              <form
+                action={handleRegisterSubmit}
+                className="flex flex-col gap-4"
+              >
+                <FormField label={t('emailLabel')} required>
+                  <Input
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    className="rounded-full bg-muted border-0 h-11 px-4"
+                  />
+                </FormField>
 
-        {/* SWITCH */}
-        <div className="text-center mt-2">
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() => setIsLoginMode((v) => !v)}
-            className="text-sm cursor-pointer text-muted-foreground hover:text-foreground hover:underline transition-colors disabled:opacity-50"
-          >
-            {isLoginMode ? t('switchRegister') : t('switchLogin')}
-          </button>
-        </div>
-      </div>
-    </Modal>
+                {/* Password row */}
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    label={t('passwordLabel')}
+                    required
+                    error={passwordError ?? undefined}
+                  >
+                    <Input
+                      name="password"
+                      type="password"
+                      required
+                      autoComplete="new-password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="rounded-full bg-muted border-0 h-11 px-4"
+                    />
+                  </FormField>
+                  <FormField label={t('confirmPasswordLabel')} required>
+                    <Input
+                      name="confirmPassword"
+                      type="password"
+                      required
+                      autoComplete="new-password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="rounded-full bg-muted border-0 h-11 px-4"
+                    />
+                  </FormField>
+                </div>
+
+                {/* Name row */}
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField label={t('firstNameLabel')} required>
+                    <Input
+                      name="firstName"
+                      required
+                      autoComplete="given-name"
+                      className="rounded-full bg-muted border-0 h-11 px-4"
+                    />
+                  </FormField>
+                  <FormField label={t('lastNameLabel')} required>
+                    <Input
+                      name="lastName"
+                      required
+                      autoComplete="family-name"
+                      className="rounded-full bg-muted border-0 h-11 px-4"
+                    />
+                  </FormField>
+                </div>
+
+                {/* Pseudo */}
+                <FormField
+                  label={t('pseudoLabel')}
+                  required
+                  error={
+                    pseudoStatus === 'taken'
+                      ? t('validation.pseudoTaken')
+                      : undefined
+                  }
+                >
+                  <div className="relative">
+                    <Input
+                      name="pseudo_display"
+                      required
+                      value={pseudo}
+                      onChange={(e) => setPseudo(e.target.value)}
+                      placeholder="ex: titou_trail"
+                      className="rounded-full bg-muted border-0 h-11 px-4 pr-28"
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      {pseudoHint}
+                    </div>
+                  </div>
+                </FormField>
+
+                <FormField label={t('nationalityLabel')} required>
+                  <Input
+                    name="nationality"
+                    required
+                    placeholder="ex: Française"
+                    className="rounded-full bg-muted border-0 h-11 px-4"
+                  />
+                </FormField>
+
+                {/* Gender + Birthdate row */}
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField label={t('genderLabel')} required>
+                    <Select name="gender" required>
+                      <SelectTrigger className="rounded-full bg-muted border-0 h-11 px-4">
+                        <SelectValue placeholder="Sélectionner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="MALE">{t('genderMale')}</SelectItem>
+                        <SelectItem value="FEMALE">
+                          {t('genderFemale')}
+                        </SelectItem>
+                        <SelectItem value="NON_BINARY">
+                          {t('genderNonBinary')}
+                        </SelectItem>
+                        <SelectItem value="OTHER">
+                          {t('genderOther')}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormField>
+                  <FormField label={t('birthDateLabel')} required>
+                    <Input
+                      name="birthDate"
+                      type="date"
+                      required
+                      className="rounded-full bg-muted border-0 h-11 px-4"
+                    />
+                  </FormField>
+                </div>
+
+                {/* Height + Weight (optional) */}
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField label={t('heightLabel')}>
+                    <Input
+                      name="height"
+                      type="number"
+                      min={100}
+                      max={250}
+                      placeholder="178"
+                      className="rounded-full bg-muted border-0 h-11 px-4"
+                    />
+                  </FormField>
+                  <FormField label={t('weightLabel')}>
+                    <Input
+                      name="weight"
+                      type="number"
+                      min={30}
+                      max={300}
+                      step={0.1}
+                      placeholder="75"
+                      className="rounded-full bg-muted border-0 h-11 px-4"
+                    />
+                  </FormField>
+                </div>
+
+                {regState?.error && (
+                  <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
+                    {regState.error}
+                  </p>
+                )}
+
+                <Button
+                  type="submit"
+                  variant="sienna"
+                  size="lg"
+                  disabled={
+                    pending ||
+                    pseudoStatus === 'taken' ||
+                    pseudoStatus === 'checking'
+                  }
+                  className="w-full rounded-full mt-1 h-12 text-base"
+                >
+                  {regPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {t('registerBtn')}
+                </Button>
+              </form>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
