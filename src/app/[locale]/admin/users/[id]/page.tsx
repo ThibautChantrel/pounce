@@ -4,12 +4,23 @@ import ShowLayout from '@/components/admin/ShowLayout'
 import { Badge } from '@/components/ui/badge'
 import { DataDetails, FieldConfig } from '@/components/admin/data-details'
 import { getTranslations } from 'next-intl/server'
+import { Link } from '@/navigation'
+import db from '@/server/db'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CheckCircle2, XCircle, ExternalLink } from 'lucide-react'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>
 }
 
 type UserType = Awaited<ReturnType<typeof getUser>>
+
+function formatDuration(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  if (h > 0) return `${h}h ${m}min`
+  return `${m}min`
+}
 
 export default async function UserShowPage(props: PageProps) {
   const params = await props.params
@@ -24,7 +35,21 @@ export default async function UserShowPage(props: PageProps) {
     OTHER: tAuth('genderOther'),
   }
 
-  const user = await getUser(params.id)
+  const [user, trackCertifications, challengeCertifications] =
+    await Promise.all([
+      getUser(params.id),
+      db.trackCertification.findMany({
+        where: { userId: params.id },
+        include: { track: { select: { id: true, title: true } } },
+        orderBy: { completedAt: 'desc' },
+      }),
+      db.challengeCertification.findMany({
+        where: { userId: params.id },
+        include: { challenge: { select: { id: true, title: true } } },
+        orderBy: { completedAt: 'desc' },
+      }),
+    ])
+
   if (!user) notFound()
 
   const userFields: FieldConfig<NonNullable<UserType>>[] = [
@@ -193,6 +218,102 @@ export default async function UserShowPage(props: PageProps) {
           data={user}
           fields={userFields}
         />
+
+        {/* Track certifications */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              {t('trackCertifications')}
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({trackCertifications.length})
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {trackCertifications.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">
+                {tGlobal('noCertifications')}
+              </p>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {trackCertifications.map((cert) => (
+                  <div
+                    key={cert.id}
+                    className="flex items-center justify-between py-3 gap-4"
+                  >
+                    <Link
+                      href={`/admin/tracks/${cert.track.id}`}
+                      className="group flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors min-w-0"
+                    >
+                      <span className="truncate">{cert.track.title}</span>
+                      <ExternalLink className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+
+                    <div className="flex items-center gap-3 shrink-0 text-sm text-muted-foreground">
+                      <span>
+                        {new Date(cert.completedAt).toLocaleDateString('fr-FR')}
+                      </span>
+                      <span>{formatDuration(cert.totalTime)}</span>
+                      <span>{cert.avgSpeed.toFixed(1)} km/h</span>
+                      {cert.isValid ? (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-400" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Challenge certifications */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              {t('challengeCertifications')}
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({challengeCertifications.length})
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {challengeCertifications.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">
+                {tGlobal('noCertifications')}
+              </p>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {challengeCertifications.map((cert) => (
+                  <div
+                    key={cert.id}
+                    className="flex items-center justify-between py-3 gap-4"
+                  >
+                    <Link
+                      href={`/admin/challenges/${cert.challenge.id}`}
+                      className="group flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors min-w-0"
+                    >
+                      <span className="truncate">{cert.challenge.title}</span>
+                      <ExternalLink className="w-3 h-3 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+
+                    <div className="flex items-center gap-3 shrink-0 text-sm text-muted-foreground">
+                      <span>
+                        {new Date(cert.completedAt).toLocaleDateString('fr-FR')}
+                      </span>
+                      {cert.isValid ? (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-400" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </ShowLayout>
   )

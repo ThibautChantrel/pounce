@@ -279,7 +279,17 @@
     "stravaFeature2": "Automatic detection of completed routes",
     "stravaFeature3": "Enhanced stats (pace, elevation, HR)",
     "stravaNotConnected": "Not connected",
-    "stravaConnectBtn": "Connect Strava"
+    "stravaConnectBtn": "Connect Strava",
+    "stravaConnectedId": "Connected (ID: {id})",
+    "stravaConnectedSuccess": "Strava connected successfully!",
+    "stravaConnectionDenied": "Strava connection cancelled.",
+    "stravaConnectionError": "Error connecting to Strava.",
+    "stravaResyncBtn": "Resync",
+    "stravasyncingBtn": "Syncing...",
+    "stravaResyncSuccess": "{count} certification(s) earned!",
+    "stravaResyncNoNew": "No new certifications found.",
+    "stravaResyncError": "Error during synchronization.",
+    "stravaResyncRateLimited": "Limit reached. Try again in 1 hour."
   },
   "Admin": {
     "Navbar": {
@@ -290,7 +300,14 @@
       "tracks": "Tracks",
       "challenges": "Challenges",
       "feedbacks": "Feedbacks",
-      "categories": "Categories"
+      "categories": "Categories",
+      "trackCertifications": "Track certs",
+      "challengeCertifications": "Challenge certs",
+      "groupContent": "Content",
+      "groupCommunity": "Community",
+      "groupStrava": "Strava",
+      "groupMedia": "Media",
+      "backToSite": "Back to site"
     },
     "Panel": {
       "title": "Admin Panel",
@@ -316,7 +333,8 @@
       "no": "No",
       "empty": "Not specified",
       "notDefined": "Not defined",
-      "noFile": "No file"
+      "noFile": "No file",
+      "noCertifications": "No certifications"
     },
     "Table": {
       "search": "Search...",
@@ -380,7 +398,9 @@
       "generatePassword": "Generate",
       "resetPasswordBtn": "Reset",
       "passwordResetSuccess": "Password reset successfully",
-      "passwordResetUnlock": "Unlock password editing"
+      "passwordResetUnlock": "Unlock password editing",
+      "trackCertifications": "Track certifications",
+      "challengeCertifications": "Challenge certifications"
     },
     "Pois": {
       "title": "POIs Management",
@@ -555,6 +575,21 @@
       "noResults": "No results found.",
       "total": "Total",
       "results": "results"
+    },
+    "Certifications": {
+      "trackTitle": "Track certifications",
+      "challengeTitle": "Challenge certifications",
+      "description": "{count} certification(s)",
+      "user": "User",
+      "track": "Track",
+      "challenge": "Challenge",
+      "completedAt": "Completed on",
+      "duration": "Duration",
+      "avgSpeed": "Avg speed",
+      "status": "Status",
+      "validate": "Validate",
+      "invalidate": "Invalidate",
+      "statusToggled": "Status updated"
     }
   }
 }

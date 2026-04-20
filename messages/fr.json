@@ -288,7 +288,17 @@
     "stravaFeature2": "Détection automatique des parcours complétés",
     "stravaFeature3": "Statistiques enrichies (allure, dénivelé, FC)",
     "stravaNotConnected": "Non connecté",
-    "stravaConnectBtn": "Connecter Strava"
+    "stravaConnectBtn": "Connecter Strava",
+    "stravaConnectedId": "Connecté (ID: {id})",
+    "stravaConnectedSuccess": "Strava connecté avec succès !",
+    "stravaConnectionDenied": "Connexion Strava annulée.",
+    "stravaConnectionError": "Erreur lors de la connexion Strava.",
+    "stravaResyncBtn": "Resynchroniser",
+    "stravasyncingBtn": "Synchronisation...",
+    "stravaResyncSuccess": "{count} certification(s) obtenue(s) !",
+    "stravaResyncNoNew": "Aucune nouvelle certification trouvée.",
+    "stravaResyncError": "Erreur lors de la synchronisation.",
+    "stravaResyncRateLimited": "Limite atteinte. Réessaie dans 1 heure."
   },
   "Admin": {
     "Navbar": {
@@ -299,7 +309,14 @@
       "tracks": "Parcours",
       "challenges": "Challenges",
       "feedbacks": "Feedbacks",
-      "categories": "Catégories"
+      "categories": "Catégories",
+      "trackCertifications": "Certif. parcours",
+      "challengeCertifications": "Certif. challenges",
+      "groupContent": "Contenu",
+      "groupCommunity": "Communauté",
+      "groupStrava": "Strava",
+      "groupMedia": "Médias",
+      "backToSite": "Retour au site"
     },
     "Panel": {
       "title": "Admin Panel",
@@ -325,7 +342,8 @@
       "no": "Non",
       "empty": "Non renseigné",
       "notDefined": "Non défini",
-      "noFile": "Aucun fichier"
+      "noFile": "Aucun fichier",
+      "noCertifications": "Aucune certification"
     },
     "Table": {
       "search": "Rechercher...",
@@ -389,7 +407,9 @@
       "generatePassword": "Générer",
       "resetPasswordBtn": "Réinitialiser",
       "passwordResetSuccess": "Mot de passe réinitialisé avec succès",
-      "passwordResetUnlock": "Déverrouiller la modification du mot de passe"
+      "passwordResetUnlock": "Déverrouiller la modification du mot de passe",
+      "trackCertifications": "Certifications parcours",
+      "challengeCertifications": "Certifications challenges"
     },
     "Pois": {
       "title": "Gestion des Lieux",
@@ -564,6 +584,21 @@
       "noResults": "Aucun résultat trouvé.",
       "total": "Total",
       "results": "résultats"
+    },
+    "Certifications": {
+      "trackTitle": "Certifications parcours",
+      "challengeTitle": "Certifications challenges",
+      "description": "{count} certification(s)",
+      "user": "Utilisateur",
+      "track": "Parcours",
+      "challenge": "Challenge",
+      "completedAt": "Complété le",
+      "duration": "Durée",
+      "avgSpeed": "Vitesse moy.",
+      "status": "Statut",
+      "validate": "Valider",
+      "invalidate": "Invalider",
+      "statusToggled": "Statut mis à jour"
     }
   }
 }

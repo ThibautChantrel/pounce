@@ -1,10 +1,13 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { LogOut, Activity, User } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { LogOut, Activity, User, RefreshCw, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { logoutAction } from '@/actions/auth/auth.actions'
+import { manualResyncAction } from '@/actions/strava/strava.actions'
 import { useTranslations } from 'next-intl'
+import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 type UserProfile = {
   id: string
@@ -17,6 +20,13 @@ type UserProfile = {
   birthDate: Date | null
   height: number | null
   weight: number | null
+}
+
+type StravaStatus = {
+  connected: boolean
+  stravaId: string | null
+  lastResyncAt: Date | null
+  canResync: boolean
 }
 
 function getInitials(
@@ -43,10 +53,20 @@ function InfoField({ label, value }: { label: string; value?: string | null }) {
   )
 }
 
-export default function ProfileClient({ user }: { user: UserProfile }) {
+export default function ProfileClient({
+  user,
+  stravaStatus,
+}: {
+  user: UserProfile
+  stravaStatus: StravaStatus
+}) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const t = useTranslations('Profile')
   const tAuth = useTranslations('Auth')
+
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [canResync, setCanResync] = useState(stravaStatus.canResync)
 
   const GENDER_LABELS: Record<string, string> = {
     MALE: tAuth('genderMale'),
@@ -54,6 +74,20 @@ export default function ProfileClient({ user }: { user: UserProfile }) {
     NON_BINARY: tAuth('genderNonBinary'),
     OTHER: tAuth('genderOther'),
   }
+
+  useEffect(() => {
+    const stravaParam = searchParams.get('strava')
+    if (stravaParam === 'connected') {
+      toast.success(t('stravaConnectedSuccess'))
+      router.replace('/profile')
+    } else if (stravaParam === 'denied') {
+      toast.info(t('stravaConnectionDenied'))
+      router.replace('/profile')
+    } else if (stravaParam === 'error') {
+      toast.error(t('stravaConnectionError'))
+      router.replace('/profile')
+    }
+  }, [searchParams, router, t])
 
   const initials = getInitials(user.firstName, user.lastName, user.email)
   const displayName =
@@ -65,6 +99,35 @@ export default function ProfileClient({ user }: { user: UserProfile }) {
     await logoutAction()
     router.refresh()
     router.push('/')
+  }
+
+  const handleResync = async () => {
+    setIsSyncing(true)
+    try {
+      const result = await manualResyncAction()
+      if (!result.success) {
+        if (result.error === 'rate_limited') {
+          toast.error(t('stravaResyncRateLimited'))
+        } else {
+          toast.error(t('stravaResyncError'))
+        }
+        return
+      }
+
+      const count =
+        (result.certifiedTrackIds?.length ?? 0) +
+        (result.certifiedChallengeIds?.length ?? 0)
+
+      if (count > 0) {
+        toast.success(t('stravaResyncSuccess', { count }))
+      } else {
+        toast.info(t('stravaResyncNoNew'))
+      }
+
+      setCanResync(false)
+    } finally {
+      setIsSyncing(false)
+    }
   }
 
   const birthDateStr = user.birthDate
@@ -132,7 +195,7 @@ export default function ProfileClient({ user }: { user: UserProfile }) {
         </div>
       </div>
 
-      {/* Strava card (visual only) */}
+      {/* Strava card */}
       <div className="rounded-2xl bg-card border border-border p-6">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
@@ -165,13 +228,42 @@ export default function ProfileClient({ user }: { user: UserProfile }) {
         </div>
 
         <div className="flex items-center justify-between mt-5 pt-5 border-t border-border">
-          <span className="text-sm text-muted-foreground">
-            {t('stravaNotConnected')}
-          </span>
-          <Button variant="sienna" className="rounded-full" disabled>
-            <Activity className="w-4 h-4 mr-1.5" />
-            {t('stravaConnectBtn')}
-          </Button>
+          {stravaStatus.connected ? (
+            <>
+              <div className="flex items-center gap-2 text-sm text-green-600">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>
+                  {t('stravaConnectedId', { id: stravaStatus.stravaId ?? '' })}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                className="rounded-full"
+                onClick={handleResync}
+                disabled={isSyncing || !canResync}
+              >
+                <RefreshCw
+                  className={`w-4 h-4 mr-1.5 ${isSyncing ? 'animate-spin' : ''}`}
+                />
+                {isSyncing ? t('stravasyncingBtn') : t('stravaResyncBtn')}
+              </Button>
+            </>
+          ) : (
+            <>
+              <span className="text-sm text-muted-foreground">
+                {t('stravaNotConnected')}
+              </span>
+              <Button
+                className="rounded-full"
+                onClick={() => {
+                  window.location.href = '/api/strava/connect'
+                }}
+              >
+                <Activity className="w-4 h-4 mr-1.5" />
+                {t('stravaConnectBtn')}
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>
