@@ -56,9 +56,11 @@ function InfoField({ label, value }: { label: string; value?: string | null }) {
 export default function ProfileClient({
   user,
   stravaStatus,
+  children,
 }: {
   user: UserProfile
   stravaStatus: StravaStatus
+  children?: React.ReactNode
 }) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -139,24 +141,26 @@ export default function ProfileClient({
     : null
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 pb-16">
       {/* Profile header banner */}
-      <div className="rounded-2xl bg-primary text-primary-foreground p-6 flex items-center gap-5">
-        <div className="w-16 h-16 rounded-full bg-sienna flex items-center justify-center text-white text-xl font-bold shrink-0">
-          {initials}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-2xl font-bold truncate">{displayName}</h1>
-          <p className="text-primary-foreground/70 text-sm truncate">
-            {user.pseudo && `@${user.pseudo} · `}
-            {user.email}
-          </p>
+      <div className="rounded-2xl bg-primary text-primary-foreground p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          <div className="w-16 h-16 rounded-full bg-sienna flex items-center justify-center text-white text-xl font-bold shrink-0">
+            {initials}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold truncate">{displayName}</h1>
+            <p className="text-primary-foreground/70 text-sm truncate">
+              {user.pseudo && `@${user.pseudo} · `}
+              {user.email}
+            </p>
+          </div>
         </div>
         <Button
           variant="outline"
           size="sm"
           onClick={handleLogout}
-          className="shrink-0 rounded-full bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+          className="self-start sm:self-auto shrink-0 rounded-full bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
         >
           <LogOut className="w-4 h-4 mr-1.5" />
           {t('logout')}
@@ -170,7 +174,7 @@ export default function ProfileClient({
           {t('personalInfo')}
         </h2>
 
-        <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
           <InfoField label={t('firstName')} value={user.firstName} />
           <InfoField label={t('lastName')} value={user.lastName} />
           <InfoField
@@ -227,18 +231,18 @@ export default function ProfileClient({
           </div>
         </div>
 
-        <div className="flex items-center justify-between mt-5 pt-5 border-t border-border">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-5 pt-5 border-t border-border">
           {stravaStatus.connected ? (
             <>
-              <div className="flex items-center gap-2 text-sm text-green-600">
-                <CheckCircle2 className="w-4 h-4" />
-                <span>
+              <div className="flex items-center gap-2 text-sm text-green-600 flex-1 min-w-0">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span className="truncate">
                   {t('stravaConnectedId', { id: stravaStatus.stravaId ?? '' })}
                 </span>
               </div>
               <Button
                 variant="outline"
-                className="rounded-full"
+                className="rounded-full self-start sm:self-auto shrink-0"
                 onClick={handleResync}
                 disabled={isSyncing || !canResync}
               >
@@ -250,11 +254,11 @@ export default function ProfileClient({
             </>
           ) : (
             <>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-muted-foreground flex-1">
                 {t('stravaNotConnected')}
               </span>
               <Button
-                className="rounded-full"
+                className="rounded-full self-start sm:self-auto shrink-0"
                 onClick={() => {
                   window.location.href = '/api/strava/connect'
                 }}
@@ -266,6 +270,9 @@ export default function ProfileClient({
           )}
         </div>
       </div>
+
+      {/* Certifications sections */}
+      {children}
     </div>
   )
 }
