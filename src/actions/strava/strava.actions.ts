@@ -4,8 +4,10 @@ import { auth } from '@/server/modules/auth/auth.config'
 import db from '@/server/db'
 import { processStravaActivity } from '@/server/modules/strava/certification.service'
 import { fetchStravaAthleteActivities } from '@/server/modules/strava/strava.client'
+import { createStravaSync } from '@/server/modules/strava/sync-log.service'
+import { SyncActivityLog } from '@/server/modules/strava/sync-log.types'
 
-const RESYNC_COOLDOWN_MS = 60 * 60 * 1000 // 1 hour
+const RESYNC_COOLDOWN_MS = 60 * 60 * 1000
 
 export async function manualResyncAction(stravaActivityId?: string): Promise<{
   success: boolean
@@ -21,12 +23,10 @@ export async function manualResyncAction(stravaActivityId?: string): Promise<{
   if (!user.stravaId) return { success: false, error: 'strava_not_connected' }
   if (!user.isVerified) return { success: false, error: 'not_verified' }
 
-  // Rate limit check
   if (user.stravaResyncAt) {
     const elapsed = Date.now() - user.stravaResyncAt.getTime()
-    if (elapsed < RESYNC_COOLDOWN_MS) {
+    if (elapsed < RESYNC_COOLDOWN_MS)
       return { success: false, error: 'rate_limited' }
-    }
   }
 
   await db.user.update({
@@ -35,21 +35,26 @@ export async function manualResyncAction(stravaActivityId?: string): Promise<{
   })
 
   try {
-    if (stravaActivityId) {
-      const result = await processStravaActivity(user.id, stravaActivityId)
-      return { success: true, ...result }
-    }
-
-    // No specific activity: re-sync the 10 most recent activities
-    const activities = await fetchStravaAthleteActivities(user.id, 10)
     const allCertifiedTrackIds: string[] = []
     const allCertifiedChallengeIds: string[] = []
+    const activityLogs: SyncActivityLog[] = []
 
-    for (const activity of activities) {
-      const result = await processStravaActivity(user.id, String(activity.id))
+    if (stravaActivityId) {
+      const result = await processStravaActivity(user.id, stravaActivityId)
+      activityLogs.push(result.activityLog)
       allCertifiedTrackIds.push(...result.certifiedTrackIds)
       allCertifiedChallengeIds.push(...result.certifiedChallengeIds)
+    } else {
+      const activities = await fetchStravaAthleteActivities(user.id, 10)
+      for (const activity of activities) {
+        const result = await processStravaActivity(user.id, String(activity.id))
+        activityLogs.push(result.activityLog)
+        allCertifiedTrackIds.push(...result.certifiedTrackIds)
+        allCertifiedChallengeIds.push(...result.certifiedChallengeIds)
+      }
     }
+
+    await createStravaSync(user.id, 'manual', activityLogs)
 
     return {
       success: true,

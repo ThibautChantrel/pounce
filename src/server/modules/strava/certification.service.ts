@@ -1,40 +1,50 @@
 import db from '@/server/db'
 import { fetchStravaActivity } from './strava.client'
 import { matchActivityToTrack } from './track-matching.service'
+import { SyncActivityLog, SyncMatchedTrack } from './sync-log.types'
 
-type CertifyResult = {
+export type ProcessActivityResult = {
+  activityLog: SyncActivityLog
   certifiedTrackIds: string[]
   certifiedChallengeIds: string[]
-  skippedTrackIds: string[]
 }
 
-/**
- * Processes a Strava activity event for a given user.
- * Matches the activity against all visible tracks that have a GPX file.
- * Creates TrackCertification and ChallengeCertification records as appropriate.
- */
 export async function processStravaActivity(
   userId: string,
   stravaActivityId: string
-): Promise<CertifyResult> {
+): Promise<ProcessActivityResult> {
+  const empty = (
+    status: SyncActivityLog['status'],
+    activityName: string | null = null,
+    errorMessage: string | null = null
+  ): ProcessActivityResult => ({
+    activityLog: {
+      stravaActivityId,
+      activityName,
+      status,
+      matchedTracks: [],
+      errorMessage,
+    },
+    certifiedTrackIds: [],
+    certifiedChallengeIds: [],
+  })
+
   const user = await db.user.findUnique({ where: { id: userId } })
-  if (!user?.isVerified) {
-    return {
-      certifiedTrackIds: [],
-      certifiedChallengeIds: [],
-      skippedTrackIds: [],
-    }
+  if (!user?.isVerified) return empty('error', null, 'user_not_verified')
+
+  let activity
+  try {
+    activity = await fetchStravaActivity(userId, stravaActivityId)
+  } catch (err) {
+    return empty(
+      'error',
+      null,
+      err instanceof Error ? err.message : 'fetch_failed'
+    )
   }
 
-  const activity = await fetchStravaActivity(userId, stravaActivityId)
   const polyline = activity.map?.summary_polyline
-  if (!polyline) {
-    return {
-      certifiedTrackIds: [],
-      certifiedChallengeIds: [],
-      skippedTrackIds: [],
-    }
-  }
+  if (!polyline) return empty('no_polyline', activity.name ?? null)
 
   const tracks = await db.track.findMany({
     where: { visible: true, gpxFileId: { not: null } },
@@ -42,19 +52,19 @@ export async function processStravaActivity(
   })
 
   const certifiedTrackIds: string[] = []
-  const skippedTrackIds: string[] = []
+  const matchedTracks: SyncMatchedTrack[] = []
+  let hasSkipped = false
 
   for (const track of tracks) {
     if (!track.gpxFile) continue
 
-    // Skip if this activity already certified this track
     const existing = await db.trackCertification.findUnique({
       where: {
         stravaActivityId_trackId: { stravaActivityId, trackId: track.id },
       },
     })
     if (existing) {
-      skippedTrackIds.push(track.id)
+      hasSkipped = true
       continue
     }
 
@@ -78,6 +88,13 @@ export async function processStravaActivity(
     })
 
     certifiedTrackIds.push(track.id)
+    matchedTracks.push({
+      trackId: track.id,
+      trackTitle: track.title,
+      matchedPoints: result.matchedPoints,
+      totalPoints: result.totalPoints,
+      direction: result.direction as 'forward' | 'backward',
+    })
   }
 
   const certifiedChallengeIds = await checkAndCertifyChallenges(
@@ -85,20 +102,28 @@ export async function processStravaActivity(
     certifiedTrackIds
   )
 
-  return { certifiedTrackIds, certifiedChallengeIds, skippedTrackIds }
+  const status: SyncActivityLog['status'] =
+    matchedTracks.length > 0 ? 'matched' : hasSkipped ? 'skipped' : 'no_match'
+
+  return {
+    activityLog: {
+      stravaActivityId,
+      activityName: activity.name ?? null,
+      status,
+      matchedTracks,
+      errorMessage: null,
+    },
+    certifiedTrackIds,
+    certifiedChallengeIds,
+  }
 }
 
-/**
- * After certifying tracks, checks if any challenge is now fully completed.
- * Creates ChallengeCertification records where all tracks are certified.
- */
 async function checkAndCertifyChallenges(
   userId: string,
   newlyCompletedTrackIds: string[]
 ): Promise<string[]> {
   if (newlyCompletedTrackIds.length === 0) return []
 
-  // Find challenges that include at least one newly certified track
   const candidateChallenges = await db.challenge.findMany({
     where: {
       visible: true,
@@ -114,16 +139,12 @@ async function checkAndCertifyChallenges(
     const trackIds = challenge.tracks.map((ct) => ct.trackId)
 
     const completedCount = await db.trackCertification.count({
-      where: {
-        userId,
-        trackId: { in: trackIds },
-        isValid: true,
-      },
+      where: { userId, trackId: { in: trackIds }, isValid: true },
     })
 
     if (completedCount < trackIds.length) continue
 
-    const mostRecentTrack = await db.trackCertification.findFirst({
+    const mostRecent = await db.trackCertification.findFirst({
       where: { userId, trackId: { in: trackIds }, isValid: true },
       orderBy: { completedAt: 'desc' },
     })
@@ -132,7 +153,7 @@ async function checkAndCertifyChallenges(
       data: {
         userId,
         challengeId: challenge.id,
-        completedAt: mostRecentTrack?.completedAt ?? new Date(),
+        completedAt: mostRecent?.completedAt ?? new Date(),
       },
     })
 

@@ -64,6 +64,7 @@ model User {
   // Strava certifications
   trackCertifications     TrackCertification[]
   challengeCertifications ChallengeCertification[]
+  stravaSyncs             StravaSync[]
 
   // Auth Relations
   accounts Account[]
@@ -378,4 +379,17 @@ model PoiType {
   updatedBy   User?    @relation("UpdatedPoiTypes", fields: [updatedById], references: [id])
 
   @@map("poi_types")
+}
+
+// --- STRAVA SYNC LOG ---
+
+model StravaSync {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source   String
+  syncedAt DateTime @default(now())
+  details  Json
+
+  @@map("strava_syncs")
 }

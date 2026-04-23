@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserByStravaId } from '@/server/modules/strava/strava.client'
 import { processStravaActivity } from '@/server/modules/strava/certification.service'
+import { createStravaSync } from '@/server/modules/strava/sync-log.service'
 
-/** Strava webhook verification handshake */
 export async function GET(req: NextRequest) {
   const mode = req.nextUrl.searchParams.get('hub.mode')
   const token = req.nextUrl.searchParams.get('hub.verify_token')
@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 }
 
-/** Strava webhook event handler */
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>
   try {
@@ -27,7 +26,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  // Only process new activities
   if (body.object_type !== 'activity' || body.aspect_type !== 'create') {
     return NextResponse.json({ ok: true })
   }
@@ -36,12 +34,18 @@ export async function POST(req: NextRequest) {
   const stravaActivityId = String(body.object_id)
 
   const user = await getUserByStravaId(stravaAthleteId)
-  if (!user) return NextResponse.json({ ok: true })
+  if (!user)
+    return NextResponse.json({ ok: true })
 
-  // Fire and forget — Strava expects a fast 200 response
-  processStravaActivity(user.id, stravaActivityId).catch((err) => {
-    console.error('[strava-webhook] certification error', err)
-  })
+    // Fire and forget — Strava expects a fast 200 response
+  ;(async () => {
+    try {
+      const result = await processStravaActivity(user.id, stravaActivityId)
+      await createStravaSync(user.id, 'webhook', [result.activityLog])
+    } catch (err) {
+      console.error('[strava-webhook] error', err)
+    }
+  })()
 
   return NextResponse.json({ ok: true })
 }

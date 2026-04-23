@@ -76,7 +76,23 @@ export const getAll = async ({ skip, take, search, orderBy }: FetchParams) => {
           },
           {
             createdBy: {
-              name: { contains: search, mode: Prisma.QueryMode.insensitive },
+              pseudo: { contains: search, mode: Prisma.QueryMode.insensitive },
+            },
+          },
+          {
+            createdBy: {
+              firstName: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive,
+              },
+            },
+          },
+          {
+            createdBy: {
+              lastName: {
+                contains: search,
+                mode: Prisma.QueryMode.insensitive,
+              },
             },
           },
         ],

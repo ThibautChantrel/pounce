@@ -14,6 +14,7 @@ import {
   MapPinned,
   Award,
   PawPrint,
+  RefreshCw,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -110,6 +111,11 @@ export default function AdminSidebar() {
           href: '/admin/challenge-certifications',
           icon: <Award size={16} />,
           label: t('Navbar.challengeCertifications'),
+        },
+        {
+          href: '/admin/strava-syncs',
+          icon: <RefreshCw size={16} />,
+          label: t('Navbar.stravaSyncs'),
         },
       ],
     },
