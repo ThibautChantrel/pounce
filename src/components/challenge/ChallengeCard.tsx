@@ -9,15 +9,21 @@ import { useTranslations } from 'next-intl'
 
 interface ChallengeCardProps {
   challenge: ChallengeWithRelations
+  completedTracks?: number
 }
 
-export function ChallengeCard({ challenge }: ChallengeCardProps) {
-  // 👇 Initialisation du hook
+export function ChallengeCard({
+  challenge,
+  completedTracks,
+}: ChallengeCardProps) {
   const t = useTranslations('Challenges')
 
   const trackCount = challenge.tracks.length
-
-  console.log('challenge in ChallengeCard:', challenge)
+  const showProgress = completedTracks !== undefined
+  const progressPct =
+    showProgress && trackCount > 0
+      ? Math.round((completedTracks! / trackCount) * 100)
+      : 0
 
   const totalDistance = challenge.tracks.reduce(
     (acc, curr) => acc + curr.track.distance,
@@ -95,27 +101,48 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
             </div>
           </div>
 
-          <div className="z-10 flex w-full items-center justify-between transition-opacity duration-300 group-hover:opacity-0">
-            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
-              <Trophy className="w-4 h-4" />
-              <span>{trackCount}</span>
+          <div className="z-10 flex flex-col gap-2">
+            <div className="flex w-full items-center justify-between transition-opacity duration-300 group-hover:opacity-0">
+              <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+                <Trophy className="w-4 h-4" />
+                <span>{trackCount}</span>
+              </div>
+
+              <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+                <Map className="w-4 h-4" />
+                <span>
+                  {totalDistance.toFixed(1)}{' '}
+                  <span className="text-xs font-normal">{t('km')}</span>
+                </span>
+              </div>
+
+              <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+                <Mountain className="w-4 h-4" />
+                <span>
+                  {totalElevation}{' '}
+                  <span className="text-xs font-normal">{t('m')}</span>
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
-              <Map className="w-4 h-4" />
-              <span>
-                {totalDistance.toFixed(1)}{' '}
-                <span className="text-xs font-normal">{t('km')}</span>
-              </span>
-            </div>
-
-            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
-              <Mountain className="w-4 h-4" />
-              <span>
-                {totalElevation}{' '}
-                <span className="text-xs font-normal">{t('m')}</span>
-              </span>
-            </div>
+            {showProgress && (
+              <div className="transition-opacity duration-300 group-hover:opacity-0">
+                <div className="flex justify-between items-center text-[10px] font-semibold uppercase tracking-wider text-sienna mb-1">
+                  <span>{t('progression')}</span>
+                  <span>
+                    {completedTracks}/{trackCount}
+                  </span>
+                </div>
+                <div className="h-1 rounded-full overflow-hidden bg-white/25">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 bg-primary" // La classe va ici
+                    style={{
+                      width: `${progressPct}%`, // Seul le dynamique reste ici
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

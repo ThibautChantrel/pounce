@@ -10,12 +10,13 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel'
 import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type'
-import { Flag, Search, Loader2, PawPrint, ArrowRight, X } from 'lucide-react'
+import { Flag, Search, Loader2, PawPrint, ArrowRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from 'use-debounce'
 import { useTranslations } from 'next-intl'
 import { ChallengeCard } from './ChallengeCard'
 import { fetchChallengesForUser } from '@/actions/challenge/challenge.action'
+import { fetchUserChallengeData } from '@/actions/user/user.certifications.actions'
 import { fetchCategoriesForSelect } from '@/actions/category/category.admin.action'
 import { Button } from '../ui/button'
 import { Link } from '@/navigation'
@@ -40,6 +41,11 @@ export function ChallengeCarousel() {
   const [searchTerm, setSearchTerm] = React.useState('')
   const [debouncedSearch] = useDebounce(searchTerm, 500)
 
+  const [progressData, setProgressData] = React.useState<{
+    isLoggedIn: boolean
+    map: Record<string, number>
+  } | null>(null)
+
   const [categories, setCategories] = React.useState<CategoryOption[]>([])
   const [selectedCategoryIds, setSelectedCategoryIds] = React.useState<
     string[]
@@ -48,6 +54,9 @@ export function ChallengeCarousel() {
   React.useEffect(() => {
     fetchCategoriesForSelect({ skip: 0, take: 50 }).then((res) =>
       setCategories(res.data)
+    )
+    fetchUserChallengeData().then(({ isLoggedIn, progressMap }) =>
+      setProgressData({ isLoggedIn, map: progressMap })
     )
   }, [])
 
@@ -195,7 +204,14 @@ export function ChallengeCarousel() {
               key={challenge.id}
               className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
             >
-              <ChallengeCard challenge={challenge} />
+              <ChallengeCard
+                challenge={challenge}
+                completedTracks={
+                  progressData?.isLoggedIn
+                    ? (progressData.map[challenge.id] ?? 0)
+                    : undefined
+                }
+              />
             </CarouselItem>
           ))}
 

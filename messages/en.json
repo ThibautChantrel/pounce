@@ -105,6 +105,7 @@
     "elevation": "Elevation",
     "km": "km",
     "m": "m",
+    "progression": "Progress",
     "title": "Leave your mark",
     "ChallengeDetail": {
       "statsTitle": "Challenge Details",
@@ -289,7 +290,16 @@
     "stravaResyncSuccess": "{count} certification(s) earned!",
     "stravaResyncNoNew": "No new certifications found.",
     "stravaResyncError": "Error during synchronization.",
-    "stravaResyncRateLimited": "Limit reached. Try again in 1 hour."
+    "stravaResyncRateLimited": "Limit reached. Try again in 1 hour.",
+    "myInProgressChallenges": "My challenges in progress",
+    "myCompletedChallenges": "My challenges",
+    "myCompletedTracks": "My tracks",
+    "progressLabel": "Progress",
+    "completedBadge": "Done",
+    "steps": "steps",
+    "viewSteps": "View steps",
+    "viewTrack": "View track",
+    "progression": "Progression"
   },
   "Admin": {
     "Navbar": {

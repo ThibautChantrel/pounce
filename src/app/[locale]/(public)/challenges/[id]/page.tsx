@@ -6,6 +6,7 @@ import { Info } from 'lucide-react'
 import { getChallengeForUserAction } from '@/actions/challenge/challenge.action'
 import { MagicSelect } from '@/components/challenge/MagicSelect'
 import { getChallengeAction } from '@/actions/challenge/challenge.admin.action'
+import { fetchUserCertifiedTrackIds } from '@/actions/user/user.certifications.actions'
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>
@@ -61,7 +62,10 @@ export default async function ChallengeDetailPage(props: PageProps) {
   const params = await props.params
   const t = await getTranslations('Challenges.ChallengeDetail')
 
-  const challenge = await getChallengeForUserAction(params.id)
+  const [challenge, certifiedTrackIds] = await Promise.all([
+    getChallengeForUserAction(params.id),
+    fetchUserCertifiedTrackIds(),
+  ])
 
   if (!challenge) {
     notFound()
@@ -107,7 +111,10 @@ export default async function ChallengeDetailPage(props: PageProps) {
 
         <MagicSelect tracks={challenge.tracks} />
 
-        <ChallengeTrackList tracks={challenge.tracks} />
+        <ChallengeTrackList
+          tracks={challenge.tracks}
+          certifiedTrackIds={certifiedTrackIds}
+        />
       </div>
     </main>
   )

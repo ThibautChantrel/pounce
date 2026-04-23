@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { Link } from '@/navigation'
-import { Map, Mountain, ArrowRight, ImageOff } from 'lucide-react'
+import { Map, Mountain, ArrowRight, ImageOff, CheckCircle2 } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ChallengeTrack } from '@/actions/challenge/challenge.admin.type'
@@ -14,10 +14,11 @@ type TrackWithRelation = ChallengeTrack & { track: TrackWithCategories }
 interface TrackCardProps {
   item: TrackWithRelation
   index?: number
+  isCertified?: boolean
   t: (key: string) => string
 }
 
-export function TrackCard({ item, index, t }: TrackCardProps) {
+export function TrackCard({ item, index, isCertified, t }: TrackCardProps) {
   const coverId = item.track.coverId
 
   return (
@@ -48,6 +49,11 @@ export function TrackCard({ item, index, t }: TrackCardProps) {
                 {index !== undefined && (
                   <div className="absolute top-0 left-0 bg-black/60 backdrop-blur-[2px] text-white px-2 py-1 rounded-br-lg text-[10px] font-bold uppercase tracking-wider z-10">
                     #{index + 1}
+                  </div>
+                )}
+                {isCertified && (
+                  <div className="absolute bottom-1.5 right-1.5 bg-primary rounded-full p-0.5 shadow-md z-10">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-white" />
                   </div>
                 )}
               </div>

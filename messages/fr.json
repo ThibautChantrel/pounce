@@ -112,6 +112,7 @@
     "elevation": "Dénivelé",
     "km": "km",
     "m": "m",
+    "progression": "Progression",
     "title": "Marque ton empreinte",
     "ChallengeDetail": {
       "statsTitle": "Détails du Défi",
@@ -298,7 +299,16 @@
     "stravaResyncSuccess": "{count} certification(s) obtenue(s) !",
     "stravaResyncNoNew": "Aucune nouvelle certification trouvée.",
     "stravaResyncError": "Erreur lors de la synchronisation.",
-    "stravaResyncRateLimited": "Limite atteinte. Réessaie dans 1 heure."
+    "stravaResyncRateLimited": "Limite atteinte. Réessaie dans 1 heure.",
+    "myInProgressChallenges": "Mes défis en cours",
+    "myCompletedChallenges": "Mes défis",
+    "myCompletedTracks": "Mes parcours",
+    "progressLabel": "Progression",
+    "completedBadge": "Terminé",
+    "steps": "étapes",
+    "viewSteps": "Voir les étapes",
+    "viewTrack": "Voir le parcours",
+    "progression": "Progression"
   },
   "Admin": {
     "Navbar": {
