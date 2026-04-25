@@ -5,9 +5,14 @@ import { LogOut, Activity, User, RefreshCw, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { logoutAction } from '@/actions/auth/auth.actions'
 import { manualResyncAction } from '@/actions/strava/strava.actions'
+import {
+  fetchUnreadCertifications,
+  markCertificationsAsRead,
+} from '@/actions/user/user.certifications.actions'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { CertificationCelebration } from '@/components/profile/CertificationCelebration'
 
 type UserProfile = {
   id: string
@@ -27,6 +32,13 @@ type StravaStatus = {
   stravaId: string | null
   lastResyncAt: Date | null
   canResync: boolean
+}
+
+type UnreadCertifications = {
+  trackCertificationIds: string[]
+  challengeCertificationIds: string[]
+  trackTitles: string[]
+  challengeTitles: string[]
 }
 
 function getInitials(
@@ -56,10 +68,12 @@ function InfoField({ label, value }: { label: string; value?: string | null }) {
 export default function ProfileClient({
   user,
   stravaStatus,
+  initialUnreadCertifications,
   children,
 }: {
   user: UserProfile
   stravaStatus: StravaStatus
+  initialUnreadCertifications: UnreadCertifications
   children?: React.ReactNode
 }) {
   const router = useRouter()
@@ -69,6 +83,15 @@ export default function ProfileClient({
 
   const [isSyncing, setIsSyncing] = useState(false)
   const [canResync, setCanResync] = useState(stravaStatus.canResync)
+  const [showCelebration, setShowCelebration] = useState(false)
+  const [celebrationTracks, setCelebrationTracks] = useState<string[]>([])
+  const [celebrationChallenges, setCelebrationChallenges] = useState<string[]>(
+    []
+  )
+  const [unreadToMark, setUnreadToMark] = useState<{
+    trackCertificationIds: string[]
+    challengeCertificationIds: string[]
+  }>({ trackCertificationIds: [], challengeCertificationIds: [] })
 
   const GENDER_LABELS: Record<string, string> = {
     MALE: tAuth('genderMale'),
@@ -90,6 +113,23 @@ export default function ProfileClient({
       router.replace('/profile')
     }
   }, [searchParams, router, t])
+
+  useEffect(() => {
+    const unreadCount =
+      initialUnreadCertifications.trackCertificationIds.length +
+      initialUnreadCertifications.challengeCertificationIds.length
+
+    if (unreadCount === 0) return
+
+    setCelebrationTracks(initialUnreadCertifications.trackTitles)
+    setCelebrationChallenges(initialUnreadCertifications.challengeTitles)
+    setUnreadToMark({
+      trackCertificationIds: initialUnreadCertifications.trackCertificationIds,
+      challengeCertificationIds:
+        initialUnreadCertifications.challengeCertificationIds,
+    })
+    setShowCelebration(true)
+  }, [initialUnreadCertifications])
 
   const initials = getInitials(user.firstName, user.lastName, user.email)
   const displayName =
@@ -122,6 +162,16 @@ export default function ProfileClient({
 
       if (count > 0) {
         toast.success(t('stravaResyncSuccess', { count }))
+
+        setCelebrationTracks(result.certifiedTrackTitles ?? [])
+        setCelebrationChallenges(result.certifiedChallengeTitles ?? [])
+
+        const unread = await fetchUnreadCertifications()
+        setUnreadToMark({
+          trackCertificationIds: unread.trackCertificationIds,
+          challengeCertificationIds: unread.challengeCertificationIds,
+        })
+        setShowCelebration(true)
       } else {
         toast.info(t('stravaResyncNoNew'))
       }
@@ -141,138 +191,160 @@ export default function ProfileClient({
     : null
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 pb-16">
-      {/* Profile header banner */}
-      <div className="rounded-2xl bg-primary text-primary-foreground p-6 flex flex-col sm:flex-row sm:items-center gap-4">
-        <div className="flex items-center gap-4 flex-1 min-w-0">
-          <div className="w-16 h-16 rounded-full bg-sienna flex items-center justify-center text-white text-xl font-bold shrink-0">
-            {initials}
+    <>
+      <CertificationCelebration
+        open={showCelebration}
+        trackTitles={celebrationTracks}
+        challengeTitles={celebrationChallenges}
+        onClose={() => {
+          setShowCelebration(false)
+          router.refresh()
+        }}
+        onViewed={async () => {
+          if (
+            unreadToMark.trackCertificationIds.length === 0 &&
+            unreadToMark.challengeCertificationIds.length === 0
+          ) {
+            return
+          }
+          await markCertificationsAsRead(unreadToMark)
+        }}
+      />
+      <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 pb-16">
+        {/* Profile header banner */}
+        <div className="rounded-2xl bg-primary text-primary-foreground p-6 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="w-16 h-16 rounded-full bg-sienna flex items-center justify-center text-white text-xl font-bold shrink-0">
+              {initials}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl font-bold truncate">{displayName}</h1>
+              <p className="text-primary-foreground/70 text-sm truncate">
+                {user.pseudo && `@${user.pseudo} · `}
+                {user.email}
+              </p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl font-bold truncate">{displayName}</h1>
-            <p className="text-primary-foreground/70 text-sm truncate">
-              {user.pseudo && `@${user.pseudo} · `}
-              {user.email}
-            </p>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLogout}
+            className="self-start sm:self-auto shrink-0 rounded-full bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+          >
+            <LogOut className="w-4 h-4 mr-1.5" />
+            {t('logout')}
+          </Button>
+        </div>
+
+        {/* Personal info card */}
+        <div className="rounded-2xl bg-card border border-border p-6">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-foreground mb-5">
+            <User className="w-4 h-4" />
+            {t('personalInfo')}
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+            <InfoField label={t('firstName')} value={user.firstName} />
+            <InfoField label={t('lastName')} value={user.lastName} />
+            <InfoField
+              label={t('pseudo')}
+              value={user.pseudo ? `@${user.pseudo}` : null}
+            />
+            <InfoField label={t('email')} value={user.email} />
+            <InfoField label={t('nationality')} value={user.nationality} />
+            <InfoField
+              label={t('gender')}
+              value={user.gender ? GENDER_LABELS[user.gender] : null}
+            />
+            <InfoField label={t('birthDate')} value={birthDateStr} />
+            <InfoField
+              label={t('height')}
+              value={user.height ? `${user.height} cm` : null}
+            />
+            <InfoField
+              label={t('weight')}
+              value={user.weight ? `${user.weight} kg` : null}
+            />
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleLogout}
-          className="self-start sm:self-auto shrink-0 rounded-full bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
-        >
-          <LogOut className="w-4 h-4 mr-1.5" />
-          {t('logout')}
-        </Button>
-      </div>
 
-      {/* Personal info card */}
-      <div className="rounded-2xl bg-card border border-border p-6">
-        <h2 className="flex items-center gap-2 text-base font-semibold text-foreground mb-5">
-          <User className="w-4 h-4" />
-          {t('personalInfo')}
-        </h2>
+        {/* Strava card */}
+        <div className="rounded-2xl bg-card border border-border p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+              <Activity className="w-6 h-6 text-orange-500" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-base font-semibold text-foreground">
+                {t('stravaTitle')}
+              </h2>
+              <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
+                {t('stravaDesc')}
+              </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
-          <InfoField label={t('firstName')} value={user.firstName} />
-          <InfoField label={t('lastName')} value={user.lastName} />
-          <InfoField
-            label={t('pseudo')}
-            value={user.pseudo ? `@${user.pseudo}` : null}
-          />
-          <InfoField label={t('email')} value={user.email} />
-          <InfoField label={t('nationality')} value={user.nationality} />
-          <InfoField
-            label={t('gender')}
-            value={user.gender ? GENDER_LABELS[user.gender] : null}
-          />
-          <InfoField label={t('birthDate')} value={birthDateStr} />
-          <InfoField
-            label={t('height')}
-            value={user.height ? `${user.height} cm` : null}
-          />
-          <InfoField
-            label={t('weight')}
-            value={user.weight ? `${user.weight} kg` : null}
-          />
-        </div>
-      </div>
-
-      {/* Strava card */}
-      <div className="rounded-2xl bg-card border border-border p-6">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
-            <Activity className="w-6 h-6 text-orange-500" />
+              <ul className="mt-3 space-y-1.5">
+                {[
+                  t('stravaFeature1'),
+                  t('stravaFeature2'),
+                  t('stravaFeature3'),
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-2 text-sm text-muted-foreground"
+                  >
+                    <span className="text-sienna">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <h2 className="text-base font-semibold text-foreground">
-              {t('stravaTitle')}
-            </h2>
-            <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
-              {t('stravaDesc')}
-            </p>
 
-            <ul className="mt-3 space-y-1.5">
-              {[
-                t('stravaFeature1'),
-                t('stravaFeature2'),
-                t('stravaFeature3'),
-              ].map((item) => (
-                <li
-                  key={item}
-                  className="flex items-center gap-2 text-sm text-muted-foreground"
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-5 pt-5 border-t border-border">
+            {stravaStatus.connected ? (
+              <>
+                <div className="flex items-center gap-2 text-sm text-green-600 flex-1 min-w-0">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span className="truncate">
+                    {t('stravaConnectedId', {
+                      id: stravaStatus.stravaId ?? '',
+                    })}
+                  </span>
+                </div>
+                <Button
+                  variant="outline"
+                  className="rounded-full self-start sm:self-auto shrink-0"
+                  onClick={handleResync}
+                  disabled={isSyncing || !canResync}
                 >
-                  <span className="text-sienna">✓</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+                  <RefreshCw
+                    className={`w-4 h-4 mr-1.5 ${isSyncing ? 'animate-spin' : ''}`}
+                  />
+                  {isSyncing ? t('stravasyncingBtn') : t('stravaResyncBtn')}
+                </Button>
+              </>
+            ) : (
+              <>
+                <span className="text-sm text-muted-foreground flex-1">
+                  {t('stravaNotConnected')}
+                </span>
+                <Button
+                  className="rounded-full self-start sm:self-auto shrink-0"
+                  onClick={() => {
+                    window.location.href = '/api/strava/connect'
+                  }}
+                >
+                  <Activity className="w-4 h-4 mr-1.5" />
+                  {t('stravaConnectBtn')}
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mt-5 pt-5 border-t border-border">
-          {stravaStatus.connected ? (
-            <>
-              <div className="flex items-center gap-2 text-sm text-green-600 flex-1 min-w-0">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span className="truncate">
-                  {t('stravaConnectedId', { id: stravaStatus.stravaId ?? '' })}
-                </span>
-              </div>
-              <Button
-                variant="outline"
-                className="rounded-full self-start sm:self-auto shrink-0"
-                onClick={handleResync}
-                disabled={isSyncing || !canResync}
-              >
-                <RefreshCw
-                  className={`w-4 h-4 mr-1.5 ${isSyncing ? 'animate-spin' : ''}`}
-                />
-                {isSyncing ? t('stravasyncingBtn') : t('stravaResyncBtn')}
-              </Button>
-            </>
-          ) : (
-            <>
-              <span className="text-sm text-muted-foreground flex-1">
-                {t('stravaNotConnected')}
-              </span>
-              <Button
-                className="rounded-full self-start sm:self-auto shrink-0"
-                onClick={() => {
-                  window.location.href = '/api/strava/connect'
-                }}
-              >
-                <Activity className="w-4 h-4 mr-1.5" />
-                {t('stravaConnectBtn')}
-              </Button>
-            </>
-          )}
-        </div>
+        {/* Certifications sections */}
+        {children}
       </div>
-
-      {/* Certifications sections */}
-      {children}
-    </div>
+    </>
   )
 }

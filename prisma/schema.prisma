@@ -56,15 +56,10 @@ model User {
   isVerified    Boolean   @default(true)
   isCertified   Boolean   @default(false)
 
-  // Strava
-  stravaId        String?   @unique
-  stravaToken     String?
-  stravaResyncAt  DateTime?
-
-  // Strava certifications
+  // Activity certifications
   trackCertifications     TrackCertification[]
   challengeCertifications ChallengeCertification[]
-  stravaSyncs             StravaSync[]
+  activitySyncs           ActivitySync[]
 
   // Auth Relations
   accounts Account[]
@@ -106,6 +101,8 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
+
+  lastResyncAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -203,6 +200,7 @@ model ChallengeCertification {
   challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
   completedAt DateTime
   isValid     Boolean   @default(true)
+  isRead      Boolean   @default(false)
   createdAt   DateTime  @default(now())
 
   @@unique([userId, challengeId])
@@ -267,19 +265,28 @@ model Track {
 }
 
 model TrackCertification {
-  id               String   @id @default(cuid())
-  userId           String
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  trackId          String
-  track            Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
-  stravaActivityId String
-  avgSpeed         Float
-  totalTime        Int
-  completedAt      DateTime
-  isValid          Boolean  @default(true)
-  createdAt        DateTime @default(now())
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackId      String
+  track        Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  provider     String   @default("strava")
+  activityId   String
+  activityType String   @default("unknown")
+  avgSpeed     Float
+  maxSpeed     Float?
+  totalTime    Int
+  distance     Float    @default(0)
+  elevationGain Float   @default(0)
+  heartRateAvg Int?
+  heartRateMax Int?
+  calories     Int?
+  completedAt  DateTime
+  isValid      Boolean  @default(true)
+  isRead       Boolean  @default(false)
+  createdAt    DateTime @default(now())
 
-  @@unique([stravaActivityId, trackId])
+  @@unique([provider, activityId, trackId])
   @@map("track_certifications")
 }
 
@@ -381,15 +388,16 @@ model PoiType {
   @@map("poi_types")
 }
 
-// --- STRAVA SYNC LOG ---
+// --- ACTIVITY SYNC LOG ---
 
-model StravaSync {
+model ActivitySync {
   id       String   @id @default(cuid())
   userId   String
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider String
   source   String
   syncedAt DateTime @default(now())
   details  Json
 
-  @@map("strava_syncs")
+  @@map("activity_syncs")
 }

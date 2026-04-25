@@ -35,11 +35,6 @@ export async function GET(req: NextRequest) {
   const data = await tokenRes.json()
   const stravaAthleteId = String(data.athlete?.id)
 
-  await db.user.update({
-    where: { id: session.user.id },
-    data: { stravaId: stravaAthleteId },
-  })
-
   await db.account.upsert({
     where: {
       provider_providerAccountId: {

@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl'
 const ActivityMap = dynamic(() => import('./ActivityMap'), { ssr: false })
 
 type Props = {
-  stravaActivityId: string
+  activityId: string
   userId: string
   trackId?: string | null
   trackTitle?: string | null
@@ -25,7 +25,7 @@ type ActivityData = {
 }
 
 export default function ActivityVisualizer({
-  stravaActivityId,
+  activityId,
   userId,
   trackId,
   trackTitle,
@@ -45,9 +45,7 @@ export default function ActivityVisualizer({
     try {
       const params = new URLSearchParams({ userId })
       if (trackId) params.set('trackId', trackId)
-      const res = await fetch(
-        `/api/strava/activity/${stravaActivityId}?${params}`
-      )
+      const res = await fetch(`/api/strava/activity/${activityId}?${params}`)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       setData(await res.json())
     } catch (e) {
@@ -77,7 +75,7 @@ export default function ActivityVisualizer({
               <div>
                 <p className="font-semibold text-sm">
                   {t('activityId')}{' '}
-                  <span className="font-mono">{stravaActivityId}</span>
+                  <span className="font-mono">{activityId}</span>
                   {data?.name && (
                     <span className="ml-2 text-muted-foreground">
                       — {data.name}

@@ -14,8 +14,12 @@ export type SyncActivityStatus =
   | 'error'
 
 export type SyncActivityLog = {
-  stravaActivityId: string
+  activityId: string
   activityName: string | null
+  activityType: string | null
+  distance: number | null
+  elevationGain: number | null
+  completedAt: string | null
   status: SyncActivityStatus
   matchedTracks: SyncMatchedTrack[]
   errorMessage: string | null

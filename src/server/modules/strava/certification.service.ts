@@ -16,11 +16,19 @@ export async function processStravaActivity(
   const empty = (
     status: SyncActivityLog['status'],
     activityName: string | null = null,
-    errorMessage: string | null = null
+    errorMessage: string | null = null,
+    activityType: string | null = null,
+    distance: number | null = null,
+    elevationGain: number | null = null,
+    completedAt: string | null = null
   ): ProcessActivityResult => ({
     activityLog: {
-      stravaActivityId,
+      activityId: stravaActivityId,
       activityName,
+      activityType,
+      distance,
+      elevationGain,
+      completedAt,
       status,
       matchedTracks: [],
       errorMessage,
@@ -43,8 +51,22 @@ export async function processStravaActivity(
     )
   }
 
+  const activityType = activity.sport_type ?? activity.type ?? 'unknown'
+  const activityDistance = activity.distance / 1000
+  const activityElevation = activity.total_elevation_gain
+  const activityDate = activity.start_date
+
   const polyline = activity.map?.summary_polyline
-  if (!polyline) return empty('no_polyline', activity.name ?? null)
+  if (!polyline)
+    return empty(
+      'no_polyline',
+      activity.name ?? null,
+      null,
+      activityType,
+      activityDistance,
+      activityElevation,
+      activityDate
+    )
 
   const tracks = await db.track.findMany({
     where: { visible: true, gpxFileId: { not: null } },
@@ -60,7 +82,11 @@ export async function processStravaActivity(
 
     const existing = await db.trackCertification.findUnique({
       where: {
-        stravaActivityId_trackId: { stravaActivityId, trackId: track.id },
+        provider_activityId_trackId: {
+          provider: 'strava',
+          activityId: stravaActivityId,
+          trackId: track.id,
+        },
       },
     })
     if (existing) {
@@ -74,15 +100,28 @@ export async function processStravaActivity(
     if (!result.matched) continue
 
     const avgSpeedKmh = activity.average_speed * 3.6
+    const maxSpeedKmh = activity.max_speed * 3.6
     const completedAt = new Date(activity.start_date)
 
     await db.trackCertification.create({
       data: {
         userId,
         trackId: track.id,
-        stravaActivityId,
+        provider: 'strava',
+        activityId: stravaActivityId,
+        activityType,
         avgSpeed: avgSpeedKmh,
+        maxSpeed: maxSpeedKmh > 0 ? maxSpeedKmh : null,
         totalTime: activity.moving_time,
+        distance: activity.distance / 1000,
+        elevationGain: activity.total_elevation_gain,
+        heartRateAvg: activity.average_heartrate
+          ? Math.round(activity.average_heartrate)
+          : null,
+        heartRateMax: activity.max_heartrate
+          ? Math.round(activity.max_heartrate)
+          : null,
+        calories: activity.calories ?? null,
         completedAt,
       },
     })
@@ -107,8 +146,12 @@ export async function processStravaActivity(
 
   return {
     activityLog: {
-      stravaActivityId,
+      activityId: stravaActivityId,
       activityName: activity.name ?? null,
+      activityType,
+      distance: activityDistance,
+      elevationGain: activityElevation,
+      completedAt: activityDate,
       status,
       matchedTracks,
       errorMessage: null,

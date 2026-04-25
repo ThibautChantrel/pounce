@@ -35,7 +35,7 @@ export default async function UserShowPage(props: PageProps) {
     OTHER: tAuth('genderOther'),
   }
 
-  const [user, trackCertifications, challengeCertifications] =
+  const [user, trackCertifications, challengeCertifications, stravaAccount] =
     await Promise.all([
       getUser(params.id),
       db.trackCertification.findMany({
@@ -47,6 +47,10 @@ export default async function UserShowPage(props: PageProps) {
         where: { userId: params.id },
         include: { challenge: { select: { id: true, title: true } } },
         orderBy: { completedAt: 'desc' },
+      }),
+      db.account.findFirst({
+        where: { userId: params.id, provider: 'strava' },
+        select: { providerAccountId: true },
       }),
     ])
 
@@ -180,17 +184,19 @@ export default async function UserShowPage(props: PageProps) {
     },
     {
       label: t('stravaConnected'),
-      key: 'stravaId',
+      key: 'id',
       type: 'custom',
-      getValue: (u: UserType) => (
+      getValue: (_: UserType) => (
         <Badge
-          variant={u.stravaId ? 'outline' : 'secondary'}
+          variant={stravaAccount ? 'outline' : 'secondary'}
           className={
-            u.stravaId ? 'text-orange-600 bg-orange-50 border-orange-200' : ''
+            stravaAccount
+              ? 'text-orange-600 bg-orange-50 border-orange-200'
+              : ''
           }
         >
-          {u.stravaId
-            ? t('stravaConnectedId', { id: u.stravaId })
+          {stravaAccount
+            ? t('stravaConnectedId', { id: stravaAccount.providerAccountId })
             : t('stravaNotConnected')}
         </Badge>
       ),

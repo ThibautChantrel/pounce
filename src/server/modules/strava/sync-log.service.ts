@@ -1,8 +1,9 @@
 import db from '@/server/db'
 import { SyncActivityLog, SyncDetails } from './sync-log.types'
 
-export async function createStravaSync(
+export async function createActivitySync(
   userId: string,
+  provider: string,
   source: 'webhook' | 'manual',
   activities: SyncActivityLog[]
 ) {
@@ -12,7 +13,7 @@ export async function createStravaSync(
     activities,
   }
 
-  return db.stravaSync.create({
-    data: { userId, source, details },
+  return db.activitySync.create({
+    data: { userId, provider, source, details },
   })
 }

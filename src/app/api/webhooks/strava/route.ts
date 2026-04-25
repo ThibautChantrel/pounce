@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getUserByStravaId } from '@/server/modules/strava/strava.client'
+import { getUserByProviderAccountId } from '@/server/modules/strava/strava.client'
 import { processStravaActivity } from '@/server/modules/strava/certification.service'
-import { createStravaSync } from '@/server/modules/strava/sync-log.service'
+import { createActivitySync } from '@/server/modules/strava/sync-log.service'
 
 export async function GET(req: NextRequest) {
   const mode = req.nextUrl.searchParams.get('hub.mode')
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   const stravaAthleteId = String(body.owner_id)
   const stravaActivityId = String(body.object_id)
 
-  const user = await getUserByStravaId(stravaAthleteId)
+  const user = await getUserByProviderAccountId('strava', stravaAthleteId)
   if (!user)
     return NextResponse.json({ ok: true })
 
@@ -41,7 +41,9 @@ export async function POST(req: NextRequest) {
   ;(async () => {
     try {
       const result = await processStravaActivity(user.id, stravaActivityId)
-      await createStravaSync(user.id, 'webhook', [result.activityLog])
+      await createActivitySync(user.id, 'strava', 'webhook', [
+        result.activityLog,
+      ])
     } catch (err) {
       console.error('[strava-webhook] error', err)
     }

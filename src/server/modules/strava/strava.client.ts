@@ -6,12 +6,18 @@ const STRAVA_API_BASE = 'https://www.strava.com/api/v3'
 export type StravaActivity = {
   id: number
   name: string
+  sport_type: string
+  type: string
   distance: number
   moving_time: number
   elapsed_time: number
   total_elevation_gain: number
   start_date: string
   average_speed: number
+  max_speed: number
+  average_heartrate?: number
+  max_heartrate?: number
+  calories?: number
   map: {
     summary_polyline: string | null
   }
@@ -95,6 +101,13 @@ export async function fetchStravaAthleteActivities(
   return res.json() as Promise<Array<{ id: number }>>
 }
 
-export async function getUserByStravaId(stravaId: string) {
-  return db.user.findUnique({ where: { stravaId } })
+export async function getUserByProviderAccountId(
+  provider: string,
+  providerAccountId: string
+) {
+  const account = await db.account.findUnique({
+    where: { provider_providerAccountId: { provider, providerAccountId } },
+    include: { user: true },
+  })
+  return account?.user ?? null
 }

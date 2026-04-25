@@ -28,9 +28,17 @@ import {
 
 export type TrackCertificationColumn = {
   id: string
-  stravaActivityId: string
+  provider: string
+  activityId: string
+  activityType: string
   avgSpeed: number
+  maxSpeed: number | null
   totalTime: number
+  distance: number
+  elevationGain: number
+  heartRateAvg: number | null
+  heartRateMax: number | null
+  calories: number | null
   completedAt: Date
   isValid: boolean
   track: { id: string; title: string }
@@ -154,6 +162,15 @@ export const useTrackCertificationColumns = () => {
           >
             {row.original.track.title}
           </Link>
+        ),
+      },
+      {
+        accessorKey: 'activityType',
+        header: t('activityType'),
+        cell: ({ row }) => (
+          <span className="text-xs font-medium bg-muted px-2 py-0.5 rounded-full">
+            {row.original.activityType}
+          </span>
         ),
       },
       {

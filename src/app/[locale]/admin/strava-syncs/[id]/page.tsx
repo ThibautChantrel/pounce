@@ -111,6 +111,7 @@ export default async function StravaSyncShowPage({ params }: PageProps) {
             <tr className="border-b bg-muted/40 text-muted-foreground text-xs uppercase tracking-wide">
               <th className="px-4 py-3 text-left">{t('activityId')}</th>
               <th className="px-4 py-3 text-left">{t('activityName')}</th>
+              <th className="px-4 py-3 text-left">{t('activityType')}</th>
               <th className="px-4 py-3 text-left">{t('status')}</th>
               <th className="px-4 py-3 text-left">{t('matchedTracks')}</th>
               <th className="px-4 py-3 text-right">{t('actions')}</th>
@@ -120,7 +121,7 @@ export default async function StravaSyncShowPage({ params }: PageProps) {
             {activities.length === 0 && (
               <tr>
                 <td
-                  colSpan={5}
+                  colSpan={6}
                   className="px-4 py-8 text-center text-muted-foreground"
                 >
                   {t('noActivities')}
@@ -129,15 +130,24 @@ export default async function StravaSyncShowPage({ params }: PageProps) {
             )}
             {activities.map((activity) => (
               <tr
-                key={activity.stravaActivityId}
+                key={activity.activityId}
                 className="border-b last:border-0 hover:bg-muted/20"
               >
                 <td className="px-4 py-3 font-mono text-xs">
-                  {activity.stravaActivityId}
+                  {activity.activityId}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {activity.activityName ?? (
                     <span className="italic">{t('noName')}</span>
+                  )}
+                </td>
+                <td className="px-4 py-3">
+                  {activity.activityType ? (
+                    <span className="text-xs font-medium bg-muted px-2 py-0.5 rounded-full">
+                      {activity.activityType}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground text-xs">—</span>
                   )}
                 </td>
                 <td className="px-4 py-3">
@@ -182,7 +192,7 @@ export default async function StravaSyncShowPage({ params }: PageProps) {
                 </td>
                 <td className="px-4 py-3 text-right">
                   <ActivityVisualizer
-                    stravaActivityId={activity.stravaActivityId}
+                    activityId={activity.activityId}
                     userId={sync.userId}
                     trackId={activity.matchedTracks[0]?.trackId ?? null}
                     trackTitle={activity.matchedTracks[0]?.trackTitle ?? null}

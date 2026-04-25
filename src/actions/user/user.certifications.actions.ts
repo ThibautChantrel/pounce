@@ -2,6 +2,10 @@
 
 import { auth } from '@/server/modules/auth/auth.config'
 import db from '@/server/db'
+import type {
+  SyncActivityLog,
+  SyncDetails,
+} from '@/server/modules/strava/sync-log.types'
 
 export type CompletedChallenge = {
   id: string
@@ -45,6 +49,13 @@ export type UserProfileStats = {
   completedChallenges: CompletedChallenge[]
   completedTracks: CompletedTrack[]
   inProgressChallenges: InProgressChallenge[]
+}
+
+export type UnreadCertificationSummary = {
+  trackCertificationIds: string[]
+  challengeCertificationIds: string[]
+  trackTitles: string[]
+  challengeTitles: string[]
 }
 
 // For the carousel: challengeId -> completed track count + whether user is logged in
@@ -192,4 +203,126 @@ export async function fetchUserProfileStats(): Promise<UserProfileStats> {
     )
 
   return { completedChallenges, completedTracks, inProgressChallenges }
+}
+
+export type UnmatchedActivity = {
+  activityId: string
+  provider: string
+  activityName: string | null
+  activityType: string | null
+  distance: number | null
+  elevationGain: number | null
+  completedAt: string | null
+  syncedAt: Date
+  source: string
+}
+
+export async function fetchUserUnmatchedActivities(): Promise<
+  UnmatchedActivity[]
+> {
+  const session = await auth()
+  if (!session?.user?.id) return []
+
+  const recentSyncs = await db.activitySync.findMany({
+    where: { userId: session.user.id },
+    orderBy: { syncedAt: 'desc' },
+    take: 5,
+  })
+
+  const seen = new Set<string>()
+  const result: UnmatchedActivity[] = []
+
+  for (const sync of recentSyncs) {
+    const details = sync.details as unknown as SyncDetails
+    const activities: SyncActivityLog[] = details?.activities ?? []
+
+    for (const activity of activities) {
+      if (activity.status !== 'no_match') continue
+      if (seen.has(activity.activityId)) continue
+      seen.add(activity.activityId)
+
+      result.push({
+        activityId: activity.activityId,
+        provider: sync.provider,
+        activityName: activity.activityName ?? null,
+        activityType: activity.activityType ?? null,
+        distance: activity.distance ?? null,
+        elevationGain: activity.elevationGain ?? null,
+        completedAt: activity.completedAt ?? null,
+        syncedAt: sync.syncedAt,
+        source: sync.source,
+      })
+    }
+  }
+
+  return result
+}
+
+export async function fetchUnreadCertifications(): Promise<UnreadCertificationSummary> {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return {
+      trackCertificationIds: [],
+      challengeCertificationIds: [],
+      trackTitles: [],
+      challengeTitles: [],
+    }
+  }
+
+  const [trackCerts, challengeCerts] = await Promise.all([
+    db.trackCertification.findMany({
+      where: { userId: session.user.id, isValid: true, isRead: false },
+      select: {
+        id: true,
+        track: { select: { title: true } },
+      },
+      orderBy: { completedAt: 'desc' },
+    }),
+    db.challengeCertification.findMany({
+      where: { userId: session.user.id, isValid: true, isRead: false },
+      select: {
+        id: true,
+        challenge: { select: { title: true } },
+      },
+      orderBy: { completedAt: 'desc' },
+    }),
+  ])
+
+  return {
+    trackCertificationIds: trackCerts.map((c) => c.id),
+    challengeCertificationIds: challengeCerts.map((c) => c.id),
+    trackTitles: trackCerts.map((c) => c.track.title),
+    challengeTitles: challengeCerts.map((c) => c.challenge.title),
+  }
+}
+
+export async function markCertificationsAsRead(input: {
+  trackCertificationIds: string[]
+  challengeCertificationIds: string[]
+}): Promise<{ success: boolean }> {
+  const session = await auth()
+  if (!session?.user?.id) return { success: false }
+
+  await Promise.all([
+    input.trackCertificationIds.length
+      ? db.trackCertification.updateMany({
+          where: {
+            id: { in: input.trackCertificationIds },
+            userId: session.user.id,
+          },
+          data: { isRead: true },
+        })
+      : Promise.resolve(),
+    input.challengeCertificationIds.length
+      ? db.challengeCertification.updateMany({
+          where: {
+            id: { in: input.challengeCertificationIds },
+            userId: session.user.id,
+          },
+          data: { isRead: true },
+        })
+      : Promise.resolve(),
+  ])
+
+  return { success: true }
 }
