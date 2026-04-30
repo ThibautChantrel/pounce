@@ -1,7 +1,37 @@
+import { ActivityMode } from '@prisma/client'
 import db from '@/server/db'
 import { fetchStravaActivity } from './strava.client'
 import { matchActivityToTrack } from './track-matching.service'
 import { SyncActivityLog, SyncMatchedTrack } from './sync-log.types'
+
+const RUN_TYPES = new Set(['Run', 'TrailRun', 'VirtualRun', 'Hike', 'Walk'])
+const RIDE_TYPES = new Set([
+  'Ride',
+  'GravelRide',
+  'MountainBikeRide',
+  'VirtualRide',
+  'EBikeRide',
+  'EMountainBikeRide',
+  'Handcycle',
+  'Velomobile',
+])
+
+function classifyType(activityType: string): 'run' | 'ride' | 'other' {
+  if (RUN_TYPES.has(activityType)) return 'run'
+  if (RIDE_TYPES.has(activityType)) return 'ride'
+  return 'other'
+}
+
+function deriveActivityMode(activityTypes: string[]): ActivityMode {
+  const categories = new Set(activityTypes.map(classifyType))
+  if (categories.size === 1) {
+    const cat = [...categories][0]
+    if (cat === 'run') return ActivityMode.RUN
+    if (cat === 'ride') return ActivityMode.RIDE
+  }
+  if (categories.size > 1) return ActivityMode.HYBRID
+  return ActivityMode.OTHER
+}
 
 export type ProcessActivityResult = {
   activityLog: SyncActivityLog
@@ -187,16 +217,23 @@ async function checkAndCertifyChallenges(
 
     if (completedCount < trackIds.length) continue
 
-    const mostRecent = await db.trackCertification.findFirst({
+    const trackCerts = await db.trackCertification.findMany({
       where: { userId, trackId: { in: trackIds }, isValid: true },
+      select: { activityType: true, completedAt: true },
       orderBy: { completedAt: 'desc' },
     })
+
+    const activityMode = deriveActivityMode(
+      trackCerts.map((c) => c.activityType)
+    )
+    const completedAt = trackCerts[0]?.completedAt ?? new Date()
 
     await db.challengeCertification.create({
       data: {
         userId,
         challengeId: challenge.id,
-        completedAt: mostRecent?.completedAt ?? new Date(),
+        completedAt,
+        activityMode,
       },
     })
 

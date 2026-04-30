@@ -1,8 +1,20 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { LogOut, Activity, User, RefreshCw, CheckCircle2 } from 'lucide-react'
+import {
+  LogOut,
+  Activity,
+  User,
+  RefreshCw,
+  CheckCircle2,
+  Info,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { logoutAction } from '@/actions/auth/auth.actions'
 import { manualResyncAction } from '@/actions/strava/strava.actions'
 import {
@@ -271,13 +283,54 @@ export default function ProfileClient({
         {/* Strava card */}
         <div className="rounded-2xl bg-card border border-border p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-orange-100  flex items-center justify-center shrink-0">
               <Activity className="w-6 h-6 text-orange-500" />
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-base font-semibold text-foreground">
-                {t('stravaTitle')}
-              </h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-semibold text-foreground flex-1">
+                  {t('stravaTitle')}
+                </h2>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      className="text-muted-foreground/50 hover:text-muted-foreground transition-colors shrink-0"
+                      aria-label={t('stravaResyncInfoTitle')}
+                    >
+                      <Info className="w-4 h-4" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="text-sm space-y-2">
+                    <p className="font-semibold text-foreground">
+                      {t('stravaResyncInfoTitle')}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('stravaResyncInfoAuto')}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('stravaResyncInfoManual')}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t('stravaResyncInfoLimit')}
+                    </p>
+                    <p className="text-xs text-muted-foreground/70 pt-1 border-t border-border">
+                      {stravaStatus.lastResyncAt
+                        ? t('stravaResyncInfoLastSync', {
+                            date: new Date(
+                              stravaStatus.lastResyncAt
+                            ).toLocaleDateString('fr-FR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            }),
+                          })
+                        : t('stravaResyncInfoNeverSynced')}
+                    </p>
+                  </PopoverContent>
+                </Popover>
+              </div>
               <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
                 {t('stravaDesc')}
               </p>

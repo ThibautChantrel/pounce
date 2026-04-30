@@ -12,7 +12,11 @@ END $$;
 
 DO $$
 BEGIN
-  IF to_regclass('public.activity_syncs') IS NOT NULL THEN
+  IF to_regclass('public.activity_syncs') IS NOT NULL
+     AND EXISTS (
+       SELECT 1 FROM information_schema.columns
+       WHERE table_name = 'activity_syncs' AND column_name = 'provider'
+     ) THEN
     ALTER TABLE "activity_syncs" ALTER COLUMN "provider" DROP DEFAULT;
   END IF;
 END $$;

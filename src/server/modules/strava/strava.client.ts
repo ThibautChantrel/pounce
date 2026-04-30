@@ -87,18 +87,28 @@ export async function fetchStravaActivity(
 
 export async function fetchStravaAthleteActivities(
   userId: string,
-  perPage = 10
+  after: number
 ): Promise<Array<{ id: number }>> {
   const token = await getValidAccessToken(userId)
+  const all: Array<{ id: number }> = []
+  let page = 1
 
-  const res = await fetch(
-    `${STRAVA_API_BASE}/athlete/activities?per_page=${perPage}`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  )
+  while (true) {
+    const url = `${STRAVA_API_BASE}/athlete/activities?after=${after}&per_page=200&page=${page}`
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!res.ok)
+      throw new Error(`Strava activities fetch failed: ${res.status}`)
 
-  if (!res.ok) throw new Error(`Strava activities fetch failed: ${res.status}`)
+    const batch = (await res.json()) as Array<{ id: number }>
+    if (batch.length === 0) break
+    all.push(...batch)
+    if (batch.length < 200) break
+    page++
+  }
 
-  return res.json() as Promise<Array<{ id: number }>>
+  return all
 }
 
 export async function getUserByProviderAccountId(

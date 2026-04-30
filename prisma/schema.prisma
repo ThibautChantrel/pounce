@@ -32,6 +32,13 @@ enum Difficulty {
   EXPERT
 }
 
+enum ActivityMode {
+  RUN
+  RIDE
+  HYBRID
+  OTHER
+}
+
 // --- MODELS ---
 
 model User {
@@ -193,15 +200,16 @@ model Challenge {
 }
 
 model ChallengeCertification {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  challengeId String
-  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-  completedAt DateTime
-  isValid     Boolean   @default(true)
-  isRead      Boolean   @default(false)
-  createdAt   DateTime  @default(now())
+  id           String       @id @default(cuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId  String
+  challenge    Challenge    @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  completedAt  DateTime
+  activityMode ActivityMode @default(OTHER)
+  isValid      Boolean      @default(true)
+  isRead       Boolean      @default(false)
+  createdAt    DateTime     @default(now())
 
   @@unique([userId, challengeId])
   @@map("challenge_certifications")

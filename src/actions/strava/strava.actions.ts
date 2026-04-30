@@ -7,7 +7,10 @@ import { fetchStravaAthleteActivities } from '@/server/modules/strava/strava.cli
 import { createActivitySync } from '@/server/modules/strava/sync-log.service'
 import { SyncActivityLog } from '@/server/modules/strava/sync-log.types'
 
-const RESYNC_COOLDOWN_MS = 60 * 60 * 1000
+const RESYNC_COOLDOWN_MS = 24 * 60 * 60 * 1000
+const DEFAULT_AFTER_UNIX = Math.floor(
+  new Date('2026-01-01T00:00:00Z').getTime() / 1000
+)
 
 export async function manualResyncAction(activityId?: string): Promise<{
   success: boolean
@@ -56,7 +59,16 @@ export async function manualResyncAction(activityId?: string): Promise<{
         allCertifiedTrackIds.push(...result.certifiedTrackIds)
         allCertifiedChallengeIds.push(...result.certifiedChallengeIds)
       } else {
-        const activities = await fetchStravaAthleteActivities(user.id, 10)
+        const lastCert = await db.trackCertification.findFirst({
+          where: { userId: user.id, provider: 'strava' },
+          orderBy: { completedAt: 'desc' },
+          select: { completedAt: true },
+        })
+        const after = lastCert
+          ? Math.floor(lastCert.completedAt.getTime() / 1000)
+          : DEFAULT_AFTER_UNIX
+
+        const activities = await fetchStravaAthleteActivities(user.id, after)
         for (const activity of activities) {
           const result = await processStravaActivity(
             user.id,
