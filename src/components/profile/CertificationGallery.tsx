@@ -2,10 +2,8 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { Search, Trophy, Map, X, Footprints, Bike } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Trophy, Map, Footprints, Bike } from 'lucide-react'
+import { FilterBar } from '@/components/ui/filter-bar'
 import { CertCard } from './CertCard'
 import type {
   CompletedChallenge,
@@ -66,55 +64,60 @@ export function CertificationGallery({
   const debouncedChallengeSearch = useDebounce(challengeSearch, 300)
   const debouncedTrackSearch = useDebounce(trackSearch, 300)
 
-  const search =
-    tab === 'challenges' ? debouncedChallengeSearch : debouncedTrackSearch
-  const activityFilter = tab === 'challenges' ? challengeFilter : trackFilter
-  const setSearch = tab === 'challenges' ? setChallengeSearch : setTrackSearch
-  const setActivityFilter =
-    tab === 'challenges' ? setChallengeFilter : setTrackFilter
   const rawSearch = tab === 'challenges' ? challengeSearch : trackSearch
+  const activeFilter = tab === 'challenges' ? challengeFilter : trackFilter
 
-  const filteredTracks = useMemo(() => {
-    return completedTracks
-      .filter((cert) => {
-        if (trackFilter === 'all') return true
-        return classifyType(cert.activityType) === trackFilter
-      })
-      .filter(
-        (cert) =>
-          !debouncedTrackSearch ||
-          cert.track.title
-            .toLowerCase()
-            .includes(debouncedTrackSearch.toLowerCase())
-      )
-  }, [completedTracks, trackFilter, debouncedTrackSearch])
+  const setSearch = tab === 'challenges' ? setChallengeSearch : setTrackSearch
+  const setFilter = tab === 'challenges' ? setChallengeFilter : setTrackFilter
 
-  const filteredChallenges = useMemo(() => {
-    return completedChallenges
-      .filter((cert) => {
-        if (challengeFilter === 'all') return true
-        if (challengeFilter === 'run') return cert.activityMode === 'RUN'
-        if (challengeFilter === 'ride') return cert.activityMode === 'RIDE'
-        return true
-      })
-      .filter(
-        (cert) =>
+  const filteredTracks = useMemo(
+    () =>
+      completedTracks
+        .filter((cert) =>
+          trackFilter === 'all'
+            ? true
+            : classifyType(cert.activityType) === trackFilter
+        )
+        .filter(
+          (cert) =>
+            !debouncedTrackSearch ||
+            cert.track.title
+              .toLowerCase()
+              .includes(debouncedTrackSearch.toLowerCase())
+        ),
+    [completedTracks, trackFilter, debouncedTrackSearch]
+  )
+
+  const filteredChallenges = useMemo(
+    () =>
+      completedChallenges
+        .filter((cert) => {
+          if (challengeFilter === 'all') return true
+          if (challengeFilter === 'run') return cert.activityMode === 'RUN'
+          if (challengeFilter === 'ride') return cert.activityMode === 'RIDE'
+          return true
+        })
+        .filter(
+          (cert) =>
+            !debouncedChallengeSearch ||
+            cert.challenge.title
+              .toLowerCase()
+              .includes(debouncedChallengeSearch.toLowerCase())
+        ),
+    [completedChallenges, challengeFilter, debouncedChallengeSearch]
+  )
+
+  const filteredInProgress = useMemo(
+    () =>
+      inProgressChallenges.filter(
+        (c) =>
           !debouncedChallengeSearch ||
-          cert.challenge.title
+          c.challenge.title
             .toLowerCase()
             .includes(debouncedChallengeSearch.toLowerCase())
-      )
-  }, [completedChallenges, challengeFilter, debouncedChallengeSearch])
-
-  const filteredInProgress = useMemo(() => {
-    return inProgressChallenges.filter(
-      (c) =>
-        !debouncedChallengeSearch ||
-        c.challenge.title
-          .toLowerCase()
-          .includes(debouncedChallengeSearch.toLowerCase())
-    )
-  }, [inProgressChallenges, debouncedChallengeSearch])
+      ),
+    [inProgressChallenges, debouncedChallengeSearch]
+  )
 
   const hasContent =
     completedTracks.length > 0 ||
@@ -123,29 +126,40 @@ export function CertificationGallery({
 
   if (!hasContent) return null
 
-  const FILTERS: {
-    value: ActivityFilter
-    label: string
-    icon?: React.ReactNode
-  }[] = [
-    { value: 'all', label: t('filterAll') },
+  const challengeCount =
+    completedChallenges.length + inProgressChallenges.length
+  const trackCount = completedTracks.length
+
+  const TABS = [
     {
-      value: 'run',
+      value: 'challenges' as Tab,
+      label: t('myCompletedChallenges'),
+      icon: <Trophy className="w-3.5 h-3.5" />,
+      count: challengeCount,
+    },
+    {
+      value: 'tracks' as Tab,
+      label: t('myCompletedTracks'),
+      icon: <Map className="w-3.5 h-3.5" />,
+      count: trackCount,
+    },
+  ]
+
+  const FILTERS = [
+    { value: 'all' as ActivityFilter, label: t('filterAll') },
+    {
+      value: 'run' as ActivityFilter,
       label: t('filterRun'),
       icon: <Footprints className="w-3 h-3" />,
     },
     {
-      value: 'ride',
+      value: 'ride' as ActivityFilter,
       label: t('filterRide'),
       icon: <Bike className="w-3 h-3" />,
     },
   ]
 
-  const challengeCount =
-    completedChallenges.length + inProgressChallenges.length
-  const trackCount = completedTracks.length
-
-  const summaryPhrase =
+  const summary =
     tab === 'challenges'
       ? [
           completedChallenges.length > 0 &&
@@ -161,87 +175,19 @@ export function CertificationGallery({
 
   return (
     <div className="space-y-4">
-      {/* Tab toggle */}
-      <div className="flex justify-center">
-        <div className="bg-muted rounded-full p-1 flex">
-          <button
-            onClick={() => setTab('challenges')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-              tab === 'challenges'
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Trophy className="w-3.5 h-3.5" />
-            {t('myCompletedChallenges')}
-            <span className="text-[11px] tabular-nums opacity-60">
-              {challengeCount}
-            </span>
-          </button>
-          <button
-            onClick={() => setTab('tracks')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-              tab === 'tracks'
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Map className="w-3.5 h-3.5" />
-            {t('myCompletedTracks')}
-            <span className="text-[11px] tabular-nums opacity-60">
-              {trackCount}
-            </span>
-          </button>
-        </div>
-      </div>
+      <FilterBar
+        tabs={TABS}
+        activeTab={tab}
+        onTabChange={setTab}
+        filters={FILTERS}
+        activeFilter={activeFilter}
+        onFilterChange={setFilter}
+        search={rawSearch}
+        onSearchChange={setSearch}
+        searchPlaceholder={t('searchPlaceholder')}
+        summary={summary || undefined}
+      />
 
-      {/* Summary phrase */}
-      {summaryPhrase && (
-        <p className="text-center text-muted-foreground text-sm">
-          {summaryPhrase}
-        </p>
-      )}
-
-      {/* Search + filters */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative flex-1 min-w-48">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <Input
-            placeholder={t('searchPlaceholder')}
-            value={rawSearch}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-9 bg-background/50 backdrop-blur-sm"
-          />
-          {rawSearch && (
-            <button
-              onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {FILTERS.map((f) => (
-            <Button
-              key={f.value}
-              variant="ghost"
-              onClick={() => setActivityFilter(f.value)}
-              className={cn(
-                'h-auto rounded-full border px-3 py-1.5 text-sm font-medium transition-all',
-                activityFilter === f.value
-                  ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
-                  : 'bg-background/50 text-muted-foreground border-border hover:bg-background/50 hover:border-primary/50 hover:text-foreground'
-              )}
-            >
-              {f.icon}
-              {f.label}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      {/* Grid */}
       {tab === 'challenges' && (
         <>
           {filteredInProgress.length === 0 &&
