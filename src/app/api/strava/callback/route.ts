@@ -35,6 +35,20 @@ export async function GET(req: NextRequest) {
   const data = await tokenRes.json()
   const stravaAthleteId = String(data.athlete?.id)
 
+  const existing = await db.account.findUnique({
+    where: {
+      provider_providerAccountId: {
+        provider: 'strava',
+        providerAccountId: stravaAthleteId,
+      },
+    },
+    select: { userId: true },
+  })
+
+  if (existing && existing.userId !== session.user.id) {
+    return NextResponse.redirect(`${origin}/profile?strava=conflict`)
+  }
+
   await db.account.upsert({
     where: {
       provider_providerAccountId: {

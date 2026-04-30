@@ -294,6 +294,7 @@
     "stravaConnectedSuccess": "Strava connecté avec succès !",
     "stravaConnectionDenied": "Connexion Strava annulée.",
     "stravaConnectionError": "Erreur lors de la connexion Strava.",
+    "stravaConnectionConflict": "Ce compte Strava est déjà lié à un autre utilisateur.",
     "stravaResyncBtn": "Resynchroniser",
     "stravasyncingBtn": "Synchronisation...",
     "stravaResyncSuccess": "{count} certification(s) obtenue(s) !",

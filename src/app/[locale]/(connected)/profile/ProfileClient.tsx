@@ -120,6 +120,9 @@ export default function ProfileClient({
     } else if (stravaParam === 'denied') {
       toast.info(t('stravaConnectionDenied'))
       router.replace('/profile')
+    } else if (stravaParam === 'conflict') {
+      toast.error(t('stravaConnectionConflict'))
+      router.replace('/profile')
     } else if (stravaParam === 'error') {
       toast.error(t('stravaConnectionError'))
       router.replace('/profile')
