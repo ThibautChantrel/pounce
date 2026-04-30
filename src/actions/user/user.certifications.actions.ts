@@ -10,6 +10,7 @@ import type {
 export type CompletedChallenge = {
   id: string
   completedAt: Date
+  activityMode: string
   challenge: {
     id: string
     title: string
@@ -25,6 +26,9 @@ export type CompletedTrack = {
   completedAt: Date
   avgSpeed: number
   totalTime: number
+  distance: number
+  elevationGain: number
+  activityType: string
   track: {
     id: string
     title: string
@@ -138,6 +142,7 @@ export async function fetchUserProfileStats(): Promise<UserProfileStats> {
     (cert) => ({
       id: cert.id,
       completedAt: cert.completedAt,
+      activityMode: cert.activityMode,
       challenge: {
         id: cert.challenge.id,
         title: cert.challenge.title,
@@ -160,6 +165,9 @@ export async function fetchUserProfileStats(): Promise<UserProfileStats> {
     completedAt: cert.completedAt,
     avgSpeed: cert.avgSpeed,
     totalTime: cert.totalTime,
+    distance: cert.distance,
+    elevationGain: cert.elevationGain,
+    activityType: cert.activityType,
     track: cert.track,
   }))
 
