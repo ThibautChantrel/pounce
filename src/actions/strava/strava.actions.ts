@@ -14,7 +14,15 @@ const DEFAULT_AFTER_UNIX = Math.floor(
 
 export async function manualResyncAction(activityId?: string): Promise<{
   success: boolean
-  error?: string
+  error?:
+    | 'unauthorized'
+    | 'not_found'
+    | 'not_verified'
+    | 'rate_limited'
+    | 'no_provider_connected'
+    | 'strava_api_error'
+    | 'internal_error'
+  nextResyncAt?: Date
   certifiedTrackIds?: string[]
   certifiedChallengeIds?: string[]
   certifiedTrackTitles?: string[]
@@ -34,8 +42,12 @@ export async function manualResyncAction(activityId?: string): Promise<{
   if (stravaAccount) {
     if (stravaAccount.lastResyncAt) {
       const elapsed = Date.now() - stravaAccount.lastResyncAt.getTime()
-      if (elapsed < RESYNC_COOLDOWN_MS)
-        return { success: false, error: 'rate_limited' }
+      if (elapsed < RESYNC_COOLDOWN_MS) {
+        const nextResyncAt = new Date(
+          stravaAccount.lastResyncAt!.getTime() + RESYNC_COOLDOWN_MS
+        )
+        return { success: false, error: 'rate_limited', nextResyncAt }
+      }
     }
 
     await db.account.update({
@@ -108,8 +120,17 @@ export async function manualResyncAction(activityId?: string): Promise<{
         certifiedChallengeTitles: challenges.map((c) => c.title),
       }
     } catch (err) {
-      console.error('[manualResync] strava error', err)
-      return { success: false, error: 'internal_error' }
+      const message = err instanceof Error ? err.message : String(err)
+      console.error('[manualResync] error', message)
+      const isStravaApi =
+        message.toLowerCase().includes('strava') ||
+        message.includes('401') ||
+        message.includes('403') ||
+        message.includes('429')
+      return {
+        success: false,
+        error: isStravaApi ? 'strava_api_error' : 'internal_error',
+      }
     }
   } else {
     // TODO: implementer les autres providers (garmin, etc.)

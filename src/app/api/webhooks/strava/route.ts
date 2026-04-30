@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUserByProviderAccountId } from '@/server/modules/strava/strava.client'
 import { processStravaActivity } from '@/server/modules/strava/certification.service'
-import { createActivitySync } from '@/server/modules/strava/sync-log.service'
+import {
+  createActivitySync,
+  createErrorSync,
+} from '@/server/modules/strava/sync-log.service'
+
+const VERIFY_TOKEN = process.env.STRAVA_WEBHOOK_VERIFY_TOKEN
+if (!VERIFY_TOKEN) {
+  throw new Error('STRAVA_WEBHOOK_VERIFY_TOKEN env var is not set')
+}
 
 export async function GET(req: NextRequest) {
   const mode = req.nextUrl.searchParams.get('hub.mode')
   const token = req.nextUrl.searchParams.get('hub.verify_token')
   const challenge = req.nextUrl.searchParams.get('hub.challenge')
 
-  if (
-    mode === 'subscribe' &&
-    token === process.env.STRAVA_WEBHOOK_VERIFY_TOKEN
-  ) {
+  if (mode === 'subscribe' && token === VERIFY_TOKEN) {
     return NextResponse.json({ 'hub.challenge': challenge })
   }
 
@@ -45,7 +50,19 @@ export async function POST(req: NextRequest) {
         result.activityLog,
       ])
     } catch (err) {
-      console.error('[strava-webhook] error', err)
+      const message = err instanceof Error ? err.message : String(err)
+      console.error('[strava-webhook] error', message)
+      try {
+        await createErrorSync(
+          user.id,
+          'strava',
+          'webhook',
+          stravaActivityId,
+          message
+        )
+      } catch (logErr) {
+        console.error('[strava-webhook] failed to log error', logErr)
+      }
     }
   })()
 

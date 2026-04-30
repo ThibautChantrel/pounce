@@ -164,7 +164,19 @@ export default function ProfileClient({
       const result = await manualResyncAction()
       if (!result.success) {
         if (result.error === 'rate_limited') {
-          toast.error(t('stravaResyncRateLimited'))
+          if (result.nextResyncAt) {
+            const timeStr = result.nextResyncAt.toLocaleTimeString('fr-FR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+            toast.error(t('stravaResyncRateLimitedUntil', { time: timeStr }))
+          } else {
+            toast.error(t('stravaResyncRateLimited'))
+          }
+        } else if (result.error === 'strava_api_error') {
+          toast.error(t('stravaResyncApiError'))
+        } else if (result.error === 'no_provider_connected') {
+          toast.error(t('stravaResyncNoProvider'))
         } else {
           toast.error(t('stravaResyncError'))
         }
