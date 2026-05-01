@@ -10,16 +10,18 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel'
 import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type'
-import { Flag, Search, Loader2, PawPrint, ArrowRight, X } from 'lucide-react'
+import { Flag, Search, Loader2, PawPrint, ArrowRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from 'use-debounce'
 import { useTranslations } from 'next-intl'
 import { ChallengeCard } from './ChallengeCard'
 import { fetchChallengesForUser } from '@/actions/challenge/challenge.action'
+import { fetchUserChallengeData } from '@/actions/user/user.certifications.actions'
 import { fetchCategoriesForSelect } from '@/actions/category/category.admin.action'
 import { Button } from '../ui/button'
 import { Link } from '@/navigation'
 import { getCategoryIcon } from '@/utils/category-icons'
+import { cn } from '@/lib/utils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -39,6 +41,11 @@ export function ChallengeCarousel() {
   const [searchTerm, setSearchTerm] = React.useState('')
   const [debouncedSearch] = useDebounce(searchTerm, 500)
 
+  const [progressData, setProgressData] = React.useState<{
+    isLoggedIn: boolean
+    map: Record<string, number>
+  } | null>(null)
+
   const [categories, setCategories] = React.useState<CategoryOption[]>([])
   const [selectedCategoryIds, setSelectedCategoryIds] = React.useState<
     string[]
@@ -47,6 +54,9 @@ export function ChallengeCarousel() {
   React.useEffect(() => {
     fetchCategoriesForSelect({ skip: 0, take: 50 }).then((res) =>
       setCategories(res.data)
+    )
+    fetchUserChallengeData().then(({ isLoggedIn, progressMap }) =>
+      setProgressData({ isLoggedIn, map: progressMap })
     )
   }, [])
 
@@ -156,18 +166,20 @@ export function ChallengeCarousel() {
                   const Icon = getCategoryIcon(cat.value)
                   const isActive = selectedCategoryIds.includes(cat.id)
                   return (
-                    <button
+                    <Button
                       key={cat.id}
+                      variant="ghost"
                       onClick={() => toggleCategory(cat.id)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium border transition-all ${
+                      className={cn(
+                        'h-auto rounded-full border px-3 py-1.5 text-sm font-medium transition-all',
                         isActive
-                          ? 'bg-primary text-primary-foreground border-primary'
-                          : 'bg-background/50 text-muted-foreground border-border hover:border-primary/50 hover:text-foreground'
-                      }`}
+                          ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                          : 'bg-background/50 text-muted-foreground border-border hover:bg-background/50 hover:border-primary/50 hover:text-foreground'
+                      )}
                     >
                       <Icon className="w-3.5 h-3.5" />
                       {cat.value}
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -192,7 +204,14 @@ export function ChallengeCarousel() {
               key={challenge.id}
               className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
             >
-              <ChallengeCard challenge={challenge} />
+              <ChallengeCard
+                challenge={challenge}
+                completedTracks={
+                  progressData?.isLoggedIn
+                    ? (progressData.map[challenge.id] ?? 0)
+                    : undefined
+                }
+              />
             </CarouselItem>
           ))}
 

@@ -18,6 +18,12 @@ enum Role {
   ADMIN
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  OTHER
+}
 
 enum Difficulty {
   EASY
@@ -26,16 +32,41 @@ enum Difficulty {
   EXPERT
 }
 
+enum ActivityMode {
+  RUN
+  RIDE
+  HYBRID
+  OTHER
+}
+
 // --- MODELS ---
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
+  pseudo        String?   @unique
+  firstName     String?
+  lastName      String?
   email         String    @unique
   emailVerified DateTime?
   image         String?
   password      String?
   role          Role      @default(USER)
+
+  // Profile fields
+  nationality   String?
+  gender        Gender?
+  birthDate     DateTime?
+  height        Int?
+  weight        Float?
+
+  // Status flags
+  isVerified    Boolean   @default(true)
+  isCertified   Boolean   @default(false)
+
+  // Activity certifications
+  trackCertifications     TrackCertification[]
+  challengeCertifications ChallengeCertification[]
+  activitySyncs           ActivitySync[]
 
   // Auth Relations
   accounts Account[]
@@ -77,6 +108,8 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
+
+  lastResyncAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -152,6 +185,9 @@ model Challenge {
   // Relation N-N vers Category
   categories ChallengeCategory[]
 
+  // Certifications
+  certifications ChallengeCertification[]
+
   // Audit
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -161,6 +197,22 @@ model Challenge {
   updatedBy   User?    @relation("UpdatedChallenges", fields: [updatedById], references: [id])
 
   @@map("challenges")
+}
+
+model ChallengeCertification {
+  id           String       @id @default(cuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId  String
+  challenge    Challenge    @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  completedAt  DateTime
+  activityMode ActivityMode @default(OTHER)
+  isValid      Boolean      @default(true)
+  isRead       Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+
+  @@unique([userId, challengeId])
+  @@map("challenge_certifications")
 }
 
 // Table de pivot Challenge <-> Track (Pour gérer l'ordre)
@@ -207,6 +259,9 @@ model Track {
   gpxFile   File?   @relation("TrackGpx", fields: [gpxFileId], references: [id])
 
   // Audit
+  // Certifications
+  certifications TrackCertification[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   createdById String?
@@ -215,6 +270,32 @@ model Track {
   updatedBy   User?    @relation("UpdatedTracks", fields: [updatedById], references: [id])
 
   @@map("tracks")
+}
+
+model TrackCertification {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackId      String
+  track        Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  provider     String   @default("strava")
+  activityId   String
+  activityType String   @default("unknown")
+  avgSpeed     Float
+  maxSpeed     Float?
+  totalTime    Int
+  distance     Float    @default(0)
+  elevationGain Float   @default(0)
+  heartRateAvg Int?
+  heartRateMax Int?
+  calories     Int?
+  completedAt  DateTime
+  isValid      Boolean  @default(true)
+  isRead       Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@unique([provider, activityId, trackId])
+  @@map("track_certifications")
 }
 
 // --- POI MODULE ---
@@ -313,4 +394,18 @@ model PoiType {
   updatedBy   User?    @relation("UpdatedPoiTypes", fields: [updatedById], references: [id])
 
   @@map("poi_types")
+}
+
+// --- ACTIVITY SYNC LOG ---
+
+model ActivitySync {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider String
+  source   String
+  syncedAt DateTime @default(now())
+  details  Json
+
+  @@map("activity_syncs")
 }

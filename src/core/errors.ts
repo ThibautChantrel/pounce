@@ -18,6 +18,7 @@ export const ERROR_CODES = {
 
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
   UNAUTHORIZED: 'UNAUTHORIZED',
+  PSEUDO_TAKEN: 'PSEUDO_TAKEN',
 } as const
 
 export type ErrorCode = keyof typeof ERROR_CODES
