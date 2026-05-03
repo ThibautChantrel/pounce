@@ -15,6 +15,7 @@ import {
   Award,
   PawPrint,
   RefreshCw,
+  Flag,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -66,6 +67,11 @@ export default function AdminSidebar() {
           href: '/admin/challenges',
           icon: <Swords size={16} />,
           label: t('Navbar.challenges'),
+        },
+        {
+          href: '/admin/races',
+          icon: <Flag size={16} />,
+          label: t('Navbar.races'),
         },
         {
           href: '/admin/categories',

@@ -8,6 +8,8 @@ import {
   RefreshCw,
   CheckCircle2,
   Info,
+  Flag,
+  ChevronRight,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,6 +24,7 @@ import {
   markCertificationsAsRead,
 } from '@/actions/user/user.certifications.actions'
 import { useTranslations } from 'next-intl'
+import { Link } from '@/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { CertificationCelebration } from '@/components/profile/CertificationCelebration'
@@ -409,6 +412,25 @@ export default function ProfileClient({
             )}
           </div>
         </div>
+
+        {/* Races link */}
+        <Link
+          href="/profile/races"
+          className="rounded-2xl bg-card border border-border p-5 flex items-center gap-4 hover:bg-muted/50 transition-colors"
+        >
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <Flag className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground">
+              Mes courses organisées
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Gérer vos courses, participants et résultats
+            </p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+        </Link>
 
         {/* Certifications sections */}
         {children}
