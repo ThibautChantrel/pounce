@@ -551,6 +551,32 @@
         "EXPERT": "Expert"
       }
     },
+    "Races": {
+      "title": "Race Management",
+      "description": "{count} race{count, plural, one {} other {s}} total",
+      "organizer": "Organizer",
+      "track": "Track",
+      "status": "Status",
+      "format": "Format",
+      "startAt": "Start",
+      "participants": "Participants",
+      "validate": "Validate",
+      "reject": "Reject",
+      "rejectReason": "Rejection reason",
+      "validateTitle": "Validate race",
+      "validateDesc": "The race will be published and visible to everyone.",
+      "rejectTitle": "Reject race",
+      "rejectDesc": "Please provide a reason (required).",
+      "validateSuccess": "Race validated",
+      "rejectSuccess": "Race rejected",
+      "Statuses": {
+        "DRAFT": "Draft",
+        "PENDING_REVIEW": "Pending review",
+        "ACTIVE": "Active",
+        "CLOSED": "Closed",
+        "CANCELLED": "Cancelled"
+      }
+    },
     "Feedbacks": {
       "title": "Feedback Management",
       "description": "View and manage user feedback and contact requests.",

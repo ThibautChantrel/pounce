@@ -6,6 +6,7 @@ import { auth } from '@/server/modules/auth/auth.config'
 import { raceService } from '@/server/modules/race/race.service'
 import { ActivityMode, RaceAccessType, RaceFormat } from '@prisma/client'
 import { CreateRaceInput, UpdateRaceInput } from './race.types'
+import db from '@/server/db'
 
 type ActionResponse = { success: boolean; error?: string; id?: string }
 
@@ -107,5 +108,28 @@ export async function listMyRacesAction() {
     return raceService.listForOrganizer(session.user.id)
   } catch {
     return []
+  }
+}
+
+export async function createRaceTrackAction(data: {
+  title: string
+  distance: number
+  elevationGain: number
+}): Promise<{ success: true; id: string } | { success: false; error: string }> {
+  try {
+    const session = await getSession()
+    const track = await db.track.create({
+      data: {
+        title: data.title,
+        distance: data.distance,
+        elevationGain: data.elevationGain,
+        visible: false,
+        createdById: session.user.id,
+      },
+      select: { id: true },
+    })
+    return { success: true, id: track.id }
+  } catch {
+    return { success: false, error: 'internal_error' }
   }
 }

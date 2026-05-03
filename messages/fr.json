@@ -560,6 +560,32 @@
         "EXPERT": "Expert"
       }
     },
+    "Races": {
+      "title": "Gestion des courses",
+      "description": "{count} course{count, plural, one {} other {s}} au total",
+      "organizer": "Organisateur",
+      "track": "Parcours",
+      "status": "Statut",
+      "format": "Format",
+      "startAt": "Début",
+      "participants": "Participants",
+      "validate": "Valider",
+      "reject": "Refuser",
+      "rejectReason": "Motif du refus",
+      "validateTitle": "Valider la course",
+      "validateDesc": "La course sera publiée et visible par tous.",
+      "rejectTitle": "Refuser la course",
+      "rejectDesc": "Précisez le motif du refus (obligatoire).",
+      "validateSuccess": "Course validée",
+      "rejectSuccess": "Course refusée",
+      "Statuses": {
+        "DRAFT": "Brouillon",
+        "PENDING_REVIEW": "En attente",
+        "ACTIVE": "Active",
+        "CLOSED": "Terminée",
+        "CANCELLED": "Annulée"
+      }
+    },
     "Feedbacks": {
       "title": "Gestion des retours",
       "description": "Consultez et gérez les retours utilisateurs et les demandes de contact.",

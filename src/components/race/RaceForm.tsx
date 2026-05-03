@@ -1,28 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from '@/navigation'
 import { toast } from 'sonner'
 import { ActivityMode, RaceAccessType, RaceFormat } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { uploadFileAction } from '@/actions/file/file.admin.actions'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { fetchTracks } from '@/actions/track/track.admin.action'
-import { fetchFiles } from '@/actions/file/file.admin.actions'
-import { createRaceAction, updateRaceAction } from '@/actions/race/race.actions'
+  createRaceAction,
+  updateRaceAction,
+  createRaceTrackAction,
+} from '@/actions/race/race.actions'
 import type { CreateRaceInput, RaceSummary } from '@/actions/race/race.types'
-import { RefreshCw, Zap } from 'lucide-react'
+import { RefreshCw, Zap, ImageIcon, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-type TrackOption = { id: string; title: string; distance: number }
-type FileOption = { id: string; filename: string }
+import Image from 'next/image'
 
 type Props = {
   defaultValues?: Partial<RaceSummary & { id: string }>
@@ -60,10 +54,70 @@ function toDatetimeLocal(d?: Date | null) {
   return dt.toISOString().slice(0, 16)
 }
 
+function ImageField({
+  label,
+  existingUrl,
+  file,
+  onFile,
+  onClear,
+  accept = 'image/*',
+}: {
+  label: string
+  existingUrl?: string | null
+  file: File | null
+  onFile: (f: File) => void
+  onClear: () => void
+  accept?: string
+}) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const preview = file ? URL.createObjectURL(file) : existingUrl
+
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0]
+          if (f) onFile(f)
+        }}
+      />
+      {preview ? (
+        <div className="relative rounded-lg overflow-hidden border border-border h-28 bg-muted">
+          <Image src={preview} alt={label} fill className="object-cover" />
+          <button
+            type="button"
+            onClick={() => {
+              onClear()
+              if (inputRef.current) inputRef.current.value = ''
+            }}
+            className="absolute top-1.5 right-1.5 bg-black/60 hover:bg-black/80 rounded-full p-0.5 text-white transition-colors"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="w-full h-28 rounded-lg border-2 border-dashed border-border flex flex-col items-center justify-center gap-1.5 text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors"
+        >
+          <ImageIcon className="w-6 h-6" />
+          <span className="text-xs">Cliquer pour sélectionner</span>
+        </button>
+      )}
+    </div>
+  )
+}
+
 export function RaceForm({ defaultValues }: Props) {
   const router = useRouter()
   const isEdit = !!defaultValues?.id
 
+  // Race fields
   const [title, setTitle] = useState(defaultValues?.title ?? '')
   const [description, setDescription] = useState(
     defaultValues?.description ?? ''
@@ -92,63 +146,107 @@ export function RaceForm({ defaultValues }: Props) {
     defaultValues?.loopDurationMinutes?.toString() ?? ''
   )
 
-  const [trackId, setTrackId] = useState(defaultValues?.track?.id ?? '')
-  const [logoId, setLogoId] = useState(defaultValues?.logoId ?? '')
-  const [bannerId, setBannerId] = useState(defaultValues?.bannerId ?? '')
+  // Track fields (create mode only — in edit, track is immutable)
+  const [trackTitle, setTrackTitle] = useState(
+    defaultValues?.track?.title ?? ''
+  )
+  const [trackDistance, setTrackDistance] = useState(
+    defaultValues?.track?.distance?.toString() ?? ''
+  )
+  const [trackElevationGain, setTrackElevationGain] = useState(
+    defaultValues?.track?.elevationGain?.toString() ?? ''
+  )
 
-  const [tracks, setTracks] = useState<TrackOption[]>([])
-  const [files, setFiles] = useState<FileOption[]>([])
-  const [tracksLoaded, setTracksLoaded] = useState(false)
-  const [filesLoaded, setFilesLoaded] = useState(false)
+  // File upload
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [bannerFile, setBannerFile] = useState<File | null>(null)
+  const existingLogoUrl = defaultValues?.logoId
+    ? `/api/files/${defaultValues.logoId}`
+    : null
+  const existingBannerUrl = defaultValues?.bannerId
+    ? `/api/files/${defaultValues.bannerId}`
+    : null
+  const [clearLogo, setClearLogo] = useState(false)
+  const [clearBanner, setClearBanner] = useState(false)
+
   const [loading, setLoading] = useState(false)
 
-  async function loadTracks() {
-    if (tracksLoaded) return
-    const res = await fetchTracks({ skip: 0, take: 100 })
-    setTracks(
-      res.data.map((t) => ({ id: t.id, title: t.title, distance: t.distance }))
-    )
-    setTracksLoaded(true)
-  }
-
-  async function loadFiles() {
-    if (filesLoaded) return
-    const res = await fetchFiles({ skip: 0, take: 200 })
-    setFiles(res.data.map((f) => ({ id: f.id, filename: f.filename })))
-    setFilesLoaded(true)
+  async function uploadIfNeeded(file: File | null): Promise<string | null> {
+    if (!file) return null
+    const fd = new FormData()
+    fd.append('file', file)
+    const res = await uploadFileAction(fd)
+    return res?.id ?? null
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!title.trim() || !startAt || !endAt || !trackId) {
+
+    if (!title.trim() || !startAt || !endAt) {
       toast.error('Remplis les champs obligatoires')
       return
     }
 
-    const data: CreateRaceInput = {
-      title: title.trim(),
-      description: description.trim() || null,
-      activityMode,
-      format,
-      accessType,
-      accessCode:
-        accessType === RaceAccessType.PRIVATE
-          ? accessCode.trim() || null
-          : null,
-      maxParticipants: maxParticipants ? parseInt(maxParticipants) : null,
-      startAt: new Date(startAt),
-      endAt: new Date(endAt),
-      loopDurationMinutes:
-        format === RaceFormat.BACKYARD && loopDurationMinutes
-          ? parseInt(loopDurationMinutes)
-          : null,
-      trackId,
-      logoId: logoId || null,
-      bannerId: bannerId || null,
+    if (
+      !isEdit &&
+      (!trackTitle.trim() || !trackDistance || !trackElevationGain)
+    ) {
+      toast.error('Remplis les informations du parcours')
+      return
     }
 
     setLoading(true)
     try {
+      // Upload files
+      const [uploadedLogoId, uploadedBannerId] = await Promise.all([
+        uploadIfNeeded(logoFile),
+        uploadIfNeeded(bannerFile),
+      ])
+
+      const resolvedLogoId = clearLogo
+        ? null
+        : (uploadedLogoId ?? defaultValues?.logoId ?? null)
+      const resolvedBannerId = clearBanner
+        ? null
+        : (uploadedBannerId ?? defaultValues?.bannerId ?? null)
+
+      // Create track (create mode only)
+      let resolvedTrackId = defaultValues?.track?.id ?? ''
+      if (!isEdit) {
+        const trackRes = await createRaceTrackAction({
+          title: trackTitle.trim(),
+          distance: parseFloat(trackDistance),
+          elevationGain: parseInt(trackElevationGain),
+        })
+        if (!trackRes.success) {
+          toast.error('Erreur lors de la création du parcours')
+          return
+        }
+        resolvedTrackId = trackRes.id
+      }
+
+      const data: CreateRaceInput = {
+        title: title.trim(),
+        description: description.trim() || null,
+        activityMode,
+        format,
+        accessType,
+        accessCode:
+          accessType === RaceAccessType.PRIVATE
+            ? accessCode.trim() || null
+            : null,
+        maxParticipants: maxParticipants ? parseInt(maxParticipants) : null,
+        startAt: new Date(startAt),
+        endAt: new Date(endAt),
+        loopDurationMinutes:
+          format === RaceFormat.BACKYARD && loopDurationMinutes
+            ? parseInt(loopDurationMinutes)
+            : null,
+        trackId: resolvedTrackId,
+        logoId: resolvedLogoId,
+        bannerId: resolvedBannerId,
+      }
+
       const result = isEdit
         ? await updateRaceAction({ ...data, id: defaultValues!.id! })
         : await createRaceAction(data)
@@ -252,26 +350,56 @@ export function RaceForm({ defaultValues }: Props) {
       </div>
 
       {/* Parcours */}
-      <div className="space-y-1.5">
-        <Label>Parcours *</Label>
-        <Select
-          value={trackId}
-          onValueChange={setTrackId}
-          onOpenChange={(open) => {
-            if (open) loadTracks()
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionner un parcours" />
-          </SelectTrigger>
-          <SelectContent>
-            {tracks.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.title} — {t.distance.toFixed(1)} km
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="rounded-xl border border-border p-4 space-y-3">
+        <p className="text-sm font-semibold">Parcours *</p>
+        {isEdit ? (
+          <div className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {defaultValues?.track?.title}
+            </span>
+            {' — '}
+            {defaultValues?.track?.distance?.toFixed(1)} km ·{' '}
+            {defaultValues?.track?.elevationGain}m D+
+            <p className="text-xs mt-1 opacity-70">
+              Le parcours ne peut pas être modifié après création.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="space-y-1.5 sm:col-span-3">
+              <Label htmlFor="trackTitle">Nom du parcours *</Label>
+              <Input
+                id="trackTitle"
+                value={trackTitle}
+                onChange={(e) => setTrackTitle(e.target.value)}
+                placeholder="Ex: Boucle des Crêtes"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="trackDistance">Distance (km) *</Label>
+              <Input
+                id="trackDistance"
+                type="number"
+                min={0.1}
+                step={0.1}
+                value={trackDistance}
+                onChange={(e) => setTrackDistance(e.target.value)}
+                placeholder="Ex: 42.5"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="trackElevation">Dénivelé (m D+) *</Label>
+              <Input
+                id="trackElevation"
+                type="number"
+                min={0}
+                value={trackElevationGain}
+                onChange={(e) => setTrackElevationGain(e.target.value)}
+                placeholder="Ex: 1200"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Timing */}
@@ -368,50 +496,32 @@ export function RaceForm({ defaultValues }: Props) {
 
       {/* Médias */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <Label>Logo</Label>
-          <Select
-            value={logoId}
-            onValueChange={setLogoId}
-            onOpenChange={(open) => {
-              if (open) loadFiles()
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Sélectionner un fichier" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Aucun</SelectItem>
-              {files.map((f) => (
-                <SelectItem key={f.id} value={f.id}>
-                  {f.filename}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label>Bannière</Label>
-          <Select
-            value={bannerId}
-            onValueChange={setBannerId}
-            onOpenChange={(open) => {
-              if (open) loadFiles()
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Sélectionner un fichier" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Aucune</SelectItem>
-              {files.map((f) => (
-                <SelectItem key={f.id} value={f.id}>
-                  {f.filename}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <ImageField
+          label="Logo"
+          existingUrl={clearLogo ? null : existingLogoUrl}
+          file={logoFile}
+          onFile={(f) => {
+            setLogoFile(f)
+            setClearLogo(false)
+          }}
+          onClear={() => {
+            setLogoFile(null)
+            setClearLogo(true)
+          }}
+        />
+        <ImageField
+          label="Bannière"
+          existingUrl={clearBanner ? null : existingBannerUrl}
+          file={bannerFile}
+          onFile={(f) => {
+            setBannerFile(f)
+            setClearBanner(false)
+          }}
+          onClear={() => {
+            setBannerFile(null)
+            setClearBanner(true)
+          }}
+        />
       </div>
 
       <div className="flex gap-3 pt-2">
