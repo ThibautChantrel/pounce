@@ -39,6 +39,45 @@ enum ActivityMode {
   OTHER
 }
 
+enum RaceFormat {
+  ONE_SHOT
+  BACKYARD
+}
+
+enum RaceAccessType {
+  PUBLIC_FREE
+  PUBLIC_VALIDATION
+  PRIVATE
+}
+
+enum RaceStatus {
+  DRAFT
+  PENDING_REVIEW
+  ACTIVE
+  CLOSED
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  PENDING
+  REGISTERED
+  VALIDATED
+  DNF
+  DNS
+  DISQUALIFIED
+}
+
+enum LoopStatus {
+  PENDING
+  VALIDATED
+  MISSED
+}
+
+enum ValidationSource {
+  AUTO
+  ORGANIZER
+}
+
 // --- MODELS ---
 
 model User {
@@ -80,6 +119,11 @@ model User {
 
   createdTracks Track[] @relation("CreatedTracks")
   updatedTracks Track[] @relation("UpdatedTracks")
+
+  // Race relations
+  organizedRaces      Race[]             @relation("OrganizedRaces")
+  adminValidatedRaces Race[]             @relation("AdminValidatedRaces")
+  raceRegistrations   RaceRegistration[]
 
   createdPois Poi[] @relation("CreatedPois")
   updatedPois Poi[] @relation("UpdatedPois")
@@ -161,6 +205,9 @@ model File {
   trackCovers  Track[] @relation("TrackCover")
   trackBanners Track[] @relation("TrackBanner")
   trackGpxs    Track[] @relation("TrackGpx")
+
+  raceLogos   Race[] @relation("RaceLogo")
+  raceBanners Race[] @relation("RaceBanner")
 
   @@map("files")
 }
@@ -258,9 +305,11 @@ model Track {
   gpxFileId String?
   gpxFile   File?   @relation("TrackGpx", fields: [gpxFileId], references: [id])
 
-  // Audit
   // Certifications
   certifications TrackCertification[]
+
+  // Races
+  races Race[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -394,6 +443,114 @@ model PoiType {
   updatedBy   User?    @relation("UpdatedPoiTypes", fields: [updatedById], references: [id])
 
   @@map("poi_types")
+}
+
+// --- RACE MODULE ---
+
+model Race {
+  id          String         @id @default(cuid())
+  title       String
+  description String?        @db.Text
+  activityMode ActivityMode
+
+  // Media
+  logoId   String?
+  logo     File?   @relation("RaceLogo", fields: [logoId], references: [id])
+  bannerId String?
+  banner   File?   @relation("RaceBanner", fields: [bannerId], references: [id])
+
+  // Track (obligatoire)
+  trackId String
+  track   Track  @relation(fields: [trackId], references: [id])
+
+  // Format & accès
+  format          RaceFormat
+  accessType      RaceAccessType
+  accessCode      String?
+  maxParticipants Int?
+
+  // Timing
+  startAt             DateTime
+  endAt               DateTime
+  loopDurationMinutes Int?
+
+  // Statut
+  status RaceStatus @default(DRAFT)
+
+  // Organisateur
+  organizerId String
+  organizer   User   @relation("OrganizedRaces", fields: [organizerId], references: [id])
+
+  // Validation admin
+  adminValidatedAt     DateTime?
+  adminValidatedById   String?
+  adminValidatedBy     User?   @relation("AdminValidatedRaces", fields: [adminValidatedById], references: [id])
+  adminRejectionReason String?
+
+  registrations RaceRegistration[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("races")
+}
+
+model RaceRegistration {
+  id     String @id @default(cuid())
+  raceId String
+  race   Race   @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status RegistrationStatus @default(PENDING)
+
+  registeredAt DateTime  @default(now())
+  validatedAt  DateTime?
+  startedAt    DateTime?
+  finishedAt   DateTime?
+
+  // Motif de changement de statut (DNF, DNS, DQ, suppression)
+  statusReason    String?
+  statusUpdatedBy String?
+
+  // Résultat final
+  totalTimeSeconds Int?
+  rank             Int?
+
+  // Activité Strava (ONE_SHOT)
+  stravaActivityId String?
+  validationSource ValidationSource?
+
+  backyardLoops BackyardLoop[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([raceId, userId])
+  @@map("race_registrations")
+}
+
+model BackyardLoop {
+  id             String           @id @default(cuid())
+  registrationId String
+  registration   RaceRegistration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+
+  loopNumber Int
+
+  stravaActivityId String?
+
+  startedAt   DateTime?
+  completedAt DateTime?
+  timeSeconds Int?
+  avgSpeed    Float?
+
+  status           LoopStatus        @default(PENDING)
+  validationSource ValidationSource?
+  validatedAt      DateTime?
+  validatedById    String?
+
+  @@unique([registrationId, loopNumber])
+  @@map("backyard_loops")
 }
 
 // --- ACTIVITY SYNC LOG ---
