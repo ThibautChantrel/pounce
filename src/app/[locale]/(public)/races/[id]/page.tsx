@@ -16,12 +16,17 @@ export default async function RaceDetailPage({ params }: PageProps) {
     ? await getMyRegistrationAction(id)
     : null
 
+  const isOrganizer =
+    !!session?.user?.id &&
+    (race.organizer.id === session.user.id || session.user.role === 'ADMIN')
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
       <RaceDetailView
         race={race}
         myRegistration={myRegistration}
         isAuthenticated={!!session?.user?.id}
+        isOrganizer={isOrganizer}
       />
     </div>
   )

@@ -38,6 +38,7 @@ const raceSelect = {
       distance: true,
       elevationGain: true,
       coverId: true,
+      gpxFileId: true,
     },
   },
   _count: { select: { registrations: true } },

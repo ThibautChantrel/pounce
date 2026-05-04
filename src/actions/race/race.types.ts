@@ -33,6 +33,7 @@ export type RaceSummary = {
     distance: number
     elevationGain: number
     coverId: string | null
+    gpxFileId: string | null
   }
   logoId: string | null
   bannerId: string | null

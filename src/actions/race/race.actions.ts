@@ -7,6 +7,8 @@ import { raceService } from '@/server/modules/race/race.service'
 import { ActivityMode, RaceAccessType, RaceFormat } from '@prisma/client'
 import { CreateRaceInput, UpdateRaceInput } from './race.types'
 import db from '@/server/db'
+import { fetchStravaAthleteActivities } from '@/server/modules/strava/strava.client'
+import { processStravaActivity } from '@/server/modules/strava/certification.service'
 
 type ActionResponse = { success: boolean; error?: string; id?: string }
 
@@ -108,6 +110,75 @@ export async function listMyRacesAction() {
     return raceService.listForOrganizer(session.user.id)
   } catch {
     return []
+  }
+}
+
+const DEFAULT_AFTER_UNIX = Math.floor(
+  new Date('2026-01-01T00:00:00Z').getTime() / 1000
+)
+
+export async function manualSyncRaceStravaAction(raceId: string): Promise<{
+  success: boolean
+  error?: string
+  syncedActivities?: number
+  syncedUsers?: number
+}> {
+  try {
+    const session = await getSession()
+
+    const race = await db.race.findUnique({
+      where: { id: raceId },
+      select: { organizerId: true },
+    })
+    if (!race) return { success: false, error: 'not_found' }
+    if (race.organizerId !== session.user.id && session.user.role !== 'ADMIN') {
+      return { success: false, error: 'unauthorized' }
+    }
+
+    const registrations = await db.raceRegistration.findMany({
+      where: {
+        raceId,
+        status: { in: ['REGISTERED', 'VALIDATED', 'PENDING'] },
+      },
+      select: { userId: true },
+    })
+
+    const userIds = [...new Set(registrations.map((r) => r.userId))]
+
+    let syncedActivities = 0
+    let syncedUsers = 0
+
+    for (const userId of userIds) {
+      const stravaAccount = await db.account.findFirst({
+        where: { userId, provider: 'strava' },
+      })
+      if (!stravaAccount) continue
+
+      try {
+        const lastCert = await db.trackCertification.findFirst({
+          where: { userId, provider: 'strava' },
+          orderBy: { completedAt: 'desc' },
+          select: { completedAt: true },
+        })
+        const after = lastCert
+          ? Math.floor(lastCert.completedAt.getTime() / 1000)
+          : DEFAULT_AFTER_UNIX
+
+        const activities = await fetchStravaAthleteActivities(userId, after)
+        for (const activity of activities) {
+          await processStravaActivity(userId, String(activity.id))
+          syncedActivities++
+        }
+        syncedUsers++
+      } catch {
+        // skip athlete on error, continue with others
+      }
+    }
+
+    return { success: true, syncedActivities, syncedUsers }
+  } catch (err) {
+    console.error('[manualSyncRaceStrava]', err)
+    return { success: false, error: 'internal_error' }
   }
 }
 

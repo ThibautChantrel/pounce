@@ -14,10 +14,17 @@ import {
   Zap,
   ArrowLeft,
   Trophy,
+  Navigation,
+  Mountain,
 } from 'lucide-react'
 import { RaceAccessType, RaceFormat, RegistrationStatus } from '@prisma/client'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
+import { TrackGpxMap } from '@/components/track/TrackGpxMap'
+import { RaceLeaderboardChart } from './RaceLeaderboardChart'
+import { RaceParticipantsTable } from './RaceParticipantsTable'
+import { ManualRaceSyncButton } from './ManualRaceSyncButton'
 import {
   registerForRaceAction,
   cancelRegistrationAction,
@@ -36,6 +43,7 @@ type Props = {
   race: RaceDetail
   myRegistration: MyRegistration
   isAuthenticated: boolean
+  isOrganizer?: boolean
 }
 
 const REGISTRATION_STATUS_LABELS: Record<RegistrationStatus, string> = {
@@ -70,6 +78,7 @@ export function RaceDetailView({
   race,
   myRegistration,
   isAuthenticated,
+  isOrganizer = false,
 }: Props) {
   const [accessCode, setAccessCode] = useState('')
   const [loading, setLoading] = useState(false)
@@ -177,6 +186,39 @@ export function RaceDetailView({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main info */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Parcours */}
+          <div className="rounded-2xl border border-border overflow-hidden">
+            <TrackGpxMap
+              customUrl={
+                race.track.gpxFileId
+                  ? `/api/files/${race.track.gpxFileId}`
+                  : undefined
+              }
+              className="h-64 w-full"
+            />
+            <div className="p-4">
+              <p className="font-semibold text-foreground">
+                {race.track.title}
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-1.5"
+                >
+                  <Navigation className="w-3 h-3" />
+                  {race.track.distance.toFixed(1)} km
+                </Badge>
+                <Badge
+                  variant="secondary"
+                  className="flex items-center gap-1.5"
+                >
+                  <Mountain className="w-3 h-3" />
+                  {race.track.elevationGain}m D+
+                </Badge>
+              </div>
+            </div>
+          </div>
+
           {race.description && (
             <div className="rounded-2xl border border-border p-5">
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
@@ -188,24 +230,51 @@ export function RaceDetailView({
             </div>
           )}
 
-          {/* Classement (si terminé) */}
-          {race.status === 'CLOSED' &&
-            race.registrations.filter((r) => r.rank).length > 0 && (
-              <div className="rounded-2xl border border-border p-5">
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Trophy className="w-4 h-4" /> Classement
-                </h2>
-                <div className="space-y-2">
-                  {race.registrations
-                    .filter((r) => r.rank && r.totalTimeSeconds)
-                    .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99))
-                    .slice(0, 10)
-                    .map((reg) => (
+          {/* Classement */}
+          {race.registrations.filter((r) => r.rank).length > 0 &&
+            (() => {
+              const ranked = race.registrations
+                .filter((r) => r.rank && r.totalTimeSeconds)
+                .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99))
+
+              const chartData = ranked.map((r) => ({
+                name:
+                  `${r.user.firstName ?? ''} ${r.user.lastName ?? ''}`.trim() ||
+                  r.user.pseudo ||
+                  'Participant',
+                seconds: r.totalTimeSeconds ?? 0,
+                rank: r.rank ?? 0,
+              }))
+
+              return (
+                <div className="rounded-2xl border border-border p-5">
+                  <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <Trophy className="w-4 h-4" /> Classement
+                  </h2>
+
+                  {/* Chart */}
+                  <div className="mb-5">
+                    <RaceLeaderboardChart registrations={chartData} />
+                  </div>
+
+                  {/* Table top 10 */}
+                  <div className="space-y-2 border-t border-border pt-4">
+                    {ranked.slice(0, 10).map((reg) => (
                       <div
                         key={reg.id}
                         className="flex items-center gap-3 text-sm"
                       >
-                        <span className="w-6 text-center font-bold text-muted-foreground text-xs">
+                        <span
+                          className={`w-6 text-center font-bold text-xs ${
+                            reg.rank === 1
+                              ? 'text-amber-500'
+                              : reg.rank === 2
+                                ? 'text-slate-400'
+                                : reg.rank === 3
+                                  ? 'text-amber-700'
+                                  : 'text-muted-foreground'
+                          }`}
+                        >
                           #{reg.rank}
                         </span>
                         <span className="flex-1 font-medium">
@@ -219,9 +288,10 @@ export function RaceDetailView({
                         </span>
                       </div>
                     ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            })()}
         </div>
 
         {/* Sidebar */}
@@ -349,6 +419,27 @@ export function RaceDetailView({
           )}
         </div>
       </div>
+
+      {/* Participants */}
+      {race.registrations.length > 0 && (
+        <div className="rounded-2xl border border-border p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Participants ({race.registrationCount})
+            </h2>
+            {isOrganizer && isActive && (
+              <ManualRaceSyncButton raceId={race.id} />
+            )}
+          </div>
+          <RaceParticipantsTable
+            raceId={race.id}
+            raceFormat={race.format}
+            registrations={race.registrations}
+            isOrganizer={isOrganizer}
+          />
+        </div>
+      )}
     </div>
   )
 }
