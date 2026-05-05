@@ -16,6 +16,10 @@ import {
   Trophy,
   Navigation,
   Mountain,
+  Settings,
+  MailCheck,
+  Activity,
+  Globe,
 } from 'lucide-react'
 import { RaceAccessType, RaceFormat, RegistrationStatus } from '@prisma/client'
 import { Button } from '@/components/ui/button'
@@ -45,6 +49,9 @@ type Props = {
   myRegistration: MyRegistration
   isAuthenticated: boolean
   isOrganizer?: boolean
+  isVerified?: boolean
+  hasStravaSync?: boolean
+  hasBanner?: boolean
 }
 
 const REGISTRATION_STATUS_LABELS: Record<RegistrationStatus, string> = {
@@ -80,9 +87,16 @@ export function RaceDetailView({
   myRegistration,
   isAuthenticated,
   isOrganizer = false,
+  isVerified = false,
+  hasStravaSync = false,
+  hasBanner = false,
 }: Props) {
   const [accessCode, setAccessCode] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const isOpenRace =
+    race.format === RaceFormat.ONE_SHOT &&
+    race.accessType === RaceAccessType.PUBLIC_FREE
 
   const isFull =
     race.maxParticipants !== null &&
@@ -123,34 +137,30 @@ export function RaceDetailView({
     else toast.error("Impossible d'annuler")
   }
 
-  const bannerUrl = race.bannerId ? `/api/files/${race.bannerId}` : null
   const logoUrl = race.logoId ? `/api/files/${race.logoId}` : null
 
   return (
     <div className="space-y-8">
-      {/* Back */}
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeft className="w-4 h-4" /> Courses
-      </Link>
+      {/* Back + admin */}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="w-4 h-4" /> Courses
+        </Link>
+        {isOrganizer && (
+          <Button variant="outline" size="sm" className="gap-1.5" asChild>
+            <Link href={`/races/${race.id}/manage`}>
+              <Settings className="w-3.5 h-3.5" />
+              Gérer
+            </Link>
+          </Button>
+        )}
+      </div>
 
-      {/* Banner */}
-      {bannerUrl && (
-        <div className="relative h-56 sm:h-72 rounded-2xl overflow-hidden">
-          <Image
-            src={bannerUrl}
-            alt={race.title}
-            fill
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-        </div>
-      )}
-
-      {/* Header */}
-      <div className="flex items-start gap-4">
+      {/* Header — remonté si bannière au-dessus */}
+      <div className={`flex items-start gap-4 ${hasBanner ? '-mt-2' : ''}`}>
         {logoUrl && (
           <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-border shrink-0">
             <Image src={logoUrl} alt="" fill className="object-cover" />
@@ -162,6 +172,10 @@ export function RaceDetailView({
               {race.format === RaceFormat.BACKYARD ? (
                 <>
                   <RefreshCw className="w-3 h-3" /> Backyard
+                </>
+              ) : isOpenRace ? (
+                <>
+                  <Globe className="w-3 h-3" /> Compétition ouverte
                 </>
               ) : (
                 <>
@@ -252,13 +266,9 @@ export function RaceDetailView({
                   <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
                     <Trophy className="w-4 h-4" /> Classement
                   </h2>
-
-                  {/* Chart */}
                   <div className="mb-5">
                     <RaceLeaderboardChart registrations={chartData} />
                   </div>
-
-                  {/* Table top 10 */}
                   <div className="space-y-2 border-t border-border pt-4">
                     {ranked.slice(0, 10).map((reg) => (
                       <div
@@ -357,12 +367,9 @@ export function RaceDetailView({
                     : ''}
                 </p>
               )}
-              {(
-                [
-                  RegistrationStatus.PENDING,
-                  RegistrationStatus.REGISTERED,
-                ] as RegistrationStatus[]
-              ).includes(myRegistration.status) &&
+              {(['PENDING', 'REGISTERED'] as RegistrationStatus[]).includes(
+                myRegistration.status
+              ) &&
                 isActive && (
                   <Button
                     variant="outline"
@@ -377,42 +384,108 @@ export function RaceDetailView({
             </div>
           )}
 
-          {/* Inscription */}
-          {!myRegistration && isActive && (
+          {/* Sidebar inscription */}
+          {isActive && !myRegistration && (
             <div className="rounded-2xl border border-border p-5 space-y-3">
-              <h3 className="text-sm font-semibold">S&apos;inscrire</h3>
-              {isFull && (
-                <p className="text-sm text-muted-foreground">
-                  La course est complète.
-                </p>
-              )}
-              {canRegister && (
+              {/* Compétition ouverte */}
+              {isOpenRace ? (
                 <>
-                  {race.accessType === RaceAccessType.PRIVATE && (
-                    <Input
-                      placeholder="Code d'accès"
-                      value={accessCode}
-                      onChange={(e) => setAccessCode(e.target.value)}
-                    />
+                  <h3 className="text-sm font-semibold flex items-center gap-1.5">
+                    <Globe className="w-4 h-4 text-primary" /> Compétition
+                    ouverte
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Pas d&apos;inscription requise. Cours ce parcours et
+                    synchronise ton activité Strava — tu apparaîtras
+                    automatiquement au classement.
+                  </p>
+                  {isAuthenticated && !hasStravaSync && (
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 px-3 py-2.5 text-xs text-orange-700 dark:text-orange-400 hover:bg-orange-100 transition-colors"
+                    >
+                      <Activity className="w-4 h-4 shrink-0" />
+                      Connecte Strava sur ton profil pour être inclus au
+                      classement
+                    </Link>
                   )}
-                  <Button
-                    className="w-full"
-                    onClick={handleRegister}
-                    disabled={loading}
-                  >
-                    {loading
-                      ? 'En cours...'
-                      : race.accessType === RaceAccessType.PUBLIC_VALIDATION
-                        ? "Demander à s'inscrire"
-                        : "S'inscrire"}
-                  </Button>
                   {!isAuthenticated && (
-                    <p className="text-xs text-muted-foreground text-center">
+                    <p className="text-xs text-muted-foreground">
                       <Link href="/login" className="underline">
                         Connecte-toi
                       </Link>{' '}
-                      pour t&apos;inscrire
+                      et lie Strava pour apparaître au classement.
                     </p>
+                  )}
+                </>
+              ) : (
+                /* Courses avec inscription */
+                <>
+                  <h3 className="text-sm font-semibold">S&apos;inscrire</h3>
+
+                  {/* Gate : email non vérifié */}
+                  {isAuthenticated && !isVerified && (
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 px-3 py-2.5 text-xs text-yellow-700 dark:text-yellow-400 hover:bg-yellow-100 transition-colors"
+                    >
+                      <MailCheck className="w-4 h-4 shrink-0" />
+                      Valide ton adresse email sur ton profil pour
+                      t&apos;inscrire
+                    </Link>
+                  )}
+
+                  {/* Gate : Strava non connecté */}
+                  {isAuthenticated && isVerified && !hasStravaSync && (
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 px-3 py-2.5 text-xs text-orange-700 dark:text-orange-400 hover:bg-orange-100 transition-colors"
+                    >
+                      <Activity className="w-4 h-4 shrink-0" />
+                      Connecte Strava sur ton profil pour t&apos;inscrire
+                    </Link>
+                  )}
+
+                  {/* Formulaire d'inscription */}
+                  {(!isAuthenticated || (isVerified && hasStravaSync)) && (
+                    <>
+                      {isFull && (
+                        <p className="text-sm text-muted-foreground">
+                          La course est complète.
+                        </p>
+                      )}
+                      {canRegister && (
+                        <>
+                          {race.accessType === RaceAccessType.PRIVATE && (
+                            <Input
+                              placeholder="Code d'accès"
+                              value={accessCode}
+                              onChange={(e) => setAccessCode(e.target.value)}
+                            />
+                          )}
+                          <Button
+                            className="w-full"
+                            onClick={handleRegister}
+                            disabled={loading || !isAuthenticated}
+                          >
+                            {loading
+                              ? 'En cours...'
+                              : race.accessType ===
+                                  RaceAccessType.PUBLIC_VALIDATION
+                                ? "Demander à s'inscrire"
+                                : "S'inscrire"}
+                          </Button>
+                          {!isAuthenticated && (
+                            <p className="text-xs text-muted-foreground text-center">
+                              <Link href="/login" className="underline">
+                                Connecte-toi
+                              </Link>{' '}
+                              pour t&apos;inscrire
+                            </p>
+                          )}
+                        </>
+                      )}
+                    </>
                   )}
                 </>
               )}

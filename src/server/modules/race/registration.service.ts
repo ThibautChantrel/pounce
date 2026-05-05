@@ -12,6 +12,7 @@ export const registrationService = {
       where: { id: raceId },
       select: {
         status: true,
+        format: true,
         accessType: true,
         accessCode: true,
         maxParticipants: true,
@@ -21,6 +22,14 @@ export const registrationService = {
 
     if (race.status !== RaceStatus.ACTIVE) {
       throw new Error('race_not_active')
+    }
+
+    // Les courses ouvertes (ONE_SHOT + PUBLIC_FREE) n'acceptent pas d'inscription manuelle
+    if (
+      race.format === 'ONE_SHOT' &&
+      race.accessType === RaceAccessType.PUBLIC_FREE
+    ) {
+      throw new Error('open_race_no_manual_registration')
     }
 
     if (race.accessType === RaceAccessType.PRIVATE) {

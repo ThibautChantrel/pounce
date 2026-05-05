@@ -8,6 +8,7 @@ import {
   RefreshCw,
   Zap,
   Lock,
+  Globe,
 } from 'lucide-react'
 import { RaceAccessType, RaceFormat, RaceStatus } from '@prisma/client'
 import type { RaceSummary } from '@/actions/race/race.types'
@@ -81,11 +82,21 @@ export function RaceCard({ race, showStatus = false, href }: Props) {
         {/* Format badge */}
         <div className="absolute top-2 left-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
           {race.format === RaceFormat.BACKYARD ? (
-            <RefreshCw className="w-2.5 h-2.5" />
+            <>
+              <RefreshCw className="w-2.5 h-2.5" />
+              Backyard
+            </>
+          ) : race.accessType === RaceAccessType.PUBLIC_FREE ? (
+            <>
+              <Globe className="w-2.5 h-2.5" />
+              Compétitif
+            </>
           ) : (
-            <Zap className="w-2.5 h-2.5" />
+            <>
+              <Zap className="w-2.5 h-2.5" />
+              Course
+            </>
           )}
-          {FORMAT_LABELS[race.format]}
         </div>
 
         {/* Access badge */}

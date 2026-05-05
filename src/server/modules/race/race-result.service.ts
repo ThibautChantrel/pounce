@@ -1,6 +1,7 @@
 import db from '@/server/db'
 import {
   LoopStatus,
+  RaceAccessType,
   RaceFormat,
   RegistrationStatus,
   ValidationSource,
@@ -14,15 +15,34 @@ export async function updateRaceFromStravaMatch(
 ): Promise<void> {
   const races = await db.race.findMany({
     where: { trackId, status: 'ACTIVE' },
-    select: { id: true, format: true },
+    select: { id: true, format: true, accessType: true },
   })
 
   for (const race of races) {
-    const reg = await db.raceRegistration.findUnique({
+    let reg = await db.raceRegistration.findUnique({
       where: { raceId_userId: { raceId: race.id, userId } },
       select: { id: true, status: true, totalTimeSeconds: true },
     })
-    if (!reg) continue
+
+    // Pour les courses ouvertes (ONE_SHOT + PUBLIC_FREE) : auto-inscription via Strava
+    if (!reg) {
+      if (
+        race.format === RaceFormat.ONE_SHOT &&
+        race.accessType === RaceAccessType.PUBLIC_FREE
+      ) {
+        const created = await db.raceRegistration.create({
+          data: {
+            raceId: race.id,
+            userId,
+            status: RegistrationStatus.REGISTERED,
+          },
+          select: { id: true, status: true, totalTimeSeconds: true },
+        })
+        reg = created
+      } else {
+        continue
+      }
+    }
     if (
       (
         [
