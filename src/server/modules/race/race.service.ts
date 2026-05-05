@@ -71,6 +71,8 @@ const registrationSelect = {
       status: true,
       timeSeconds: true,
       avgSpeed: true,
+      heartRateAvg: true,
+      heartRateMax: true,
       completedAt: true,
       validationSource: true,
     },

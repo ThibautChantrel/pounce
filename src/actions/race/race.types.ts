@@ -79,6 +79,8 @@ export type BackyardLoopSummary = {
   status: LoopStatus
   timeSeconds: number | null
   avgSpeed: number | null
+  heartRateAvg: number | null
+  heartRateMax: number | null
   completedAt: Date | null
   validationSource: ValidationSource | null
 }

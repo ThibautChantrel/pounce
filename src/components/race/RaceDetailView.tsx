@@ -25,6 +25,7 @@ import { TrackGpxMap } from '@/components/track/TrackGpxMap'
 import { RaceLeaderboardChart } from './RaceLeaderboardChart'
 import { RaceParticipantsTable } from './RaceParticipantsTable'
 import { ManualRaceSyncButton } from './ManualRaceSyncButton'
+import { RaceStatsSection } from './stats/RaceStatsSection'
 import {
   registerForRaceAction,
   cancelRegistrationAction,
@@ -419,6 +420,16 @@ export function RaceDetailView({
           )}
         </div>
       </div>
+
+      {/* Stats & graphiques */}
+      {race.registrations.length > 0 && (
+        <div className="rounded-2xl border border-border p-5">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-5">
+            <Trophy className="w-4 h-4" /> Statistiques
+          </h2>
+          <RaceStatsSection race={race} />
+        </div>
+      )}
 
       {/* Participants */}
       {race.registrations.length > 0 && (

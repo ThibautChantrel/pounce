@@ -543,6 +543,8 @@ model BackyardLoop {
   completedAt DateTime?
   timeSeconds Int?
   avgSpeed    Float?
+  heartRateAvg Int?
+  heartRateMax Int?
 
   status           LoopStatus        @default(PENDING)
   validationSource ValidationSource?

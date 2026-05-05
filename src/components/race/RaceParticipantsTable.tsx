@@ -86,10 +86,7 @@ export function RaceParticipantsTable({
   const [pendingStatus, setPendingStatus] = useState<{
     registrationId: string
     participantName: string
-    status:
-      | RegistrationStatus.DNF
-      | RegistrationStatus.DNS
-      | RegistrationStatus.DISQUALIFIED
+    status: 'DNF' | 'DNS' | 'DISQUALIFIED'
     dqReason: string
   } | null>(null)
 
@@ -130,10 +127,7 @@ export function RaceParticipantsTable({
   function requestStatus(
     id: string,
     name: string,
-    status:
-      | RegistrationStatus.DNF
-      | RegistrationStatus.DNS
-      | RegistrationStatus.DISQUALIFIED
+    status: 'DNF' | 'DNS' | 'DISQUALIFIED'
   ) {
     setPendingStatus({
       registrationId: id,
@@ -186,22 +180,20 @@ export function RaceParticipantsTable({
   const isBackyard = raceFormat === RaceFormat.BACKYARD
 
   const STATUS_DIALOG: Record<
-    | RegistrationStatus.DNF
-    | RegistrationStatus.DNS
-    | RegistrationStatus.DISQUALIFIED,
+    'DNF' | 'DNS' | 'DISQUALIFIED',
     { title: string; description: string; label: string }
   > = {
-    [RegistrationStatus.DNF]: {
+    DNF: {
       title: 'Marquer comme abandon (DNF) ?',
       description: `${pendingStatus?.participantName} sera marqué·e comme n'ayant pas terminé la course. Cette action est définitive et ne pourra pas être modifiée.`,
       label: "Confirmer l'abandon",
     },
-    [RegistrationStatus.DNS]: {
+    DNS: {
       title: 'Marquer comme non-partant (DNS) ?',
       description: `${pendingStatus?.participantName} sera marqué·e comme non-partant·e. Cette action est définitive et ne pourra pas être modifiée.`,
       label: 'Confirmer',
     },
-    [RegistrationStatus.DISQUALIFIED]: {
+    DISQUALIFIED: {
       title: 'Disqualifier le participant ?',
       description: `${pendingStatus?.participantName} sera disqualifié·e. Cette action est définitive et ne pourra pas être modifiée. Un motif est obligatoire.`,
       label: 'Disqualifier',
