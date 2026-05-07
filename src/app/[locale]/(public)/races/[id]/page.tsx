@@ -24,9 +24,8 @@ export default async function RaceDetailPage({ params }: PageProps) {
 
   // Gates : vérification email + compte Strava
   let isVerified = false
-  let hasStravaSync = false
   if (session?.user?.id) {
-    const [userDetails, stravaAccount] = await Promise.all([
+    const [userDetails] = await Promise.all([
       db.user.findUnique({
         where: { id: session.user.id },
         select: { isVerified: true },
@@ -37,7 +36,6 @@ export default async function RaceDetailPage({ params }: PageProps) {
       }),
     ])
     isVerified = userDetails?.isVerified ?? false
-    hasStravaSync = !!stravaAccount
   }
 
   const bannerUrl = race.bannerId ? `/api/files/${race.bannerId}` : null
@@ -54,7 +52,7 @@ export default async function RaceDetailPage({ params }: PageProps) {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
         </div>
       )}
 
@@ -67,7 +65,6 @@ export default async function RaceDetailPage({ params }: PageProps) {
           isAuthenticated={!!session?.user?.id}
           isOrganizer={isOrganizer}
           isVerified={isVerified}
-          hasStravaSync={hasStravaSync}
           hasBanner={!!bannerUrl}
         />
       </div>

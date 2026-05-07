@@ -1,16 +1,19 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import ShowLayout from '@/components/admin/ShowLayout'
 import { DataDetails, FieldConfig } from '@/components/admin/data-details'
 import { Badge } from '@/components/ui/badge'
 import { getRaceAction } from '@/actions/race/race.actions'
 import { RaceAdminActions } from '@/components/race/admin/RaceAdminActions'
+import { AdminRegistrationsTable } from '@/components/race/admin/AdminRegistrationsTable'
+import { FormSection } from '@/components/race/RaceForm'
+import { Users } from 'lucide-react'
 import {
   ActivityMode,
   RaceAccessType,
   RaceFormat,
   RaceStatus,
 } from '@prisma/client'
+import Image from 'next/image'
 import type { RaceDetail } from '@/actions/race/race.types'
 
 type PageProps = { params: Promise<{ id: string }> }
@@ -48,11 +51,7 @@ const ACCESS_MAP: Record<RaceAccessType, string> = {
 }
 
 const raceFields: FieldConfig<RaceDetail>[] = [
-  {
-    label: 'Titre',
-    key: 'title',
-    type: 'string',
-  },
+  { label: 'Titre', key: 'title', type: 'string' },
   {
     label: 'Statut',
     type: 'custom',
@@ -66,7 +65,7 @@ const raceFields: FieldConfig<RaceDetail>[] = [
     type: 'custom',
     getValue: (r) =>
       r.format === RaceFormat.BACKYARD
-        ? `${FORMAT_MAP.BACKYARD} — boucle toutes les ${r.loopDurationMinutes ?? '?'}min`
+        ? `${FORMAT_MAP.BACKYARD} — boucle toutes les ${r.loopDurationMinutes ?? '?'} min`
         : FORMAT_MAP.ONE_SHOT,
   },
   {
@@ -77,13 +76,16 @@ const raceFields: FieldConfig<RaceDetail>[] = [
   {
     label: 'Accès',
     type: 'custom',
-    getValue: (r) => ACCESS_MAP[r.accessType] ?? r.accessType,
+    getValue: (r) =>
+      r.accessType === RaceAccessType.PRIVATE
+        ? `${ACCESS_MAP.PRIVATE}${r.accessCode ? ` — code: ${r.accessCode}` : ''}`
+        : ACCESS_MAP[r.accessType],
   },
   {
     label: 'Parcours',
     type: 'custom',
     getValue: (r) =>
-      `${r.track.title} — ${r.track.distance.toFixed(1)} km · ${r.track.elevationGain}m D+`,
+      `${r.track.title} — ${r.track.distance.toFixed(1)} km · ${r.track.elevationGain} m D+`,
   },
   {
     label: 'Organisateur',
@@ -100,16 +102,8 @@ const raceFields: FieldConfig<RaceDetail>[] = [
     getValue: (r) =>
       `${r.registrationCount}${r.maxParticipants ? ` / ${r.maxParticipants}` : ''}`,
   },
-  {
-    label: 'Début',
-    key: 'startAt',
-    type: 'date',
-  },
-  {
-    label: 'Fin',
-    key: 'endAt',
-    type: 'date',
-  },
+  { label: 'Début', key: 'startAt', type: 'date' },
+  { label: 'Fin', key: 'endAt', type: 'date' },
   {
     label: 'Description',
     type: 'custom',
@@ -120,21 +114,9 @@ const raceFields: FieldConfig<RaceDetail>[] = [
         </p>
       ) : null,
   },
-  {
-    label: 'Validé le',
-    key: 'adminValidatedAt',
-    type: 'date',
-  },
-  {
-    label: 'Motif de refus',
-    key: 'adminRejectionReason',
-    type: 'string',
-  },
-  {
-    label: 'Créé le',
-    key: 'createdAt',
-    type: 'date',
-  },
+  { label: 'Validé le', key: 'adminValidatedAt', type: 'date' },
+  { label: 'Motif de refus', key: 'adminRejectionReason', type: 'string' },
+  { label: 'Créé le', key: 'createdAt', type: 'date' },
   {
     label: 'Logo',
     type: 'custom',
@@ -174,14 +156,30 @@ export default async function AdminRaceDetailPage({ params }: PageProps) {
 
   return (
     <ShowLayout module="races">
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Validation actions */}
         <RaceAdminActions race={{ id: race.id, status: race.status }} />
+
+        {/* Race details */}
         <DataDetails
           title={race.title}
           description={`ID: ${race.id}`}
           data={race as unknown as Record<string, unknown>}
           fields={raceFields as FieldConfig<Record<string, unknown>>[]}
         />
+
+        {/* Registrations */}
+        <FormSection
+          icon={<Users className="w-4 h-4" />}
+          title={`Inscriptions (${race.registrationCount})`}
+          description="Gestion complète des participants — statut, résultats, suppression."
+        >
+          <AdminRegistrationsTable
+            raceId={id}
+            raceFormat={race.format}
+            registrations={race.registrations}
+          />
+        </FormSection>
       </div>
     </ShowLayout>
   )

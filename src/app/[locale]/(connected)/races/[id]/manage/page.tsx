@@ -200,20 +200,14 @@ export default async function ManageRacePage({ params }: PageProps) {
       </div>
 
       {/* Edit section */}
-      <div className="rounded-2xl border border-border overflow-hidden">
-        <div className="px-5 py-4 bg-muted/40 border-b border-border">
-          <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <Pencil className="w-4 h-4 text-muted-foreground" />
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Pencil className="w-4 h-4 text-muted-foreground" />
+          <h2 className="text-sm font-semibold text-foreground">
             Modifier la course
           </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Les modifications sont appliquées immédiatement.
-          </p>
         </div>
-
-        <div className="p-5">
-          <RaceForm defaultValues={race} />
-        </div>
+        <RaceForm defaultValues={race} />
       </div>
 
       {/* Danger zone (informative) */}

@@ -67,14 +67,14 @@ type Props = {
   raceId: string
   raceFormat: RaceFormat
   registrations: RegistrationSummary[]
-  isOrganizer: boolean
+  isOrganizer?: boolean
 }
 
 export function RaceParticipantsTable({
   raceId,
   raceFormat,
   registrations,
-  isOrganizer,
+  isOrganizer = false,
 }: Props) {
   const router = useRouter()
   const [resultForm, setResultForm] = useState<string | null>(null)

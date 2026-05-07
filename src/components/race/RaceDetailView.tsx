@@ -28,7 +28,6 @@ import { Input } from '@/components/ui/input'
 import { TrackGpxMap } from '@/components/track/TrackGpxMap'
 import { RaceLeaderboardChart } from './RaceLeaderboardChart'
 import { RaceParticipantsTable } from './RaceParticipantsTable'
-import { ManualRaceSyncButton } from './ManualRaceSyncButton'
 import { RaceStatsSection } from './stats/RaceStatsSection'
 import {
   registerForRaceAction,
@@ -512,15 +511,11 @@ export function RaceDetailView({
               <Users className="w-4 h-4" />
               Participants ({race.registrationCount})
             </h2>
-            {isOrganizer && isActive && (
-              <ManualRaceSyncButton raceId={race.id} />
-            )}
           </div>
           <RaceParticipantsTable
             raceId={race.id}
             raceFormat={race.format}
             registrations={race.registrations}
-            isOrganizer={isOrganizer}
           />
         </div>
       )}

@@ -4,6 +4,9 @@ import { RacesAdminTable } from '@/components/race/admin/RacesAdminTable'
 import { RaceStatus } from '@prisma/client'
 import { getTranslations } from 'next-intl/server'
 import type { RaceColumn } from '@/admin/race.columns'
+import { Link } from '@/navigation'
+import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -40,6 +43,12 @@ export default async function AdminRacesPage({ searchParams }: PageProps) {
             {t('description', { count: total })}
           </p>
         </div>
+        <Button asChild size="sm">
+          <Link href="/admin/races/create">
+            <Plus className="w-4 h-4 mr-1.5" />
+            Créer une course
+          </Link>
+        </Button>
       </div>
       <RacesAdminTable data={tableData} totalItems={total} />
     </div>

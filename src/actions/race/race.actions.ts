@@ -186,6 +186,7 @@ export async function createRaceTrackAction(data: {
   title: string
   distance: number
   elevationGain: number
+  gpxFileId?: string | null
 }): Promise<{ success: true; id: string } | { success: false; error: string }> {
   try {
     const session = await getSession()
@@ -194,6 +195,7 @@ export async function createRaceTrackAction(data: {
         title: data.title,
         distance: data.distance,
         elevationGain: data.elevationGain,
+        gpxFileId: data.gpxFileId ?? null,
         visible: false,
         createdById: session.user.id,
       },
@@ -203,4 +205,30 @@ export async function createRaceTrackAction(data: {
   } catch {
     return { success: false, error: 'internal_error' }
   }
+}
+
+export async function searchTracksAction(
+  query: string
+): Promise<
+  {
+    id: string
+    title: string
+    distance: number
+    elevationGain: number
+    gpxFileId: string | null
+  }[]
+> {
+  if (!query.trim()) return []
+  return db.track.findMany({
+    where: { title: { contains: query.trim(), mode: 'insensitive' } },
+    select: {
+      id: true,
+      title: true,
+      distance: true,
+      elevationGain: true,
+      gpxFileId: true,
+    },
+    orderBy: { title: 'asc' },
+    take: 10,
+  })
 }
