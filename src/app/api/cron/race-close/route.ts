@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import db from '@/server/db'
-import { RaceStatus, RegistrationStatus } from '@prisma/client'
+import {
+  LoopStatus,
+  RaceFormat,
+  RaceStatus,
+  RegistrationStatus,
+} from '@prisma/client'
 import { fetchStravaAthleteActivities } from '@/server/modules/strava/strava.client'
 import { processStravaActivity } from '@/server/modules/strava/certification.service'
 import { certifyRaceRegistration } from '@/server/modules/race/race-certification.service'
@@ -19,6 +24,7 @@ export async function GET(req: NextRequest) {
     where: { status: RaceStatus.ACTIVE, endAt: { lte: now } },
     select: {
       id: true,
+      format: true,
       registrations: {
         where: {
           status: {
@@ -30,6 +36,12 @@ export async function GET(req: NextRequest) {
           userId: true,
           status: true,
           totalTimeSeconds: true,
+          // Pour BACKYARD : détecter si au moins une boucle validée existe
+          backyardLoops: {
+            where: { status: LoopStatus.VALIDATED },
+            select: { id: true },
+            take: 1,
+          },
         },
       },
     },
@@ -53,13 +65,19 @@ export async function GET(req: NextRequest) {
     })
 
     for (const reg of race.registrations) {
-      // Certify VALIDATED registrations that have a result recorded
-      if (reg.status === RegistrationStatus.VALIDATED && reg.totalTimeSeconds) {
+      const shouldCertify =
+        reg.status === RegistrationStatus.VALIDATED
+          ? race.format === RaceFormat.BACKYARD
+            ? reg.backyardLoops.length > 0
+            : reg.totalTimeSeconds !== null
+          : false
+
+      if (shouldCertify) {
         const cert = await certifyRaceRegistration(reg.id)
         if (cert.certifiedTrackId) totalCertifications++
       }
 
-      // Sync Strava for all participants
+      // Sync Strava finale pour tous les participants
       const stravaAccount = await db.account.findFirst({
         where: { userId: reg.userId, provider: 'strava' },
       })

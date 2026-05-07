@@ -3,8 +3,14 @@
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/server/modules/auth/auth.config'
 import { registrationService } from '@/server/modules/race/registration.service'
-import { Role, RegistrationStatus } from '@prisma/client'
+import {
+  LoopStatus,
+  Role,
+  RegistrationStatus,
+  ValidationSource,
+} from '@prisma/client'
 import { setRegistrationResult } from '@/server/modules/race/race-certification.service'
+import { recalculateBackyardRanks } from '@/server/modules/race/race-result.service'
 import db from '@/server/db'
 
 type ActionResponse = { success: boolean; error?: string }
@@ -118,6 +124,56 @@ export async function setRaceResultAction(
     }
   } catch (err) {
     console.error('[setRaceResult]', err)
+    return { success: false, error: 'internal_error' }
+  }
+}
+
+export async function addBackyardLoopAction(
+  registrationId: string,
+  timeSeconds: number
+): Promise<ActionResponse> {
+  try {
+    const session = await getSession()
+
+    const reg = await db.raceRegistration.findUnique({
+      where: { id: registrationId },
+      select: {
+        raceId: true,
+        race: { select: { organizerId: true } },
+        backyardLoops: {
+          where: { status: LoopStatus.VALIDATED },
+          orderBy: { loopNumber: 'desc' },
+          take: 1,
+          select: { loopNumber: true },
+        },
+      },
+    })
+    if (!reg) return { success: false, error: 'not_found' }
+    if (
+      reg.race.organizerId !== session.user.id &&
+      session.user.role !== Role.ADMIN
+    ) {
+      return { success: false, error: 'unauthorized' }
+    }
+
+    const nextLoopNumber = (reg.backyardLoops[0]?.loopNumber ?? 0) + 1
+
+    await db.backyardLoop.create({
+      data: {
+        registrationId,
+        loopNumber: nextLoopNumber,
+        timeSeconds,
+        status: LoopStatus.VALIDATED,
+        validationSource: ValidationSource.ORGANIZER,
+        validatedAt: new Date(),
+      },
+    })
+
+    await recalculateBackyardRanks(reg.raceId)
+    revalidatePath('/profile/races')
+    return { success: true }
+  } catch (err) {
+    console.error('[addBackyardLoop]', err)
     return { success: false, error: 'internal_error' }
   }
 }

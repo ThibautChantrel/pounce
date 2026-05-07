@@ -22,6 +22,7 @@ import {
   validateRegistrationAction,
   updateRegistrationStatusAction,
   setRaceResultAction,
+  addBackyardLoopAction,
 } from '@/actions/race/registration.actions'
 import { ArbitrageDialog } from './ArbitrageDialog'
 import type { RegistrationSummary } from '@/actions/race/race.types'
@@ -79,6 +80,8 @@ export function RaceParticipantsTable({
   const [resultForm, setResultForm] = useState<string | null>(null)
   const [rankInput, setRankInput] = useState('')
   const [timeInput, setTimeInput] = useState('')
+  const [loopForm, setLoopForm] = useState<string | null>(null)
+  const [loopTimeInput, setLoopTimeInput] = useState('')
   const [arbitrage, setArbitrage] = useState<{
     registrationId: string
     name: string
@@ -154,6 +157,21 @@ export function RaceParticipantsTable({
       toast.success('Statut mis à jour')
       router.refresh()
     } else toast.error('Erreur')
+  }
+
+  async function handleAddLoop(id: string) {
+    const seconds = parseTime(loopTimeInput)
+    if (!seconds) {
+      toast.error('Format invalide — ex: 1:23:45')
+      return
+    }
+    const res = await addBackyardLoopAction(id, seconds)
+    if (res.success) {
+      toast.success('Boucle ajoutée')
+      setLoopForm(null)
+      setLoopTimeInput('')
+      router.refresh()
+    } else toast.error("Erreur lors de l'ajout")
   }
 
   async function handleSetResult(id: string) {
@@ -402,6 +420,19 @@ export function RaceParticipantsTable({
                               Résultat
                             </Button>
                           )}
+                          {canManage && isBackyard && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 px-2 text-xs text-primary"
+                              onClick={() => {
+                                setLoopForm(loopForm === reg.id ? null : reg.id)
+                                setLoopTimeInput('')
+                              }}
+                            >
+                              + Boucle
+                            </Button>
+                          )}
                           {reg.stravaActivityId && (
                             <Button
                               size="sm"
@@ -500,6 +531,40 @@ export function RaceParticipantsTable({
                             variant="ghost"
                             className="h-7 px-2 text-xs"
                             onClick={() => setResultForm(null)}
+                          >
+                            Annuler
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* Inline loop form */}
+                  {loopForm === reg.id && (
+                    <tr key={`${reg.id}-loop-form`}>
+                      <td colSpan={isOrganizer ? 4 : 3} className="py-2 px-0">
+                        <div className="flex items-center gap-2 bg-muted/30 rounded-lg px-3 py-2">
+                          <span className="text-xs text-muted-foreground shrink-0">
+                            Temps boucle
+                          </span>
+                          <Input
+                            value={loopTimeInput}
+                            onChange={(e) => setLoopTimeInput(e.target.value)}
+                            placeholder="H:MM:SS"
+                            className="h-7 w-28 text-xs font-mono"
+                          />
+                          <Button
+                            size="sm"
+                            className="h-7 px-3 text-xs"
+                            onClick={() => handleAddLoop(reg.id)}
+                          >
+                            Ajouter
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 px-2 text-xs"
+                            onClick={() => setLoopForm(null)}
                           >
                             Annuler
                           </Button>

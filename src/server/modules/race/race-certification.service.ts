@@ -1,5 +1,10 @@
 import db from '@/server/db'
-import { ActivityMode, ValidationSource } from '@prisma/client'
+import {
+  ActivityMode,
+  LoopStatus,
+  RaceFormat,
+  ValidationSource,
+} from '@prisma/client'
 import { checkAndCertifyChallenges } from '../strava/certification.service'
 
 function activityTypeFromMode(mode: ActivityMode): string {
@@ -22,17 +27,47 @@ export async function certifyRaceRegistration(registrationId: string): Promise<{
       race: {
         select: {
           trackId: true,
+          format: true,
           activityMode: true,
           track: { select: { distance: true, elevationGain: true } },
         },
       },
+      backyardLoops: {
+        where: { status: LoopStatus.VALIDATED },
+        orderBy: { loopNumber: 'desc' },
+        select: { loopNumber: true, timeSeconds: true, completedAt: true },
+      },
     },
   })
 
-  if (!reg?.totalTimeSeconds) {
-    return { certifiedTrackId: null, certifiedChallengeIds: [] }
+  if (!reg) return { certifiedTrackId: null, certifiedChallengeIds: [] }
+
+  let totalTimeSeconds: number
+  let distance: number
+  let elevationGain: number
+  let completedAt: Date
+
+  if (reg.race.format === RaceFormat.BACKYARD) {
+    const loops = reg.backyardLoops
+    if (loops.length === 0)
+      return { certifiedTrackId: null, certifiedChallengeIds: [] }
+
+    totalTimeSeconds = loops.reduce((sum, l) => sum + (l.timeSeconds ?? 0), 0)
+    // Distance et dénivelé totaux = nb de boucles × valeurs du parcours
+    distance = loops.length * reg.race.track.distance
+    elevationGain = loops.length * reg.race.track.elevationGain
+    // loops est trié loopNumber DESC → premier élément = dernière boucle
+    completedAt = loops[0].completedAt ?? reg.validatedAt ?? new Date()
+  } else {
+    if (!reg.totalTimeSeconds)
+      return { certifiedTrackId: null, certifiedChallengeIds: [] }
+    totalTimeSeconds = reg.totalTimeSeconds
+    distance = reg.race.track.distance
+    elevationGain = reg.race.track.elevationGain
+    completedAt = reg.finishedAt ?? reg.validatedAt ?? new Date()
   }
 
+  // Idempotence : ne pas créer deux fois la même certification
   const existing = await db.trackCertification.findUnique({
     where: {
       provider_activityId_trackId: {
@@ -44,8 +79,8 @@ export async function certifyRaceRegistration(registrationId: string): Promise<{
   })
   if (existing) return { certifiedTrackId: null, certifiedChallengeIds: [] }
 
-  const completedAt = reg.finishedAt ?? reg.validatedAt ?? new Date()
-  const avgSpeed = reg.race.track.distance / (reg.totalTimeSeconds / 3600)
+  const avgSpeed =
+    totalTimeSeconds > 0 ? distance / (totalTimeSeconds / 3600) : 0
 
   await db.trackCertification.create({
     data: {
@@ -56,9 +91,9 @@ export async function certifyRaceRegistration(registrationId: string): Promise<{
       activityType: activityTypeFromMode(reg.race.activityMode),
       avgSpeed,
       maxSpeed: null,
-      totalTime: reg.totalTimeSeconds,
-      distance: reg.race.track.distance,
-      elevationGain: reg.race.track.elevationGain,
+      totalTime: totalTimeSeconds,
+      distance,
+      elevationGain,
       completedAt,
     },
   })

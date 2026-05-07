@@ -18,12 +18,12 @@ export async function GET(req: NextRequest) {
 
   const now = new Date()
 
-  // Only active backyard races
   const races = await db.race.findMany({
     where: {
       status: RaceStatus.ACTIVE,
       format: RaceFormat.BACKYARD,
       loopDurationMinutes: { not: null },
+      startAt: { lte: now },
     },
     select: {
       id: true,
@@ -37,10 +37,12 @@ export async function GET(req: NextRequest) {
         },
         select: {
           id: true,
-          userId: true,
+          // Dernière boucle validée pour déterminer la prochaine attendue
           backyardLoops: {
-            where: { status: LoopStatus.PENDING },
-            select: { id: true, loopNumber: true, startedAt: true },
+            where: { status: LoopStatus.VALIDATED },
+            orderBy: { loopNumber: 'desc' },
+            take: 1,
+            select: { loopNumber: true },
           },
         },
       },
@@ -51,42 +53,51 @@ export async function GET(req: NextRequest) {
   let totalDNF = 0
 
   for (const race of races) {
-    const loopDurationMs = (race.loopDurationMinutes ?? 0) * 60 * 1000
+    const loopDurationMs = race.loopDurationMinutes! * 60 * 1000
 
     for (const reg of race.registrations) {
-      for (const loop of reg.backyardLoops) {
-        // Compute loop start: explicit startedAt OR race.startAt + (loopNumber-1) * loopDuration
-        const loopStart =
-          loop.startedAt ??
-          new Date(
-            race.startAt.getTime() + (loop.loopNumber - 1) * loopDurationMs
-          )
+      // La prochaine boucle attendue = dernière boucle validée + 1 (ou 1 si aucune)
+      const lastValidatedLoop = reg.backyardLoops[0]?.loopNumber ?? 0
+      const nextLoopNumber = lastValidatedLoop + 1
+      const deadline = new Date(
+        race.startAt.getTime() + nextLoopNumber * loopDurationMs
+      )
 
-        const deadline = new Date(loopStart.getTime() + loopDurationMs)
+      // La deadline n'est pas encore passée → rien à faire
+      if (deadline > now) continue
 
-        if (deadline <= now) {
-          await db.backyardLoop.update({
-            where: { id: loop.id },
-            data: {
-              status: LoopStatus.MISSED,
-              validationSource: ValidationSource.AUTO,
-              validatedAt: now,
-            },
-          })
-          totalMissed++
+      // Vérifier si cette boucle est déjà enregistrée (VALIDATED ou MISSED)
+      const existingLoop = await db.backyardLoop.findUnique({
+        where: {
+          registrationId_loopNumber: {
+            registrationId: reg.id,
+            loopNumber: nextLoopNumber,
+          },
+        },
+      })
+      if (existingLoop) continue
 
-          // Mark registration as DNF
-          await db.raceRegistration.update({
-            where: { id: reg.id },
-            data: {
-              status: RegistrationStatus.DNF,
-              statusReason: `Loop ${loop.loopNumber} non complété dans les temps`,
-              statusUpdatedBy: 'system',
-            },
-          })
-          totalDNF++
-        }
-      }
+      // La deadline est passée sans aucune boucle validée → DNF
+      await db.backyardLoop.create({
+        data: {
+          registrationId: reg.id,
+          loopNumber: nextLoopNumber,
+          status: LoopStatus.MISSED,
+          validationSource: ValidationSource.AUTO,
+          validatedAt: now,
+        },
+      })
+      totalMissed++
+
+      await db.raceRegistration.update({
+        where: { id: reg.id },
+        data: {
+          status: RegistrationStatus.DNF,
+          statusReason: `Boucle ${nextLoopNumber} non complétée dans les temps`,
+          statusUpdatedBy: 'system',
+        },
+      })
+      totalDNF++
     }
   }
 
