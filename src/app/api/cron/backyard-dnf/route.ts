@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   const races = await db.race.findMany({
     where: {
-      status: RaceStatus.ACTIVE,
+      status: RaceStatus.IN_PROGRESS,
       format: RaceFormat.BACKYARD,
       loopDurationMinutes: { not: null },
       startAt: { lte: now },

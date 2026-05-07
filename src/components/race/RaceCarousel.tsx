@@ -10,8 +10,9 @@ import {
   TrendingUp,
   RefreshCw,
   Zap,
+  Play,
 } from 'lucide-react'
-import { ActivityMode, RaceFormat } from '@prisma/client'
+import { ActivityMode, RaceFormat, RaceStatus } from '@prisma/client'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -65,6 +66,24 @@ const MODE_FILTERS: {
   },
 ]
 
+const STATUS_FILTERS: {
+  value: RaceStatus | 'all'
+  label: string
+  icon: React.ReactNode
+}[] = [
+  { value: 'all', label: 'Toutes', icon: null },
+  {
+    value: RaceStatus.ACTIVE,
+    label: 'Ouvertes',
+    icon: <Flag className="w-3 h-3" />,
+  },
+  {
+    value: RaceStatus.IN_PROGRESS,
+    label: 'En cours',
+    icon: <Play className="w-3 h-3" />,
+  },
+]
+
 export function RaceCarousel() {
   const [races, setRaces] = useState<RaceSummary[]>([])
   const [total, setTotal] = useState(0)
@@ -72,6 +91,7 @@ export function RaceCarousel() {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [format, setFormat] = useState<RaceFormat | 'all'>('all')
   const [mode, setMode] = useState<ActivityMode | 'all'>('all')
+  const [statusFilter, setStatusFilter] = useState<RaceStatus | 'all'>('all')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -87,13 +107,14 @@ export function RaceCarousel() {
         search: debouncedSearch || undefined,
         format: format === 'all' ? undefined : format,
         activityMode: mode === 'all' ? undefined : mode,
+        status: statusFilter,
       })
       setRaces(data)
       setTotal(total)
       setLoading(false)
     }
     fetchRaces()
-  }, [debouncedSearch, format, mode])
+  }, [debouncedSearch, format, mode, statusFilter])
 
   return (
     <div className="w-full py-4 flex flex-col gap-6">
@@ -156,6 +177,25 @@ export function RaceCarousel() {
                   className={cn(
                     'h-auto rounded-full border px-3 py-1.5 text-sm font-medium transition-all',
                     mode === f.value
+                      ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                      : 'bg-background/50 text-muted-foreground border-border hover:bg-background/50 hover:border-primary/50 hover:text-foreground'
+                  )}
+                >
+                  {f.icon}
+                  {f.label}
+                </Button>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {STATUS_FILTERS.map((f) => (
+                <Button
+                  key={String(f.value)}
+                  variant="ghost"
+                  onClick={() => setStatusFilter(f.value)}
+                  className={cn(
+                    'h-auto rounded-full border px-3 py-1.5 text-sm font-medium transition-all',
+                    statusFilter === f.value
                       ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
                       : 'bg-background/50 text-muted-foreground border-border hover:bg-background/50 hover:border-primary/50 hover:text-foreground'
                   )}

@@ -14,6 +14,7 @@ const PENDING_STATUS_LABEL: Record<RaceStatus, string> = {
   DRAFT: 'Brouillon',
   PENDING_REVIEW: 'En attente de validation admin',
   ACTIVE: 'Active',
+  IN_PROGRESS: 'En cours',
   CLOSED: 'Terminée',
   CANCELLED: 'Refusée / annulée',
 }

@@ -15,7 +15,7 @@ export async function updateRaceFromStravaMatch(
   activity: StravaActivity
 ): Promise<void> {
   const races = await db.race.findMany({
-    where: { trackId, status: 'ACTIVE' },
+    where: { trackId, status: 'IN_PROGRESS' },
     select: {
       id: true,
       format: true,

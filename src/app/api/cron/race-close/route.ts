@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   const now = new Date()
 
   const racesToClose = await db.race.findMany({
-    where: { status: RaceStatus.ACTIVE, endAt: { lte: now } },
+    where: { status: RaceStatus.IN_PROGRESS, endAt: { lte: now } },
     select: {
       id: true,
       format: true,

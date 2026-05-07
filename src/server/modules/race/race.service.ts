@@ -180,9 +180,14 @@ export const raceService = {
     search?: string
     format?: string
     activityMode?: string
+    status?: RaceStatus | 'all'
   }): Promise<{ data: RaceSummary[]; total: number }> {
+    const statusFilter =
+      !params.status || params.status === 'all'
+        ? { in: [RaceStatus.ACTIVE, RaceStatus.IN_PROGRESS] }
+        : params.status
     const where = {
-      status: RaceStatus.ACTIVE,
+      status: statusFilter as never,
       ...(params.search
         ? { title: { contains: params.search, mode: 'insensitive' as const } }
         : {}),

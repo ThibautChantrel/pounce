@@ -56,6 +56,7 @@ const STATUS_VARIANTS: Record<
   DRAFT: 'outline',
   PENDING_REVIEW: 'secondary',
   ACTIVE: 'default',
+  IN_PROGRESS: 'default',
   CLOSED: 'outline',
   CANCELLED: 'destructive',
 }
@@ -206,6 +207,7 @@ export const useRaceColumns = () => {
             DRAFT: 'Brouillon',
             PENDING_REVIEW: 'En attente',
             ACTIVE: 'Active',
+            IN_PROGRESS: 'En cours',
             CLOSED: 'Terminée',
             CANCELLED: 'Annulée',
           }

@@ -4,7 +4,12 @@ import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/server/modules/auth/auth.config'
 import { raceService } from '@/server/modules/race/race.service'
-import { ActivityMode, RaceAccessType, RaceFormat } from '@prisma/client'
+import {
+  ActivityMode,
+  RaceAccessType,
+  RaceFormat,
+  RaceStatus,
+} from '@prisma/client'
 import { CreateRaceInput, UpdateRaceInput } from './race.types'
 import db from '@/server/db'
 import { fetchStravaAthleteActivities } from '@/server/modules/strava/strava.client'
@@ -39,6 +44,24 @@ export async function createRaceAction(
 ): Promise<ActionResponse> {
   const parsed = raceSchema.safeParse(data)
   if (!parsed.success) return { success: false, error: 'invalid_data' }
+
+  const now = new Date()
+  if (parsed.data.startAt < now) {
+    return { success: false, error: 'start_in_past' }
+  }
+  if (parsed.data.endAt <= parsed.data.startAt) {
+    return { success: false, error: 'end_before_start' }
+  }
+  if (
+    parsed.data.format === RaceFormat.BACKYARD &&
+    parsed.data.loopDurationMinutes
+  ) {
+    const totalMinutes =
+      (parsed.data.endAt.getTime() - parsed.data.startAt.getTime()) / 60_000
+    if (totalMinutes % parsed.data.loopDurationMinutes !== 0) {
+      return { success: false, error: 'backyard_loop_mismatch' }
+    }
+  }
 
   try {
     const session = await getSession()
@@ -100,6 +123,7 @@ export async function listPublicRacesAction(params: {
   search?: string
   format?: string
   activityMode?: string
+  status?: RaceStatus | 'all'
 }) {
   return raceService.listPublic(params)
 }
@@ -207,9 +231,7 @@ export async function createRaceTrackAction(data: {
   }
 }
 
-export async function searchTracksAction(
-  query: string
-): Promise<
+export async function searchTracksAction(query: string): Promise<
   {
     id: string
     title: string

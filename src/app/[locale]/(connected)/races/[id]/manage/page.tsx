@@ -24,6 +24,7 @@ const STATUS_LABELS: Record<RaceStatus, string> = {
   DRAFT: 'Brouillon',
   PENDING_REVIEW: 'En attente',
   ACTIVE: 'Active',
+  IN_PROGRESS: 'En cours',
   CLOSED: 'Clôturée',
   CANCELLED: 'Annulée',
 }
@@ -34,6 +35,8 @@ const STATUS_STYLES: Record<RaceStatus, string> = {
     'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
   ACTIVE:
     'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+  IN_PROGRESS:
+    'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
   CLOSED: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
   CANCELLED: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 }
@@ -210,9 +213,10 @@ export default async function ManageRacePage({ params }: PageProps) {
         <RaceForm defaultValues={race} />
       </div>
 
-      {/* Danger zone (informative) */}
+      {/* Informative notices */}
       {(race.status === RaceStatus.DRAFT ||
-        race.status === RaceStatus.ACTIVE) && (
+        race.status === RaceStatus.ACTIVE ||
+        race.status === RaceStatus.IN_PROGRESS) && (
         <div className="rounded-2xl border border-border p-5">
           <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-1">
             <AlertCircle className="w-4 h-4 text-muted-foreground" />
@@ -228,7 +232,14 @@ export default async function ManageRacePage({ params }: PageProps) {
             )}
             {race.status === RaceStatus.ACTIVE && (
               <li>
-                • La course est <strong>active</strong>. Les synchronisations
+                • La course est <strong>active</strong> — les inscriptions sont
+                ouvertes. La synchro Strava démarrera automatiquement au début
+                de la course.
+              </li>
+            )}
+            {race.status === RaceStatus.IN_PROGRESS && (
+              <li>
+                • La course est <strong>en cours</strong>. Les synchronisations
                 Strava s&apos;effectuent automatiquement toutes les heures.
               </li>
             )}

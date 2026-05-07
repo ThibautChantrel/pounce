@@ -54,6 +54,7 @@ enum RaceStatus {
   DRAFT
   PENDING_REVIEW
   ACTIVE
+  IN_PROGRESS
   CLOSED
   CANCELLED
 }

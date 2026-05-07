@@ -25,7 +25,8 @@ const STATUS_MAP: Record<RaceStatus, { label: string; className: string }> = {
     className: 'bg-yellow-100 text-yellow-800',
   },
   ACTIVE: { label: 'Active', className: 'bg-green-100 text-green-800' },
-  CLOSED: { label: 'Terminée', className: 'bg-blue-100 text-blue-800' },
+  IN_PROGRESS: { label: 'En cours', className: 'bg-blue-100 text-blue-800' },
+  CLOSED: { label: 'Terminée', className: 'bg-slate-100 text-slate-600' },
   CANCELLED: {
     label: 'Refusée / annulée',
     className: 'bg-red-100 text-red-800',

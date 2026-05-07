@@ -42,6 +42,7 @@ import { cn } from '@/lib/utils'
 import Image from 'next/image'
 import { TrackSelector, TrackSelectorValue } from './TrackSelector'
 import { UserSelector, UserSelectorValue } from './admin/UserSelector'
+import { RaceFormatGuide } from './RaceFormatGuide'
 
 // ─── Section card wrapper ───────────────────────────────────────────────────
 
@@ -186,6 +187,11 @@ const STATUS_OPTIONS: { value: RaceStatus; label: string; color: string }[] = [
     color: 'text-amber-600',
   },
   { value: RaceStatus.ACTIVE, label: 'Active', color: 'text-green-600' },
+  {
+    value: RaceStatus.IN_PROGRESS,
+    label: 'En cours',
+    color: 'text-blue-600',
+  },
   { value: RaceStatus.CLOSED, label: 'Clôturée', color: 'text-slate-500' },
   { value: RaceStatus.CANCELLED, label: 'Annulée', color: 'text-destructive' },
 ]
@@ -290,6 +296,29 @@ export function RaceForm({ defaultValues, adminMode = false }: Props) {
     if (!title.trim() || !startAt || !endAt) {
       toast.error('Remplis les champs obligatoires')
       return
+    }
+
+    const startDate = new Date(startAt)
+    const endDate = new Date(endAt)
+
+    if (!isEdit && startDate < new Date()) {
+      toast.error('La date de début ne peut pas être dans le passé')
+      return
+    }
+
+    if (endDate <= startDate) {
+      toast.error('La date de fin doit être après la date de début')
+      return
+    }
+
+    if (format === RaceFormat.BACKYARD && loopDurationMinutes) {
+      const totalMinutes = (endDate.getTime() - startDate.getTime()) / 60_000
+      if (totalMinutes % parseInt(loopDurationMinutes) !== 0) {
+        toast.error(
+          'La durée totale doit être un multiple de la durée des boucles'
+        )
+        return
+      }
     }
 
     if (adminMode && !organizerValue) {
@@ -628,6 +657,30 @@ export function RaceForm({ defaultValues, adminMode = false }: Props) {
               placeholder="Ex: 240 (= 4 heures)"
               className="max-w-xs"
             />
+            {loopDurationMinutes &&
+              startAt &&
+              endAt &&
+              (() => {
+                const totalMinutes =
+                  (new Date(endAt).getTime() - new Date(startAt).getTime()) /
+                  60_000
+                const loopMin = parseInt(loopDurationMinutes)
+                if (!loopMin || totalMinutes <= 0) return null
+                const loops = totalMinutes / loopMin
+                const isValid = Number.isInteger(loops) && loops > 0
+                return (
+                  <p
+                    className={cn(
+                      'text-xs mt-1',
+                      isValid ? 'text-green-600' : 'text-destructive'
+                    )}
+                  >
+                    {isValid
+                      ? `Votre backyard sera constituée de ${loops} boucle${loops > 1 ? 's' : ''}`
+                      : "⚠️ Le format ne colle pas — la durée totale n'est pas un multiple de la durée des boucles"}
+                  </p>
+                )
+              })()}
           </div>
         )}
       </FormSection>
@@ -738,7 +791,7 @@ export function RaceForm({ defaultValues, adminMode = false }: Props) {
       </FormSection>
 
       {/* ── Submit ── */}
-      <div className="flex gap-3 pt-2">
+      <div className="flex items-center gap-3 pt-2">
         <Button type="submit" disabled={loading}>
           {loading
             ? 'Enregistrement…'
@@ -751,6 +804,9 @@ export function RaceForm({ defaultValues, adminMode = false }: Props) {
         <Button type="button" variant="ghost" onClick={() => router.back()}>
           Annuler
         </Button>
+        <div className="ml-auto">
+          <RaceFormatGuide />
+        </div>
       </div>
     </form>
   )
