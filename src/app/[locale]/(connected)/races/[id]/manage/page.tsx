@@ -203,15 +203,18 @@ export default async function ManageRacePage({ params }: PageProps) {
       </div>
 
       {/* Edit section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Pencil className="w-4 h-4 text-muted-foreground" />
-          <h2 className="text-sm font-semibold text-foreground">
-            Modifier la course
-          </h2>
-        </div>
-        <RaceForm defaultValues={race} />
-      </div>
+      {race.status === RaceStatus.DRAFT ||
+        (race.status === RaceStatus.PENDING_REVIEW && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Pencil className="w-4 h-4 text-muted-foreground" />
+              <h2 className="text-sm font-semibold text-foreground">
+                Modifier la course
+              </h2>
+            </div>
+            <RaceForm defaultValues={race} />
+          </div>
+        ))}
 
       {/* Informative notices */}
       {(race.status === RaceStatus.DRAFT ||

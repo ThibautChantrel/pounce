@@ -100,7 +100,12 @@ export async function processStravaActivity(
     )
 
   const tracks = await db.track.findMany({
-    where: { visible: true, gpxFileId: { not: null } },
+    where: {
+      visible: true,
+      gpxFileId: { not: null },
+      // Ne certifier via Strava que les parcours rattachés à un challenge.
+      challenges: { some: {} },
+    },
     include: { gpxFile: true },
   })
 
