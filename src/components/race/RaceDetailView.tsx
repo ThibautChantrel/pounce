@@ -21,7 +21,12 @@ import {
   Activity,
   Globe,
 } from 'lucide-react'
-import { RaceAccessType, RaceFormat, RegistrationStatus } from '@prisma/client'
+import {
+  RaceAccessType,
+  RaceFormat,
+  RaceStatus,
+  RegistrationStatus,
+} from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -72,6 +77,27 @@ const REGISTRATION_STATUS_STYLES: Record<RegistrationStatus, string> = {
   DNF: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
   DNS: 'bg-muted text-muted-foreground',
   DISQUALIFIED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
+}
+
+const RACE_STATUS_LABELS: Record<RaceStatus, string> = {
+  DRAFT: 'Brouillon',
+  PENDING_REVIEW: 'En attente',
+  ACTIVE: 'Ouverte',
+  IN_PROGRESS: 'En cours',
+  CLOSED: 'Terminée',
+  CANCELLED: 'Annulée',
+}
+
+const RACE_STATUS_STYLES: Record<RaceStatus, string> = {
+  DRAFT: 'bg-muted text-muted-foreground',
+  PENDING_REVIEW:
+    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
+  ACTIVE:
+    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
+  IN_PROGRESS:
+    'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
+  CLOSED: 'bg-muted text-muted-foreground',
+  CANCELLED: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
 }
 
 function formatTime(seconds: number) {
@@ -187,6 +213,11 @@ export function RaceDetailView({
                 <Lock className="w-3 h-3" /> Privée
               </span>
             )}
+            <span
+              className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${RACE_STATUS_STYLES[race.status]}`}
+            >
+              {RACE_STATUS_LABELS[race.status]}
+            </span>
           </div>
           <h1 className="text-2xl font-bold text-foreground">{race.title}</h1>
           <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">

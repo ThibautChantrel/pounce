@@ -59,7 +59,7 @@ type Props = {
   href?: string
 }
 
-export function RaceCard({ race, showStatus = false, href }: Props) {
+export function RaceCard({ race, showStatus = true, href }: Props) {
   const imageUrl = race.bannerId ? `/api/files/${race.bannerId}` : null
   const target = href ?? `/races/${race.id}`
 

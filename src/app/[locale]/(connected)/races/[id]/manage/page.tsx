@@ -93,6 +93,7 @@ export default async function ManageRacePage({ params }: PageProps) {
   const dns = regs.filter((r) => r.status === 'DNS').length
   const dq = regs.filter((r) => r.status === 'DISQUALIFIED').length
   const isActive = race.status === RaceStatus.ACTIVE
+  const isInProgress = race.status === RaceStatus.IN_PROGRESS
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-8 pb-20">
@@ -175,7 +176,7 @@ export default async function ManageRacePage({ params }: PageProps) {
             <span className="text-muted-foreground font-normal">({total})</span>
           </h2>
           <div className="flex items-center gap-2">
-            {isActive && <ManualRaceSyncButton raceId={id} />}
+            {isInProgress && <ManualRaceSyncButton raceId={id} />}
           </div>
         </div>
 
