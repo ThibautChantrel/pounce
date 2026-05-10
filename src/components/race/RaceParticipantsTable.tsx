@@ -400,39 +400,6 @@ export function RaceParticipantsTable({
                               <CheckCircle className="w-3.5 h-3.5" />
                             </Button>
                           )}
-                          {canManage && isOneShot && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2 text-xs text-primary"
-                              onClick={() => {
-                                setResultForm(
-                                  resultForm === reg.id ? null : reg.id
-                                )
-                                setRankInput(reg.rank ? String(reg.rank) : '')
-                                setTimeInput(
-                                  reg.totalTimeSeconds
-                                    ? `${Math.floor(reg.totalTimeSeconds / 3600)}:${String(Math.floor((reg.totalTimeSeconds % 3600) / 60)).padStart(2, '0')}:${String(reg.totalTimeSeconds % 60).padStart(2, '0')}`
-                                    : ''
-                                )
-                              }}
-                            >
-                              Résultat
-                            </Button>
-                          )}
-                          {canManage && isBackyard && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-7 px-2 text-xs text-primary"
-                              onClick={() => {
-                                setLoopForm(loopForm === reg.id ? null : reg.id)
-                                setLoopTimeInput('')
-                              }}
-                            >
-                              + Boucle
-                            </Button>
-                          )}
                           {reg.stravaActivityId && (
                             <Button
                               size="sm"
@@ -446,50 +413,20 @@ export function RaceParticipantsTable({
                             </Button>
                           )}
                           {canManage && (
-                            <>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-xs text-muted-foreground"
-                                onClick={() =>
-                                  requestStatus(
-                                    reg.id,
-                                    name,
-                                    RegistrationStatus.DNF
-                                  )
-                                }
-                              >
-                                DNF
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-xs text-muted-foreground"
-                                onClick={() =>
-                                  requestStatus(
-                                    reg.id,
-                                    name,
-                                    RegistrationStatus.DNS
-                                  )
-                                }
-                              >
-                                DNS
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-xs text-destructive"
-                                onClick={() =>
-                                  requestStatus(
-                                    reg.id,
-                                    name,
-                                    RegistrationStatus.DISQUALIFIED
-                                  )
-                                }
-                              >
-                                DQ
-                              </Button>
-                            </>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-7 px-2 text-xs text-destructive"
+                              onClick={() =>
+                                requestStatus(
+                                  reg.id,
+                                  name,
+                                  RegistrationStatus.DISQUALIFIED
+                                )
+                              }
+                            >
+                              DQ
+                            </Button>
                           )}
                         </div>
                       </td>

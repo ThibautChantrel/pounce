@@ -627,6 +627,7 @@ export function RaceForm({ defaultValues, adminMode = false }: Props) {
               id="startAt"
               type="datetime-local"
               value={startAt}
+              min={toDatetimeLocal(new Date())}
               onChange={(e) => setStartAt(e.target.value)}
               required
             />
@@ -637,6 +638,7 @@ export function RaceForm({ defaultValues, adminMode = false }: Props) {
               id="endAt"
               type="datetime-local"
               value={endAt}
+              min={startAt || toDatetimeLocal(new Date())}
               onChange={(e) => setEndAt(e.target.value)}
               required
             />
