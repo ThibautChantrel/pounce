@@ -93,7 +93,15 @@ export async function updateRegistrationStatusAction(
 export async function setRaceResultAction(
   registrationId: string,
   rank: number,
-  totalTimeSeconds: number
+  totalTimeSeconds: number,
+  details?: {
+    avgSpeed?: number | null
+    maxSpeed?: number | null
+    heartRateAvg?: number | null
+    heartRateMax?: number | null
+    calories?: number | null
+    finishedAt?: Date | null
+  }
 ): Promise<ActionResponse & { certifiedChallengeIds?: string[] }> {
   try {
     const session = await getSession()
@@ -114,7 +122,8 @@ export async function setRaceResultAction(
       registrationId,
       rank,
       totalTimeSeconds,
-      session.user.id
+      session.user.id,
+      details
     )
 
     revalidatePath('/profile/races')
@@ -130,7 +139,14 @@ export async function setRaceResultAction(
 
 export async function addBackyardLoopAction(
   registrationId: string,
-  timeSeconds: number
+  timeSeconds: number,
+  details?: {
+    avgSpeed?: number | null
+    heartRateAvg?: number | null
+    heartRateMax?: number | null
+    startedAt?: Date | null
+    completedAt?: Date | null
+  }
 ): Promise<ActionResponse> {
   try {
     const session = await getSession()
@@ -163,6 +179,11 @@ export async function addBackyardLoopAction(
         registrationId,
         loopNumber: nextLoopNumber,
         timeSeconds,
+        avgSpeed: details?.avgSpeed ?? null,
+        heartRateAvg: details?.heartRateAvg ?? null,
+        heartRateMax: details?.heartRateMax ?? null,
+        startedAt: details?.startedAt ?? null,
+        completedAt: details?.completedAt ?? null,
         status: LoopStatus.VALIDATED,
         validationSource: ValidationSource.ORGANIZER,
         validatedAt: new Date(),

@@ -11,26 +11,22 @@ import {
   RefreshCw,
   Zap,
   Play,
+  CheckCircle,
 } from 'lucide-react'
 import { ActivityMode, RaceFormat, RaceStatus } from '@prisma/client'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import {
+  MultiSelect,
+  type MultiSelectOption,
+} from '@/components/ui/multi-select'
 import { cn } from '@/lib/utils'
 import { RaceCard } from './RaceCard'
 import { listPublicRacesAction } from '@/actions/race/race.actions'
 import type { RaceSummary } from '@/actions/race/race.types'
 import { Link } from '@/navigation'
 
-const FORMAT_FILTERS: {
-  value: RaceFormat | 'all'
-  label: string
-  icon: React.ReactNode
-}[] = [
-  {
-    value: 'all',
-    label: 'Tous les formats',
-    icon: <Flag className="w-3.5 h-3.5" />,
-  },
+const FORMAT_OPTIONS: MultiSelectOption<RaceFormat>[] = [
   {
     value: RaceFormat.ONE_SHOT,
     label: 'Course',
@@ -43,6 +39,24 @@ const FORMAT_FILTERS: {
   },
 ]
 
+const STATUS_OPTIONS: MultiSelectOption<RaceStatus>[] = [
+  {
+    value: RaceStatus.ACTIVE,
+    label: 'Ouvertes',
+    icon: <Flag className="w-3.5 h-3.5" />,
+  },
+  {
+    value: RaceStatus.IN_PROGRESS,
+    label: 'En cours',
+    icon: <Play className="w-3.5 h-3.5" />,
+  },
+  {
+    value: RaceStatus.CLOSED,
+    label: 'Terminées',
+    icon: <CheckCircle className="w-3.5 h-3.5" />,
+  },
+]
+
 const MODE_FILTERS: {
   value: ActivityMode | 'all'
   label: string
@@ -51,7 +65,7 @@ const MODE_FILTERS: {
   { value: 'all', label: 'Tous', icon: null },
   {
     value: ActivityMode.RUN,
-    label: 'Course',
+    label: 'Course à pied',
     icon: <Footprints className="w-3 h-3" />,
   },
   {
@@ -66,32 +80,17 @@ const MODE_FILTERS: {
   },
 ]
 
-const STATUS_FILTERS: {
-  value: RaceStatus | 'all'
-  label: string
-  icon: React.ReactNode
-}[] = [
-  { value: 'all', label: 'Toutes', icon: null },
-  {
-    value: RaceStatus.ACTIVE,
-    label: 'Ouvertes',
-    icon: <Flag className="w-3 h-3" />,
-  },
-  {
-    value: RaceStatus.IN_PROGRESS,
-    label: 'En cours',
-    icon: <Play className="w-3 h-3" />,
-  },
-]
-
 export function RaceCarousel() {
   const [races, setRaces] = useState<RaceSummary[]>([])
   const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [format, setFormat] = useState<RaceFormat | 'all'>('all')
+  const [formats, setFormats] = useState<RaceFormat[]>([])
   const [mode, setMode] = useState<ActivityMode | 'all'>('all')
-  const [statusFilter, setStatusFilter] = useState<RaceStatus | 'all'>('all')
+  const [statuses, setStatuses] = useState<RaceStatus[]>([
+    RaceStatus.ACTIVE,
+    RaceStatus.IN_PROGRESS,
+  ])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -105,16 +104,16 @@ export function RaceCarousel() {
       const { data, total } = await listPublicRacesAction({
         take: 12,
         search: debouncedSearch || undefined,
-        format: format === 'all' ? undefined : format,
+        formats: formats.length > 0 ? formats : undefined,
         activityMode: mode === 'all' ? undefined : mode,
-        status: statusFilter,
+        statuses: statuses.length > 0 ? statuses : undefined,
       })
       setRaces(data)
       setTotal(total)
       setLoading(false)
     }
     fetchRaces()
-  }, [debouncedSearch, format, mode, statusFilter])
+  }, [debouncedSearch, formats, mode, statuses])
 
   return (
     <div className="w-full py-4 flex flex-col gap-6">
@@ -149,24 +148,12 @@ export function RaceCarousel() {
               )}
             </div>
 
-            <div className="flex flex-wrap gap-1.5">
-              {FORMAT_FILTERS.map((f) => (
-                <Button
-                  key={String(f.value)}
-                  variant="ghost"
-                  onClick={() => setFormat(f.value)}
-                  className={cn(
-                    'h-auto rounded-full border px-3 py-1.5 text-sm font-medium transition-all',
-                    format === f.value
-                      ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
-                      : 'bg-background/50 text-muted-foreground border-border hover:bg-background/50 hover:border-primary/50 hover:text-foreground'
-                  )}
-                >
-                  {f.icon}
-                  {f.label}
-                </Button>
-              ))}
-            </div>
+            <MultiSelect
+              options={FORMAT_OPTIONS}
+              selected={formats}
+              onChange={setFormats}
+              label="Format"
+            />
 
             <div className="flex flex-wrap gap-1.5">
               {MODE_FILTERS.map((f) => (
@@ -187,24 +174,12 @@ export function RaceCarousel() {
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-1.5">
-              {STATUS_FILTERS.map((f) => (
-                <Button
-                  key={String(f.value)}
-                  variant="ghost"
-                  onClick={() => setStatusFilter(f.value)}
-                  className={cn(
-                    'h-auto rounded-full border px-3 py-1.5 text-sm font-medium transition-all',
-                    statusFilter === f.value
-                      ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
-                      : 'bg-background/50 text-muted-foreground border-border hover:bg-background/50 hover:border-primary/50 hover:text-foreground'
-                  )}
-                >
-                  {f.icon}
-                  {f.label}
-                </Button>
-              ))}
-            </div>
+            <MultiSelect
+              options={STATUS_OPTIONS}
+              selected={statuses}
+              onChange={setStatuses}
+              label="Statut"
+            />
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 import db from '@/server/db'
 import {
+  Prisma,
   RaceStatus,
   RegistrationStatus,
   ValidationSource,
@@ -41,10 +42,9 @@ export const raceAdminService = {
 
   async updateRace(data: AdminUpdateRaceInput): Promise<{ id: string }> {
     const { id, ...rest } = data
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return db.race.update({
       where: { id },
-      data: rest as any,
+      data: rest as Prisma.RaceUpdateInput,
       select: { id: true },
     })
   },
@@ -74,6 +74,39 @@ export const raceAdminService = {
 
   async updateRegistration(id: string, data: AdminUpdateRegistrationInput) {
     return db.raceRegistration.update({ where: { id }, data })
+  },
+
+  async createRegistration(raceId: string, userId: string) {
+    const race = await db.race.findUnique({
+      where: { id: raceId },
+      select: {
+        maxParticipants: true,
+        _count: { select: { registrations: true } },
+      },
+    })
+    if (!race) throw new Error('race_not_found')
+
+    if (
+      race.maxParticipants !== null &&
+      race._count.registrations >= race.maxParticipants
+    ) {
+      throw new Error('race_full')
+    }
+
+    const existing = await db.raceRegistration.findUnique({
+      where: { raceId_userId: { raceId, userId } },
+      select: { id: true },
+    })
+    if (existing) throw new Error('already_registered')
+
+    return db.raceRegistration.create({
+      data: {
+        raceId,
+        userId,
+        status: RegistrationStatus.REGISTERED,
+      },
+      select: { id: true },
+    })
   },
 
   async deleteRegistration(id: string) {

@@ -112,7 +112,7 @@ export const registrationService = {
   },
 
   async getUserRegistration(raceId: string, userId: string) {
-    return db.raceRegistration.findUnique({
+    const reg = await db.raceRegistration.findUnique({
       where: { raceId_userId: { raceId, userId } },
       select: {
         id: true,
@@ -126,10 +126,24 @@ export const registrationService = {
             status: true,
             timeSeconds: true,
             completedAt: true,
+            heartRateAvg: true,
+            heartRateMax: true,
           },
           orderBy: { loopNumber: 'asc' },
         },
       },
     })
+    if (!reg) return null
+
+    const cert = await db.trackCertification.findFirst({
+      where: { provider: 'race', activityId: reg.id },
+      select: { heartRateAvg: true, heartRateMax: true },
+    })
+
+    return {
+      ...reg,
+      heartRateAvg: cert?.heartRateAvg ?? null,
+      heartRateMax: cert?.heartRateMax ?? null,
+    }
   },
 }

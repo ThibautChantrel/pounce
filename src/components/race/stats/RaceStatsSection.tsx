@@ -43,10 +43,6 @@ export function RaceStatsSection({ race }: Props) {
 
   if (registrations.length === 0) return null
 
-  const hasAnyBpm = registrations
-    .flatMap((r) => r.backyardLoops)
-    .some((l) => l.heartRateAvg)
-
   return (
     <div className="space-y-4">
       {/* KPI cards */}
@@ -101,16 +97,6 @@ export function RaceStatsSection({ race }: Props) {
               mode="speed"
             />
           </ChartCard>
-
-          {/* BPM par boucle */}
-          {hasAnyBpm && (
-            <ChartCard title="Fréquence cardiaque moyenne par boucle (bpm)">
-              <BackyardLoopTimesChart
-                registrations={registrations}
-                mode="bpm"
-              />
-            </ChartCard>
-          )}
         </>
       )}
     </div>

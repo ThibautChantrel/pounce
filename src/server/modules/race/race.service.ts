@@ -178,20 +178,22 @@ export const raceService = {
     skip?: number
     take?: number
     search?: string
-    format?: string
+    formats?: string[]
     activityMode?: string
-    status?: RaceStatus | 'all'
+    statuses?: RaceStatus[]
   }): Promise<{ data: RaceSummary[]; total: number }> {
-    const statusFilter =
-      !params.status || params.status === 'all'
+    const statusWhere =
+      !params.statuses || params.statuses.length === 0
         ? { in: [RaceStatus.ACTIVE, RaceStatus.IN_PROGRESS] }
-        : params.status
+        : { in: params.statuses }
     const where = {
-      status: statusFilter as never,
+      status: statusWhere as never,
       ...(params.search
         ? { title: { contains: params.search, mode: 'insensitive' as const } }
         : {}),
-      ...(params.format ? { format: params.format as never } : {}),
+      ...(params.formats && params.formats.length > 0
+        ? { format: { in: params.formats as never } }
+        : {}),
       ...(params.activityMode
         ? { activityMode: params.activityMode as never }
         : {}),

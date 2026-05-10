@@ -46,6 +46,16 @@ type MyRegistration = {
   registeredAt: Date
   totalTimeSeconds: number | null
   rank: number | null
+  heartRateAvg: number | null
+  heartRateMax: number | null
+  backyardLoops: {
+    loopNumber: number
+    status: string
+    timeSeconds: number | null
+    completedAt: Date | null
+    heartRateAvg: number | null
+    heartRateMax: number | null
+  }[]
 } | null
 
 type Props = {
@@ -397,6 +407,36 @@ export function RaceDetailView({
                     : ''}
                 </p>
               )}
+              {(() => {
+                // ONE_SHOT : HR stocké dans TrackCertification
+                if (myRegistration.heartRateAvg) {
+                  return (
+                    <p className="text-sm text-muted-foreground">
+                      FC moy. {myRegistration.heartRateAvg} bpm
+                      {myRegistration.heartRateMax
+                        ? ` · max ${myRegistration.heartRateMax} bpm`
+                        : ''}
+                    </p>
+                  )
+                }
+                // BACKYARD : HR stocké par boucle
+                const loopsWithHr = myRegistration.backyardLoops.filter(
+                  (l) => l.status === 'VALIDATED' && l.heartRateAvg
+                )
+                if (loopsWithHr.length === 0) return null
+                const avgHr = Math.round(
+                  loopsWithHr.reduce((s, l) => s + l.heartRateAvg!, 0) /
+                    loopsWithHr.length
+                )
+                const maxHr = Math.max(
+                  ...loopsWithHr.map((l) => l.heartRateMax ?? l.heartRateAvg!)
+                )
+                return (
+                  <p className="text-sm text-muted-foreground">
+                    FC moy. {avgHr} bpm · max {maxHr} bpm
+                  </p>
+                )
+              })()}
               {(['PENDING', 'REGISTERED'] as RegistrationStatus[]).includes(
                 myRegistration.status
               ) &&

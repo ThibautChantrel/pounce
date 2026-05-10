@@ -13,7 +13,17 @@ function activityTypeFromMode(mode: ActivityMode): string {
   return 'Other'
 }
 
-export async function certifyRaceRegistration(registrationId: string): Promise<{
+export async function certifyRaceRegistration(
+  registrationId: string,
+  manualMetrics?: {
+    avgSpeed?: number | null
+    maxSpeed?: number | null
+    heartRateAvg?: number | null
+    heartRateMax?: number | null
+    calories?: number | null
+    completedAt?: Date | null
+  }
+): Promise<{
   certifiedTrackId: string | null
   certifiedChallengeIds: string[]
 }> {
@@ -89,12 +99,15 @@ export async function certifyRaceRegistration(registrationId: string): Promise<{
       provider: 'race',
       activityId: registrationId,
       activityType: activityTypeFromMode(reg.race.activityMode),
-      avgSpeed,
-      maxSpeed: null,
+      avgSpeed: manualMetrics?.avgSpeed ?? avgSpeed,
+      maxSpeed: manualMetrics?.maxSpeed ?? null,
       totalTime: totalTimeSeconds,
       distance,
       elevationGain,
-      completedAt,
+      heartRateAvg: manualMetrics?.heartRateAvg ?? null,
+      heartRateMax: manualMetrics?.heartRateMax ?? null,
+      calories: manualMetrics?.calories ?? null,
+      completedAt: manualMetrics?.completedAt ?? completedAt,
     },
   })
 
@@ -109,9 +122,17 @@ export async function setRegistrationResult(
   registrationId: string,
   rank: number,
   totalTimeSeconds: number,
-  actorId: string
+  actorId: string,
+  manualMetrics?: {
+    avgSpeed?: number | null
+    maxSpeed?: number | null
+    heartRateAvg?: number | null
+    heartRateMax?: number | null
+    calories?: number | null
+    finishedAt?: Date | null
+  }
 ) {
-  const now = new Date()
+  const now = manualMetrics?.finishedAt ?? new Date()
 
   await db.raceRegistration.update({
     where: { id: registrationId },
@@ -126,5 +147,12 @@ export async function setRegistrationResult(
     },
   })
 
-  return certifyRaceRegistration(registrationId)
+  return certifyRaceRegistration(registrationId, {
+    avgSpeed: manualMetrics?.avgSpeed,
+    maxSpeed: manualMetrics?.maxSpeed,
+    heartRateAvg: manualMetrics?.heartRateAvg,
+    heartRateMax: manualMetrics?.heartRateMax,
+    calories: manualMetrics?.calories,
+    completedAt: manualMetrics?.finishedAt ?? null,
+  })
 }

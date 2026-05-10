@@ -63,13 +63,6 @@ export function RaceStatsCards({ race }: { race: RaceDetail }) {
           ).toFixed(1)
         : '—'
 
-    const bpmValues = allLoops
-      .filter((l) => l.heartRateAvg)
-      .map((l) => l.heartRateAvg!)
-    const avgBpm = bpmValues.length
-      ? Math.round(bpmValues.reduce((s, v) => s + v, 0) / bpmValues.length)
-      : null
-
     const avgTimes = allLoops
       .filter((l) => l.timeSeconds)
       .map((l) => l.timeSeconds!)
@@ -98,7 +91,6 @@ export function RaceStatsCards({ race }: { race: RaceDetail }) {
         <StatCard
           label="Temps moy. / boucle"
           value={avgLoop ? formatTime(avgLoop) : '—'}
-          sub={avgBpm ? `${avgBpm} bpm en moyenne` : undefined}
         />
       </div>
     )

@@ -121,9 +121,9 @@ export async function listPublicRacesAction(params: {
   skip?: number
   take?: number
   search?: string
-  format?: string
+  formats?: string[]
   activityMode?: string
-  status?: RaceStatus | 'all'
+  statuses?: RaceStatus[]
 }) {
   return raceService.listPublic(params)
 }
