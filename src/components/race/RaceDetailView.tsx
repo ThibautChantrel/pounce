@@ -34,6 +34,7 @@ import { TrackGpxMap } from '@/components/track/TrackGpxMap'
 import { RaceLeaderboardChart } from './RaceLeaderboardChart'
 import { RaceParticipantsTable } from './RaceParticipantsTable'
 import { RaceStatsSection } from './stats/RaceStatsSection'
+import { PersonalBpmChart } from './stats/PersonalBpmChart'
 import {
   registerForRaceAction,
   cancelRegistrationAction,
@@ -419,23 +420,12 @@ export function RaceDetailView({
                     </p>
                   )
                 }
-                // BACKYARD : HR stocké par boucle
+                // BACKYARD : graphe HR par boucle
                 const loopsWithHr = myRegistration.backyardLoops.filter(
                   (l) => l.status === 'VALIDATED' && l.heartRateAvg
                 )
                 if (loopsWithHr.length === 0) return null
-                const avgHr = Math.round(
-                  loopsWithHr.reduce((s, l) => s + l.heartRateAvg!, 0) /
-                    loopsWithHr.length
-                )
-                const maxHr = Math.max(
-                  ...loopsWithHr.map((l) => l.heartRateMax ?? l.heartRateAvg!)
-                )
-                return (
-                  <p className="text-sm text-muted-foreground">
-                    FC moy. {avgHr} bpm · max {maxHr} bpm
-                  </p>
-                )
+                return <PersonalBpmChart loops={loopsWithHr} />
               })()}
               {(['PENDING', 'REGISTERED'] as RegistrationStatus[]).includes(
                 myRegistration.status
