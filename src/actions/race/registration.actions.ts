@@ -207,3 +207,12 @@ export async function getMyRegistrationAction(raceId: string) {
     return null
   }
 }
+
+export async function listMyParticipationsAction() {
+  try {
+    const session = await getSession()
+    return registrationService.listForUser(session.user.id)
+  } catch {
+    return []
+  }
+}

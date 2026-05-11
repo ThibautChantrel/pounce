@@ -111,6 +111,44 @@ export const registrationService = {
     })
   },
 
+  async listForUser(userId: string) {
+    const regs = await db.raceRegistration.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        status: true,
+        rank: true,
+        totalTimeSeconds: true,
+        registeredAt: true,
+        backyardLoops: {
+          where: { status: 'VALIDATED' },
+          select: { id: true },
+        },
+        race: {
+          select: {
+            id: true,
+            title: true,
+            format: true,
+            status: true,
+            startAt: true,
+            bannerId: true,
+            track: { select: { title: true, distance: true } },
+          },
+        },
+      },
+      orderBy: { race: { startAt: 'desc' } },
+    })
+    return regs.map((r) => ({
+      id: r.id,
+      status: r.status,
+      rank: r.rank,
+      totalTimeSeconds: r.totalTimeSeconds,
+      registeredAt: r.registeredAt,
+      validatedLoopCount: r.backyardLoops.length,
+      race: r.race,
+    }))
+  },
+
   async getUserRegistration(raceId: string, userId: string) {
     const reg = await db.raceRegistration.findUnique({
       where: { raceId_userId: { raceId, userId } },

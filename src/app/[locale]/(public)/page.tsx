@@ -1,7 +1,6 @@
 import { Metadata } from 'next'
-import { ChallengeCarousel } from '@/components/challenge/ChallengeCaroussel'
-import { RaceCarousel } from '@/components/race/RaceCarousel'
 import Hero from '@/components/Hero'
+import { HomeTabs } from '@/components/HomeTabs'
 
 export async function generateMetadata({
   params,
@@ -38,9 +37,8 @@ export default function Home() {
     <main className="flex min-h-screen flex-col dark:bg-black">
       <Hero />
 
-      <div className="flex flex-col items-center gap-6 py-4 px-4">
-        <RaceCarousel />
-        <ChallengeCarousel />
+      <div className="flex flex-col items-center py-4 px-4 w-full">
+        <HomeTabs />
       </div>
     </main>
   )

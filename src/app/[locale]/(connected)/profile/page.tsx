@@ -7,6 +7,7 @@ import {
   fetchUserProfileStats,
   fetchUserUnmatchedActivities,
 } from '@/actions/user/user.certifications.actions'
+import { listMyParticipationsAction } from '@/actions/race/registration.actions'
 import { ProfileCertifications } from '@/components/profile/ProfileCertifications'
 import { UserUnmatchedActivities } from '@/components/profile/UserUnmatchedActivities'
 import ProfileClient from './ProfileClient'
@@ -15,14 +16,21 @@ export default async function ProfilePage() {
   const session = await auth()
   if (!session?.user?.id) notFound()
 
-  const [user, stravaStatus, profileStats, unmatchedActivities, unreadCerts] =
-    await Promise.all([
-      getOne(session.user.id),
-      getStravaStatusAction(),
-      fetchUserProfileStats(),
-      fetchUserUnmatchedActivities(),
-      fetchUnreadCertifications(),
-    ])
+  const [
+    user,
+    stravaStatus,
+    profileStats,
+    unmatchedActivities,
+    unreadCerts,
+    participations,
+  ] = await Promise.all([
+    getOne(session.user.id),
+    getStravaStatusAction(),
+    fetchUserProfileStats(),
+    fetchUserUnmatchedActivities(),
+    fetchUnreadCertifications(),
+    listMyParticipationsAction(),
+  ])
 
   if (!user) notFound()
 
@@ -36,6 +44,7 @@ export default async function ProfilePage() {
         completedChallenges={profileStats.completedChallenges}
         completedTracks={profileStats.completedTracks}
         inProgressChallenges={profileStats.inProgressChallenges}
+        participations={participations}
       />
       <UserUnmatchedActivities activities={unmatchedActivities} />
     </ProfileClient>
