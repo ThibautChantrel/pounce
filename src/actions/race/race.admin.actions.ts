@@ -10,6 +10,7 @@ import {
 import { RegistrationStatus, RaceStatus } from '@prisma/client'
 import { CreateRaceInput } from './race.types'
 import { setRegistrationResult } from '@/server/modules/race/race-certification.service'
+import { closeRace } from '@/server/modules/race/race-close.service'
 import db from '@/server/db'
 
 type ActionResponse = { success: boolean; error?: string; id?: string }
@@ -82,6 +83,11 @@ export async function adminUpdateRaceAction(
   try {
     await getAdminSession()
     await raceAdminService.updateRace(data)
+
+    if (data.status === RaceStatus.CLOSED) {
+      await closeRace(data.id)
+    }
+
     revalidatePath('/admin/races')
     revalidatePath(`/admin/races/${data.id}`)
     revalidatePath(`/races/${data.id}`)

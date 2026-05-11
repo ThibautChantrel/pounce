@@ -289,18 +289,35 @@ export function RaceDetailView({
           {/* Classement */}
           {race.registrations.filter((r) => r.rank).length > 0 &&
             (() => {
+              const isBackyard = race.format === RaceFormat.BACKYARD
+
               const ranked = race.registrations
-                .filter((r) => r.rank && r.totalTimeSeconds)
+                .filter((r) => {
+                  if (!r.rank) return false
+                  if (isBackyard) return true
+                  return r.totalTimeSeconds !== null
+                })
                 .sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99))
 
-              const chartData = ranked.map((r) => ({
-                name:
+              if (ranked.length === 0) return null
+
+              const chartData = ranked.map((r) => {
+                const name =
                   `${r.user.firstName ?? ''} ${r.user.lastName ?? ''}`.trim() ||
                   r.user.pseudo ||
-                  'Participant',
-                seconds: r.totalTimeSeconds ?? 0,
-                rank: r.rank ?? 0,
-              }))
+                  'Participant'
+                if (isBackyard) {
+                  const loopCount = r.backyardLoops.filter(
+                    (l) => l.status === 'VALIDATED'
+                  ).length
+                  return { name, value: loopCount, rank: r.rank ?? 0 }
+                }
+                return {
+                  name,
+                  value: r.totalTimeSeconds ?? 0,
+                  rank: r.rank ?? 0,
+                }
+              })
 
               return (
                 <div className="rounded-2xl border border-border p-5">
@@ -308,38 +325,50 @@ export function RaceDetailView({
                     <Trophy className="w-4 h-4" /> Classement
                   </h2>
                   <div className="mb-5">
-                    <RaceLeaderboardChart registrations={chartData} />
+                    <RaceLeaderboardChart
+                      registrations={chartData}
+                      mode={isBackyard ? 'loops' : 'time'}
+                    />
                   </div>
                   <div className="space-y-2 border-t border-border pt-4">
-                    {ranked.slice(0, 10).map((reg) => (
-                      <div
-                        key={reg.id}
-                        className="flex items-center gap-3 text-sm"
-                      >
-                        <span
-                          className={`w-6 text-center font-bold text-xs ${
-                            reg.rank === 1
-                              ? 'text-amber-500'
-                              : reg.rank === 2
-                                ? 'text-slate-400'
-                                : reg.rank === 3
-                                  ? 'text-amber-700'
-                                  : 'text-muted-foreground'
-                          }`}
+                    {ranked.slice(0, 10).map((reg) => {
+                      const loopCount = isBackyard
+                        ? reg.backyardLoops.filter(
+                            (l) => l.status === 'VALIDATED'
+                          ).length
+                        : null
+                      return (
+                        <div
+                          key={reg.id}
+                          className="flex items-center gap-3 text-sm"
                         >
-                          #{reg.rank}
-                        </span>
-                        <span className="flex-1 font-medium">
-                          {reg.user.firstName ?? ''} {reg.user.lastName ?? ''}{' '}
-                          {reg.user.pseudo ? `(${reg.user.pseudo})` : ''}
-                        </span>
-                        <span className="text-muted-foreground font-mono text-xs">
-                          {reg.totalTimeSeconds
-                            ? formatTime(reg.totalTimeSeconds)
-                            : '—'}
-                        </span>
-                      </div>
-                    ))}
+                          <span
+                            className={`w-6 text-center font-bold text-xs ${
+                              reg.rank === 1
+                                ? 'text-amber-500'
+                                : reg.rank === 2
+                                  ? 'text-slate-400'
+                                  : reg.rank === 3
+                                    ? 'text-amber-700'
+                                    : 'text-muted-foreground'
+                            }`}
+                          >
+                            #{reg.rank}
+                          </span>
+                          <span className="flex-1 font-medium">
+                            {reg.user.firstName ?? ''} {reg.user.lastName ?? ''}{' '}
+                            {reg.user.pseudo ? `(${reg.user.pseudo})` : ''}
+                          </span>
+                          <span className="text-muted-foreground font-mono text-xs">
+                            {isBackyard
+                              ? `${loopCount} boucle${loopCount !== 1 ? 's' : ''}`
+                              : reg.totalTimeSeconds
+                                ? formatTime(reg.totalTimeSeconds)
+                                : '—'}
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
               )

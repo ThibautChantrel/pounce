@@ -12,12 +12,13 @@ import {
 
 type Entry = {
   name: string
-  seconds: number
+  value: number
   rank: number
 }
 
 type Props = {
   registrations: Entry[]
+  mode?: 'time' | 'loops'
 }
 
 function formatSeconds(s: number) {
@@ -35,15 +36,17 @@ function formatSecondsShort(s: number) {
 
 const PODIUM_COLORS = ['#f59e0b', '#94a3b8', '#b45309']
 
-export function RaceLeaderboardChart({ registrations }: Props) {
+export function RaceLeaderboardChart({ registrations, mode = 'time' }: Props) {
+  const isLoops = mode === 'loops'
+
   const data = registrations
-    .filter((r) => r.seconds > 0)
-    .sort((a, b) => a.seconds - b.seconds)
+    .filter((r) => r.value > 0)
+    .sort((a, b) => (isLoops ? b.value - a.value : a.value - b.value))
     .slice(0, 20)
     .map((r) => ({
       name: r.name.length > 16 ? r.name.slice(0, 14) + '…' : r.name,
       fullName: r.name,
-      seconds: r.seconds,
+      value: r.value,
       rank: r.rank,
     }))
 
@@ -59,8 +62,8 @@ export function RaceLeaderboardChart({ registrations }: Props) {
       >
         <XAxis
           type="number"
-          dataKey="seconds"
-          tickFormatter={formatSecondsShort}
+          dataKey="value"
+          tickFormatter={isLoops ? (v) => `${v}` : formatSecondsShort}
           tick={{ fontSize: 11, fill: '#94a3b8' }}
           axisLine={false}
           tickLine={false}
@@ -78,17 +81,20 @@ export function RaceLeaderboardChart({ registrations }: Props) {
           content={({ active, payload }) => {
             if (!active || !payload?.length) return null
             const d = payload[0].payload
+            const label = isLoops
+              ? `${d.value} boucle${d.value > 1 ? 's' : ''}`
+              : formatSeconds(d.value)
             return (
               <div className="bg-popover border border-border rounded-lg px-3 py-2 text-xs shadow-md">
                 <p className="font-semibold text-foreground">{d.fullName}</p>
                 <p className="text-muted-foreground">
-                  #{d.rank} — {formatSeconds(d.seconds)}
+                  #{d.rank} — {label}
                 </p>
               </div>
             )
           }}
         />
-        <Bar dataKey="seconds" radius={4} maxBarSize={20}>
+        <Bar dataKey="value" radius={4} maxBarSize={20}>
           {data.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
