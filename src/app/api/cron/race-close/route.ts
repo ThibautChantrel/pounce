@@ -3,7 +3,7 @@ import db from '@/server/db'
 import { RaceStatus } from '@prisma/client'
 import { fetchStravaAthleteActivities } from '@/server/modules/strava/strava.client'
 import { processStravaActivity } from '@/server/modules/strava/certification.service'
-import { closeRacesIfDue } from '@/server/modules/race/race-close.service'
+import { closeRacesDue } from '@/server/modules/race/race-lifecycle.service'
 
 const CRON_SECRET = process.env.CRON_SECRET
 
@@ -13,22 +13,20 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { closed, certifications } = await closeRacesIfDue()
+  const { closed, certifications } = await closeRacesDue()
 
   if (closed === 0) {
     return NextResponse.json({ closed: 0, message: 'Nothing to close' })
   }
 
-  // Sync Strava finale pour tous les participants des courses fermées
+  // Sync Strava finale pour les participants des courses clôturées
   const DEFAULT_AFTER_UNIX = Math.floor(
     new Date('2026-01-01T00:00:00Z').getTime() / 1000
   )
 
   const closedRaces = await db.race.findMany({
     where: { status: RaceStatus.CLOSED },
-    select: {
-      registrations: { select: { userId: true } },
-    },
+    select: { registrations: { select: { userId: true } } },
   })
 
   let totalSyncedActivities = 0

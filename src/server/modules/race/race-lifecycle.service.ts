@@ -6,8 +6,42 @@ import {
   RegistrationStatus,
 } from '@prisma/client'
 import { certifyRaceRegistration } from './race-certification.service'
+import {
+  recalculateBackyardRanks,
+  recalculateRaceRanks,
+} from './race-result.service'
 
-export async function closeRace(raceId: string): Promise<{
+// ─── ACTIVE → IN_PROGRESS ────────────────────────────────────────────────
+
+export async function onRaceStarted(_raceId: string): Promise<void> {
+  // Hook pour les effets de bord au démarrage (Strava sync initial, notifications…)
+}
+
+export async function startRacesDue(): Promise<{ started: number }> {
+  const now = new Date()
+  const races = await db.race.findMany({
+    where: {
+      status: RaceStatus.ACTIVE,
+      startAt: { lte: now },
+      endAt: { gt: now },
+    },
+    select: { id: true },
+  })
+
+  for (const race of races) {
+    await db.race.update({
+      where: { id: race.id },
+      data: { status: RaceStatus.IN_PROGRESS },
+    })
+    await onRaceStarted(race.id)
+  }
+
+  return { started: races.length }
+}
+
+// ─── IN_PROGRESS → CLOSED ────────────────────────────────────────────────
+
+export async function onRaceClosed(raceId: string): Promise<{
   certifications: number
 }> {
   const race = await db.race.findUnique({
@@ -15,11 +49,14 @@ export async function closeRace(raceId: string): Promise<{
     select: {
       id: true,
       format: true,
-      status: true,
       registrations: {
         where: {
           status: {
-            in: [RegistrationStatus.REGISTERED, RegistrationStatus.VALIDATED],
+            in: [
+              RegistrationStatus.REGISTERED,
+              RegistrationStatus.VALIDATED,
+              RegistrationStatus.DNF,
+            ],
           },
         },
         select: {
@@ -38,6 +75,13 @@ export async function closeRace(raceId: string): Promise<{
 
   if (!race) return { certifications: 0 }
 
+  // Recalcul des classements avant certification
+  if (race.format === RaceFormat.BACKYARD) {
+    await recalculateBackyardRanks(raceId)
+  } else {
+    await recalculateRaceRanks(raceId)
+  }
+
   let totalCertifications = 0
 
   for (const reg of race.registrations) {
@@ -49,8 +93,7 @@ export async function closeRace(raceId: string): Promise<{
 
     if (!shouldCertify) continue
 
-    // En backyard : les participants encore REGISTERED à la clôture
-    // (jamais DNF) passent VALIDATED avant certification
+    // En backyard : les participants encore REGISTERED à la clôture passent VALIDATED
     if (
       race.format === RaceFormat.BACKYARD &&
       reg.status === RegistrationStatus.REGISTERED
@@ -72,27 +115,27 @@ export async function closeRace(raceId: string): Promise<{
   return { certifications: totalCertifications }
 }
 
-export async function closeRacesIfDue(): Promise<{
+export async function closeRacesDue(): Promise<{
   closed: number
   certifications: number
 }> {
   const now = new Date()
-  const racesToClose = await db.race.findMany({
+  const races = await db.race.findMany({
     where: { status: RaceStatus.IN_PROGRESS, endAt: { lte: now } },
     select: { id: true },
   })
 
-  if (racesToClose.length === 0) return { closed: 0, certifications: 0 }
+  if (races.length === 0) return { closed: 0, certifications: 0 }
 
   let totalCertifications = 0
-  for (const race of racesToClose) {
+  for (const race of races) {
     await db.race.update({
       where: { id: race.id },
       data: { status: RaceStatus.CLOSED },
     })
-    const result = await closeRace(race.id)
+    const result = await onRaceClosed(race.id)
     totalCertifications += result.certifications
   }
 
-  return { closed: racesToClose.length, certifications: totalCertifications }
+  return { closed: races.length, certifications: totalCertifications }
 }
