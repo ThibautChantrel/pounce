@@ -3,6 +3,7 @@ import db from '@/server/db'
 import { fetchStravaActivity } from './strava.client'
 import { matchActivityToTrack } from './track-matching.service'
 import { SyncActivityLog, SyncMatchedTrack } from './sync-log.types'
+import { updateRaceFromStravaMatch } from '../race/race-result.service'
 
 const RUN_TYPES = new Set(['Run', 'TrailRun', 'VirtualRun', 'Hike', 'Walk'])
 const RIDE_TYPES = new Set([
@@ -99,7 +100,12 @@ export async function processStravaActivity(
     )
 
   const tracks = await db.track.findMany({
-    where: { visible: true, gpxFileId: { not: null } },
+    where: {
+      visible: true,
+      gpxFileId: { not: null },
+      // Ne certifier via Strava que les parcours rattachés à un challenge.
+      challenges: { some: {} },
+    },
     include: { gpxFile: true },
   })
 
@@ -157,6 +163,7 @@ export async function processStravaActivity(
     })
 
     certifiedTrackIds.push(track.id)
+    await updateRaceFromStravaMatch(userId, track.id, activity)
     matchedTracks.push({
       trackId: track.id,
       trackTitle: track.title,
@@ -191,7 +198,7 @@ export async function processStravaActivity(
   }
 }
 
-async function checkAndCertifyChallenges(
+export async function checkAndCertifyChallenges(
   userId: string,
   newlyCompletedTrackIds: string[]
 ): Promise<string[]> {

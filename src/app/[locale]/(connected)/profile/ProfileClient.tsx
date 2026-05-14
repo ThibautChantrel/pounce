@@ -8,6 +8,9 @@ import {
   RefreshCw,
   CheckCircle2,
   Info,
+  Flag,
+  ChevronRight,
+  AlertTriangle,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +18,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { logoutAction } from '@/actions/auth/auth.actions'
 import { manualResyncAction } from '@/actions/strava/strava.actions'
 import {
@@ -22,6 +35,7 @@ import {
   markCertificationsAsRead,
 } from '@/actions/user/user.certifications.actions'
 import { useTranslations } from 'next-intl'
+import { Link } from '@/navigation'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { CertificationCelebration } from '@/components/profile/CertificationCelebration'
@@ -95,6 +109,7 @@ export default function ProfileClient({
 
   const [isSyncing, setIsSyncing] = useState(false)
   const [canResync, setCanResync] = useState(stravaStatus.canResync)
+  const [showStravaConfirm, setShowStravaConfirm] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
   const [celebrationTracks, setCelebrationTracks] = useState<string[]>([])
   const [celebrationChallenges, setCelebrationChallenges] = useState<string[]>(
@@ -219,6 +234,68 @@ export default function ProfileClient({
 
   return (
     <>
+      <AlertDialog open={showStravaConfirm} onOpenChange={setShowStravaConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-orange-500 shrink-0" />
+              Lier ton compte Strava
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  Avant de continuer, assure-toi de bien comprendre les
+                  conditions de cette liaison :
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-500 font-bold mt-0.5 shrink-0">
+                      •
+                    </span>
+                    <span>
+                      <strong className="text-foreground">
+                        Un seul compte Strava
+                      </strong>{' '}
+                      peut être lié à ton profil.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-500 font-bold mt-0.5 shrink-0">
+                      •
+                    </span>
+                    <span>
+                      Cette liaison est{' '}
+                      <strong className="text-foreground">permanente</strong> —
+                      elle ne peut pas être modifiée ou supprimée.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-orange-500 font-bold mt-0.5 shrink-0">
+                      •
+                    </span>
+                    <span>
+                      Tes activités Strava seront utilisées pour valider
+                      automatiquement tes participations aux courses.
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                window.location.href = '/api/strava/connect'
+              }}
+            >
+              <Activity className="w-4 h-4 mr-1.5" />
+              Lier Strava
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <CertificationCelebration
         open={showCelebration}
         trackTitles={celebrationTracks}
@@ -398,9 +475,7 @@ export default function ProfileClient({
                 </span>
                 <Button
                   className="rounded-full self-start sm:self-auto shrink-0"
-                  onClick={() => {
-                    window.location.href = '/api/strava/connect'
-                  }}
+                  onClick={() => setShowStravaConfirm(true)}
                 >
                   <Activity className="w-4 h-4 mr-1.5" />
                   {t('stravaConnectBtn')}
@@ -409,6 +484,25 @@ export default function ProfileClient({
             )}
           </div>
         </div>
+
+        {/* Races link */}
+        <Link
+          href="/profile/races"
+          className="rounded-2xl bg-card border border-border p-5 flex items-center gap-4 hover:bg-muted/50 transition-colors"
+        >
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <Flag className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground">
+              Mes courses organisées
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Gérer vos courses, participants et résultats
+            </p>
+          </div>
+          <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+        </Link>
 
         {/* Certifications sections */}
         {children}

@@ -1,0 +1,536 @@
+# Module Race — Documentation technique
+
+## Table des matières
+
+1. [Vue d'ensemble](#1-vue-densemble)
+2. [Modèles de données](#2-modèles-de-données)
+3. [Cycle de vie d'une course](#3-cycle-de-vie-dune-course)
+4. [Inscription et contrôle d'accès](#4-inscription-et-contrôle-daccès)
+5. [Compétition ouverte (ONE_SHOT + PUBLIC_FREE)](#5-compétition-ouverte-one_shot--public_free)
+6. [Résultats et classement](#6-résultats-et-classement)
+7. [Format Backyard Ultra](#7-format-backyard-ultra)
+8. [Intégration Strava](#8-intégration-strava)
+9. [Certification des parcours](#9-certification-des-parcours)
+10. [Crons automatiques](#10-crons-automatiques)
+11. [Statistiques et graphiques](#11-statistiques-et-graphiques)
+12. [Architecture technique](#12-architecture-technique)
+13. [Interfaces utilisateur](#13-interfaces-utilisateur)
+
+---
+
+## 1. Vue d'ensemble
+
+Le module Race permet d'organiser et de gérer des courses de trail et ultra-trail. Deux formats sont supportés :
+
+- **ONE_SHOT** — course classique point-à-point ou boucle unique ; le résultat est un temps final.
+- **BACKYARD** — format Backyard Ultra où les coureurs complètent des boucles répétées à interval régulier jusqu'à ce qu'ils abandonnent ou manquent le départ d'une boucle.
+
+Les résultats sont alimentés automatiquement via l'API Strava dès qu'un participant synchronise une activité correspondant au parcours de la course. Une saisie manuelle par l'organisateur est également disponible.
+
+**Cas particulier — Compétition ouverte :** une course `ONE_SHOT + PUBLIC_FREE` est une compétition ouverte : aucune inscription manuelle requise, tous les coureurs Strava qui valident le parcours sont automatiquement intégrés au classement.
+
+---
+
+## 2. Modèles de données
+
+### Race
+
+| Champ                 | Type             | Description                                                        |
+| --------------------- | ---------------- | ------------------------------------------------------------------ |
+| `id`                  | string (cuid)    | Identifiant                                                        |
+| `title`               | string           | Nom de la course                                                   |
+| `description`         | string?          | Description libre                                                  |
+| `format`              | `RaceFormat`     | ONE_SHOT ou BACKYARD                                               |
+| `activityMode`        | `ActivityMode`   | RUN, RIDE, HYBRID, OTHER                                           |
+| `accessType`          | `RaceAccessType` | PUBLIC_FREE, PUBLIC_VALIDATION, PRIVATE                            |
+| `accessCode`          | string?          | Code d'accès pour les courses PRIVATE                              |
+| `maxParticipants`     | int?             | Plafond d'inscriptions (null = illimité)                           |
+| `startAt` / `endAt`   | DateTime         | Fenêtre temporelle de la course                                    |
+| `loopDurationMinutes` | int?             | Durée d'une boucle en minutes (BACKYARD uniquement)                |
+| `status`              | `RaceStatus`     | DRAFT → PENDING_REVIEW → ACTIVE → IN_PROGRESS → CLOSED / CANCELLED |
+| `trackId`             | string           | Parcours GPX associé                                               |
+| `logoId` / `bannerId` | string?          | Fichiers visuels (via `/api/files/:id`)                            |
+| `organizerId`         | string           | Créateur de la course                                              |
+
+### RaceRegistration
+
+| Champ              | Type                 | Description                         |
+| ------------------ | -------------------- | ----------------------------------- |
+| `status`           | `RegistrationStatus` | Voir ci-dessous                     |
+| `totalTimeSeconds` | int?                 | Temps final en secondes (ONE_SHOT)  |
+| `rank`             | int?                 | Classement calculé automatiquement  |
+| `stravaActivityId` | string?              | ID de l'activité Strava source      |
+| `validationSource` | `ValidationSource`   | AUTO (Strava) ou ORGANIZER (manuel) |
+| `finishedAt`       | DateTime?            | Heure d'arrivée calculée            |
+
+**Statuts d'inscription :**
+
+| Statut         | Signification                                                   |
+| -------------- | --------------------------------------------------------------- |
+| `PENDING`      | En attente de validation par l'organisateur (PUBLIC_VALIDATION) |
+| `REGISTERED`   | Inscrit confirmé, pas encore de résultat                        |
+| `VALIDATED`    | Résultat enregistré et validé                                   |
+| `DNF`          | Did Not Finish — abandon en cours de course                     |
+| `DNS`          | Did Not Start — non-partant                                     |
+| `DISQUALIFIED` | Disqualifié (motif obligatoire)                                 |
+
+**Contrainte d'unicité :** un utilisateur ne peut avoir qu'une seule inscription par course (`raceId_userId`).
+
+### BackyardLoop
+
+| Champ              | Type               | Description                    |
+| ------------------ | ------------------ | ------------------------------ |
+| `loopNumber`       | int                | Numéro séquentiel de la boucle |
+| `status`           | `LoopStatus`       | PENDING, VALIDATED, MISSED     |
+| `timeSeconds`      | int?               | Durée de la boucle             |
+| `avgSpeed`         | float?             | Vitesse moyenne (km/h)         |
+| `heartRateAvg`     | int?               | Fréquence cardiaque moyenne    |
+| `heartRateMax`     | int?               | Fréquence cardiaque maximale   |
+| `startedAt`        | DateTime?          | Début de la boucle             |
+| `completedAt`      | DateTime?          | Fin de la boucle               |
+| `validationSource` | `ValidationSource` | AUTO ou ORGANIZER              |
+
+**Contrainte d'unicité :** `registrationId_loopNumber`.
+
+---
+
+## 3. Cycle de vie d'une course
+
+```
+Créée par un utilisateur → DRAFT
+     ↓ (soumission)
+PENDING_REVIEW  → (admin rejette) → CANCELLED
+     ↓ (admin valide)
+ACTIVE  ←── inscriptions ouvertes, Strava ne match pas encore
+     ↓ (startAt atteint, cron race-start s'exécute)
+IN_PROGRESS ←── course en cours, Strava matche les activités, plus d'inscriptions
+     ↓ (endAt atteint, cron race-close s'exécute)
+CLOSED ←── certification finale + sync Strava de clôture
+
+Créée par un admin → directement ACTIVE (pas de validation nécessaire)
+```
+
+**Transition ACTIVE → IN_PROGRESS (cron `/api/cron/race-start`) :**
+
+- Toutes les races ACTIVE dont `startAt ≤ now` et `endAt > now` passent en `IN_PROGRESS`.
+
+**Transition IN_PROGRESS → CLOSED (cron `/api/cron/race-close`) :**
+
+1. Toutes les races IN_PROGRESS dont `endAt ≤ now` sont fermées.
+2. Pour chaque course fermée :
+   - Les inscriptions VALIDATED déclenchent une certification de parcours.
+   - Un sync Strava final est lancé pour tous les participants ayant un compte Strava connecté.
+
+### Règles de validation à la création
+
+- **Date de début** : ne peut pas être dans le passé.
+- **Date de fin** : doit être postérieure à la date de début.
+- **BACKYARD** : `(endAt - startAt)` doit être un multiple exact de `loopDurationMinutes`. Le formulaire affiche en temps réel le nombre de boucles calculé ou un avertissement si le format ne colle pas.
+
+---
+
+## 4. Inscription et contrôle d'accès
+
+### Prérequis pour s'inscrire
+
+Avant de pouvoir s'inscrire à une course, l'utilisateur doit :
+
+1. Avoir **vérifié son adresse email** (`User.isVerified = true`) — sinon un message l'invite à le faire depuis son profil.
+2. Avoir **connecté son compte Strava** (`Account` avec `provider = 'strava'`) — sinon un message l'invite à le faire depuis son profil.
+
+Ces deux conditions s'appliquent uniquement aux courses avec inscription explicite. Les compétitions ouvertes (voir section 5) n'ont pas ce prérequis côté UI, mais Strava reste nécessaire pour apparaître au classement.
+
+### Types d'accès
+
+| `accessType`        | Comportement à l'inscription                                                   |
+| ------------------- | ------------------------------------------------------------------------------ |
+| `PUBLIC_FREE`       | Inscription immédiate → statut `REGISTERED`                                    |
+| `PUBLIC_VALIDATION` | Inscription en attente → statut `PENDING` jusqu'à validation de l'organisateur |
+| `PRIVATE`           | Inscription avec code d'accès requis → `REGISTERED` si code correct            |
+
+### Règles de validation (service)
+
+1. La course doit être `ACTIVE` (les inscriptions ferment dès le passage en `IN_PROGRESS`).
+2. Les courses `ONE_SHOT + PUBLIC_FREE` refusent toute inscription manuelle (`open_race_no_manual_registration`) — l'entrée se fait uniquement via Strava.
+3. Si `maxParticipants` est défini : `registrationCount < maxParticipants`.
+4. Pas de double inscription (`raceId_userId` unique).
+5. Pour PRIVATE : `accessCode` fourni doit correspondre à `race.accessCode` (comparaison exacte).
+
+### Flux d'inscription PUBLIC_VALIDATION
+
+```
+Utilisateur clique "Demander à s'inscrire"
+     ↓
+Statut PENDING créé
+     ↓
+L'organisateur voit l'inscription dans son dashboard
+     ↓
+Organisateur clique ✓ → statut passe à REGISTERED
+```
+
+### Annulation
+
+Un participant peut annuler son inscription tant que le statut est `PENDING` ou `REGISTERED`. Une inscription `VALIDATED` ne peut pas être annulée (la course est terminée ou le résultat est enregistré).
+
+---
+
+## 5. Compétition ouverte (ONE_SHOT + PUBLIC_FREE)
+
+Une course avec `format = ONE_SHOT` et `accessType = PUBLIC_FREE` est traitée comme une **compétition ouverte** (classement permanent et sans inscription).
+
+### Comportement
+
+- **Aucune inscription manuelle** : le bouton "S'inscrire" est remplacé par une explication du fonctionnement. Toute tentative d'inscription manuelle via le service est rejetée.
+- **Auto-inscription via Strava** : lorsqu'une activité Strava est synchronisée et correspond au parcours de la course, si l'utilisateur n'est pas encore inscrit, une inscription `REGISTERED` est créée automatiquement avant d'enregistrer le résultat.
+- **Classement en temps réel** : tous les coureurs ayant un compte Strava connecté et ayant réalisé le parcours apparaissent automatiquement au classement.
+
+### Affichage
+
+- Badge **"Compétitif"** (icône Globe) sur les cartes de course dans la liste.
+- Badge **"Compétition ouverte"** sur la page de détail.
+- Sidebar dédiée expliquant le fonctionnement + avertissement si Strava n'est pas connecté.
+
+---
+
+## 6. Résultats et classement
+
+### Format ONE_SHOT
+
+#### Via Strava (automatique)
+
+Dès qu'une activité Strava est synchronisée et que son tracé correspond au parcours de la course (via l'algorithme de matching GPX/polyline), le service `updateRaceFromStravaMatch` :
+
+1. Vérifie que l'utilisateur est inscrit et que la course est **IN_PROGRESS**.
+2. Pour les compétitions ouvertes (ONE_SHOT + PUBLIC_FREE) : crée l'inscription si elle n'existe pas.
+3. Ignore les inscriptions DNF/DNS/DISQUALIFIED.
+4. Si aucun `totalTimeSeconds` n'existe ou si le nouveau temps est **meilleur** (plus rapide) : met à jour la registration.
+5. Calcule `finishedAt = startDate + movingTime`.
+6. Passe le statut à `VALIDATED` avec `validationSource = AUTO`.
+7. Appelle `recalculateRaceRanks()`.
+
+**Règle du meilleur temps** : si un participant effectue plusieurs activités correspondant au parcours, seul le meilleur temps est conservé.
+
+#### Via saisie manuelle (organisateur)
+
+L'organisateur saisit rang + temps (format `HH:MM:SS`) dans le tableau des participants. L'action `setRaceResultAction` :
+
+1. Vérifie que l'appelant est organisateur ou admin.
+2. Appelle `setRegistrationResult()` → statut `VALIDATED`, source `ORGANIZER`.
+3. Déclenche la certification du parcours.
+
+#### Algorithme de classement
+
+```typescript
+// recalculateRaceRanks(raceId)
+// 1. Récupère toutes les registrations VALIDATED avec totalTimeSeconds != null
+// 2. Les trie par totalTimeSeconds ASC
+// 3. Attribue rank = index + 1 (1er, 2ème, 3ème...)
+// 4. Met à jour en parallèle avec Promise.all()
+```
+
+Le classement est recalculé à chaque nouveau résultat Strava entrant, garantissant un classement en temps réel pendant la course.
+
+---
+
+## 7. Format Backyard Ultra
+
+### Principe
+
+Les participants complètent des boucles de durée fixe (`loopDurationMinutes`, typiquement 60 min) en boucle. Chaque boucle doit être commencée avant la fin de la précédente. Le dernier à terminer une boucle quand tous les autres ont abandonné gagne.
+
+### Gestion des boucles
+
+Chaque boucle complétée via Strava crée un `BackyardLoop` :
+
+```
+loopNumber = nombre de boucles VALIDATED existantes + 1
+startedAt = start_date de l'activité Strava
+completedAt = startedAt + movingTime
+timeSeconds = movingTime Strava
+avgSpeed = average_speed * 3.6
+heartRateAvg / heartRateMax = données cardiaques si disponibles dans l'activité
+status = VALIDATED
+validationSource = AUTO
+```
+
+**Protection contre les doublons** : si une `BackyardLoop` avec le même `(registrationId, loopNumber)` existe déjà, l'activité est ignorée.
+
+### Auto-DNF (cron `/api/cron/backyard-dnf`)
+
+Le cron s'exécute chaque minute sur les courses **IN_PROGRESS** et vérifie les boucles en statut `PENDING` dont la deadline est dépassée :
+
+```
+deadline = loopStartedAt + loopDurationMinutes
+         = startedAt (si explicite) OU race.startAt + (loopNumber - 1) * loopDurationMinutes
+
+si deadline <= now:
+    loop.status → MISSED
+    registration.status → DNF
+    registration.statusReason → "Loop X non complété dans les temps"
+```
+
+---
+
+## 8. Intégration Strava
+
+### Liaison du compte Strava
+
+Depuis la page profil, le bouton "Connecter Strava" ouvre un **dialog de confirmation** avant de rediriger vers l'OAuth Strava. Ce dialog précise :
+
+- Un seul compte Strava peut être lié par profil.
+- Cette liaison est **permanente** et ne peut pas être supprimée.
+- Les activités Strava seront utilisées pour valider les participations.
+
+### Sync automatique (webhook / sync manuelle)
+
+**Important** : la synchro Strava ne matche des courses que lorsqu'elles sont en statut **IN_PROGRESS**. Les activités enregistrées pendant la phase ACTIVE (avant le départ) ne sont pas prises en compte par les crons de course.
+
+Le flux de certification Strava (`processStravaActivity`) est le point d'entrée principal :
+
+```
+processStravaActivity(userId, stravaActivityId)
+     ↓
+fetchStravaActivity → activité Strava complète
+     ↓
+Vérifie la polyline (summary_polyline) de la carte
+     ↓
+Pour chaque Track visible avec un fichier GPX :
+    matchActivityToTrack(polyline, gpxString)
+         ↓ si matched
+    Crée TrackCertification (provider='strava')
+    updateRaceFromStravaMatch(userId, trackId, activity) ← hook race
+         ↓
+Vérifie et certifie les défis (checkAndCertifyChallenges)
+```
+
+### Sync manuelle (organisateur)
+
+Le bouton **ManualRaceSyncButton** déclenche `manualSyncRaceStravaAction` :
+
+1. Récupère tous les comptes Strava des participants.
+2. Pour chaque compte, récupère les activités depuis la dernière certification.
+3. Lance `processStravaActivity` pour chaque activité.
+4. Retourne `{ syncedActivities, syncedUsers }`.
+
+**Utilité** : si un participant a synchronisé son activité avant de s'inscrire à la course, la sync manuelle permet de rattraper le résultat.
+
+### Arbitrage (comparaison trace)
+
+L'organisateur peut ouvrir un dialog d'arbitrage pour comparer visuellement la trace Strava d'un participant avec le parcours officiel GPX :
+
+```
+GET /api/races/:raceId/arbitrage/:registrationId
+     ↓
+Vérifie que l'appelant est organisateur ou admin
+     ↓
+Récupère l'activité Strava (registration.stravaActivityId)
+Décode la polyline → activityPoints[]
+Parse le GPX du parcours → referencePoints[]
+     ↓
+Retourne { userName, activityName, activityPoints, referencePoints }
+```
+
+La carte affiche :
+
+- **Bleu** : parcours officiel GPX
+- **Orange** : trace Strava du participant
+
+---
+
+## 9. Certification des parcours
+
+Quand un résultat de course est validé (Strava ou manuel), `certifyRaceRegistration` crée une `TrackCertification` spécifique à la course :
+
+```typescript
+TrackCertification.create({
+  provider: 'race',
+  activityId: registrationId,   // clé unique pour éviter les doublons
+  trackId: race.trackId,
+  userId,
+  totalTime: totalTimeSeconds,
+  avgSpeed: distance / (totalTimeSeconds / 3600),  // km/h
+  completedAt: finishedAt ?? validatedAt,
+  ...
+})
+```
+
+Ensuite, `checkAndCertifyChallenges` vérifie si le parcours certifié complète des défis (challenges) pour l'utilisateur.
+
+**Idempotence** : la certification est ignorée si une `TrackCertification` avec `(provider='race', activityId=registrationId)` existe déjà.
+
+---
+
+## 10. Crons automatiques
+
+Configurés dans [vercel.json](../vercel.json) et sécurisés par le header `Authorization: Bearer ${CRON_SECRET}`.
+
+| Route                    | Schedule       | Action                                                                                       |
+| ------------------------ | -------------- | -------------------------------------------------------------------------------------------- |
+| `/api/cron/race-start`   | `* * * * *`    | Passe les courses ACTIVE → IN_PROGRESS quand `startAt ≤ now`                                 |
+| `/api/cron/race-close`   | `*/15 * * * *` | Ferme les courses IN_PROGRESS dont `endAt` est dépassé + sync Strava finale + certifications |
+| `/api/cron/backyard-dnf` | `* * * * *`    | Marque les boucles expirées MISSED + DNF les participants (courses IN_PROGRESS)              |
+
+---
+
+## 11. Statistiques et graphiques
+
+La section statistiques (`RaceStatsSection`) s'affiche sur la page publique d'une course dès qu'il y a au moins un participant.
+
+### Format ONE_SHOT
+
+**KPI cards :**
+
+- Inscrits / Finishers (avec taux de finition %) / Temps moyen / Temps médian / Écart 1er–dernier
+- Compteurs DNF, DNS, DQ
+
+**Graphiques :**
+
+- Donut `RaceCompletionPie` — répartition des statuts (VALIDATED, REGISTERED, PENDING, DNF, DNS, DQ)
+- `OneShotSpeedChart` — barres horizontales avec vitesse par participant (km/h), ligne de moyenne, podium coloré or/argent/bronze
+
+### Format BACKYARD
+
+**KPI cards :**
+
+- Participants / Encore en course (% survie) / Boucles max / Moy. boucles / Temps moy. par boucle
+- BPM moyen (si données cardiaques disponibles)
+
+**Graphiques :**
+
+- `BackyardSurvivalChart` — courbe de survie (nb participants par boucle), AreaChart avec gradient
+- `BackyardAvgLoopChart` — temps moyen par boucle toutes catégories confondues, BarChart
+- `BackyardLoopTimesChart` (mode `time`) — évolution des temps de boucle par participant, LineChart multi-lignes
+- `BackyardLoopTimesChart` (mode `speed`) — évolution des vitesses par participant
+- `BackyardLoopTimesChart` (mode `bpm`) — évolution du BPM par participant (affiché uniquement si au moins une boucle a des données cardiaques)
+
+Tous les graphiques utilisent `hsl(var(--primary))` comme couleur principale pour rester cohérents avec le thème de l'application.
+
+---
+
+## 12. Architecture technique
+
+### Couches
+
+```
+Page (RSC)
+  ↓ appelle
+Server Action (src/actions/race/)
+  ↓ appelle
+Service (src/server/modules/race/)
+  ↓ appelle
+Prisma DB (db)
+```
+
+### Fichiers clés
+
+| Fichier                                                                                   | Rôle                                                                                      |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [race.service.ts](../src/server/modules/race/race.service.ts)                             | CRUD courses, liste publique/admin/organisateur                                           |
+| [race-result.service.ts](../src/server/modules/race/race-result.service.ts)               | Mise à jour résultats depuis Strava + classement + auto-inscription compétitions ouvertes |
+| [race-certification.service.ts](../src/server/modules/race/race-certification.service.ts) | Certification parcours depuis résultat de course                                          |
+| [registration.service.ts](../src/server/modules/race/registration.service.ts)             | Inscription, annulation, validation, changements de statut                                |
+| [race.actions.ts](../src/actions/race/race.actions.ts)                                    | Server actions CRUD + sync manuelle Strava                                                |
+| [registration.actions.ts](../src/actions/race/registration.actions.ts)                    | Server actions inscriptions, statuts, résultats                                           |
+| [race.types.ts](../src/actions/race/race.types.ts)                                        | Types TypeScript partagés (RaceDetail, RegistrationSummary…)                              |
+| [certification.service.ts](../src/server/modules/strava/certification.service.ts)         | Traitement activité Strava → certification parcours + hook race                           |
+
+### Routing des pages
+
+| URL                 | Rôle                                                                | Auth                    |
+| ------------------- | ------------------------------------------------------------------- | ----------------------- |
+| `/`                 | Homepage avec carousel des courses ACTIVE + IN_PROGRESS (filtrable) | Public                  |
+| `/races/:id`        | Détail course + classement + inscription                            | Public                  |
+| `/races/:id/manage` | Panel admin organisateur (participants + édition)                   | Connecté (organisateur) |
+| `/races/create`     | Formulaire de création                                              | Connecté                |
+| `/profile/races`    | Dashboard organisateur                                              | Connecté                |
+| `/admin/races`      | Liste admin avec filtres                                            | Admin                   |
+| `/admin/races/:id`  | Validation/rejet admin                                              | Admin                   |
+
+---
+
+## 13. Interfaces utilisateur
+
+### Vue détail d'une course (`RaceDetailView`)
+
+Accessible à tous. Affiche :
+
+- Bannière pleine largeur (rendue au niveau de la page, hors container `max-w-4xl`)
+- Logo + badges format (Backyard / Compétition ouverte / Course) + badge Privée
+- Bouton **⚙ Gérer** (organisateur uniquement) → `/races/:id/manage`
+- Carte GPX interactive du parcours + badges distance/dénivelé
+- Description
+- Sidebar : dates, nb participants, durée boucle (Backyard)
+- **Mon inscription** : statut coloré + bouton d'annulation si PENDING/REGISTERED
+- **S'inscrire** (courses classiques) :
+  - Gate email non vérifié → message + lien profil
+  - Gate Strava non connecté → message + lien profil
+  - Champ code si PRIVATE, bouton adapté selon accessType
+- **Compétition ouverte** : explication du fonctionnement Strava + avertissement si Strava non connecté
+- **Classement** : graphique + top 10 (si résultats disponibles)
+- **Statistiques** : section `RaceStatsSection` avec KPIs + graphiques
+- **Tableau des participants** (avec actions organisateur si isOrganizer)
+
+### Tableau des participants (`RaceParticipantsTable`)
+
+| Colonne                | ONE_SHOT   | BACKYARD |
+| ---------------------- | ---------- | -------- |
+| Rang                   | ✓ (🥇🥈🥉) | —        |
+| Nom                    | ✓          | ✓        |
+| Temps                  | ✓          | —        |
+| Boucles                | —          | ✓        |
+| Statut                 | ✓          | ✓        |
+| Actions (organisateur) | ✓          | ✓        |
+
+**Actions organisateur :**
+
+- ✓ : valider une inscription PENDING → REGISTERED
+- **Résultat** : saisir rang + temps manuellement (ONE_SHOT uniquement)
+- **Map** : ouvrir l'arbitrage Strava (si stravaActivityId présent)
+- **DNF** / **DNS** / **DQ** : changement de statut avec dialog de confirmation
+
+### Panel d'administration (`/races/:id/manage`)
+
+Accessible à l'organisateur et aux admins. Comprend :
+
+- **Breadcrumb** : Mes courses → [titre] → Administration
+- **En-tête** : titre de la course + badge de statut coloré + lien vers la page publique
+- **KPI cards** : Total / En attente / Validés / DNF+DNS+DQ
+- **Section Participants** : tableau complet + bouton ManualRaceSyncButton
+- **Section Modifier** : formulaire d'édition complet (`RaceForm`)
+- **Section Informations** : messages contextuels selon le statut (DRAFT, ACTIVE)
+
+### Profil — Connexion Strava
+
+Avant de rediriger vers l'OAuth Strava, un `AlertDialog` de confirmation informe l'utilisateur que :
+
+- La liaison est limitée à **un seul compte Strava** par profil.
+- La liaison est **permanente** et ne peut pas être supprimée.
+
+### Cards de course (`RaceCard`)
+
+Badge format (haut gauche) :
+
+| Format + accès              | Badge affiché |
+| --------------------------- | ------------- |
+| BACKYARD                    | ↻ Backyard    |
+| ONE_SHOT + PUBLIC_FREE      | 🌐 Compétitif |
+| ONE_SHOT + autre accessType | ⚡ Course     |
+
+### Guide du format course (`RaceFormatGuide`)
+
+Bouton "Comprendre le format course" affiché en bas du formulaire de création/édition. Au clic, ouvre un dialog expliquant :
+
+- Le cycle de vie d'une course (DRAFT → CLOSED)
+- Les règles d'inscription par type d'accès
+- Le fonctionnement ONE_SHOT et BACKYARD
+- La synchro Strava et ses conditions
+- Les crons automatiques
+- La certification à la clôture
+
+### Dashboard organisateur (`OrganizerRacesDashboard`)
+
+Liste des courses de l'organisateur avec :
+
+- Statut coloré + motif de rejet si CANCELLED
+- Boutons Voir, Modifier, Supprimer
+- Panneau extensible (ACTIVE uniquement) : liste des participants avec actions rapides + ManualRaceSyncButton

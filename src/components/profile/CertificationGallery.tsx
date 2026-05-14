@@ -2,16 +2,18 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
-import { Trophy, Map, Footprints, Bike } from 'lucide-react'
+import { Trophy, Map, Footprints, Bike, Flag } from 'lucide-react'
 import { FilterBar } from '@/components/ui/filter-bar'
 import { CertCard } from './CertCard'
+import { RaceParticipationCard } from '@/components/race/RaceParticipationCard'
 import type {
   CompletedChallenge,
   CompletedTrack,
   InProgressChallenge,
 } from '@/actions/user/user.certifications.actions'
+import type { listMyParticipationsAction } from '@/actions/race/registration.actions'
 
-type Tab = 'challenges' | 'tracks'
+type Tab = 'challenges' | 'tracks' | 'races'
 type ActivityFilter = 'all' | 'run' | 'ride'
 
 const RUN_TYPES = new Set(['Run', 'TrailRun', 'VirtualRun', 'Hike', 'Walk'])
@@ -45,12 +47,14 @@ type Props = {
   completedTracks: CompletedTrack[]
   completedChallenges: CompletedChallenge[]
   inProgressChallenges: InProgressChallenge[]
+  participations: Awaited<ReturnType<typeof listMyParticipationsAction>>
 }
 
 export function CertificationGallery({
   completedTracks,
   completedChallenges,
   inProgressChallenges,
+  participations,
 }: Props) {
   const t = useTranslations('Profile')
   const [tab, setTab] = useState<Tab>('challenges')
@@ -122,13 +126,15 @@ export function CertificationGallery({
   const hasContent =
     completedTracks.length > 0 ||
     completedChallenges.length > 0 ||
-    inProgressChallenges.length > 0
+    inProgressChallenges.length > 0 ||
+    participations.length > 0
 
   if (!hasContent) return null
 
   const challengeCount =
     completedChallenges.length + inProgressChallenges.length
   const trackCount = completedTracks.length
+  const raceCount = participations.length
 
   const TABS = [
     {
@@ -142,6 +148,12 @@ export function CertificationGallery({
       label: t('myCompletedTracks'),
       icon: <Map className="w-3.5 h-3.5" />,
       count: trackCount,
+    },
+    {
+      value: 'races' as Tab,
+      label: 'Mes courses',
+      icon: <Flag className="w-3.5 h-3.5" />,
+      count: raceCount,
     },
   ]
 
@@ -169,9 +181,13 @@ export function CertificationGallery({
         ]
           .filter(Boolean)
           .join(' · ')
-      : trackCount > 0
-        ? `${trackCount} parcours certifié${trackCount > 1 ? 's' : ''}`
-        : ''
+      : tab === 'tracks'
+        ? trackCount > 0
+          ? `${trackCount} parcours certifié${trackCount > 1 ? 's' : ''}`
+          : ''
+        : raceCount > 0
+          ? `${raceCount} course${raceCount > 1 ? 's' : ''}`
+          : ''
 
   return (
     <div className="space-y-4">
@@ -222,6 +238,22 @@ export function CertificationGallery({
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {filteredTracks.map((cert) => (
                 <CertCard key={cert.id} type="track" data={cert} />
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {tab === 'races' && (
+        <>
+          {participations.length === 0 ? (
+            <p className="text-center text-muted-foreground text-sm py-12">
+              Aucune course pour le moment
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {participations.map((p) => (
+                <RaceParticipationCard key={p.id} participation={p} />
               ))}
             </div>
           )}
