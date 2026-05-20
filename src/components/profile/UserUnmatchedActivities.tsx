@@ -1,6 +1,9 @@
 import { getTranslations } from 'next-intl/server'
-import { AlertCircle, Activity } from 'lucide-react'
+import { AlertCircle, Activity, ChevronDown } from 'lucide-react'
 import type { UnmatchedActivity } from '@/actions/user/user.certifications.actions'
+import { Link } from '@/navigation'
+
+const DEFAULT_LIMIT = 5
 
 function formatDate(iso: string | null): string {
   if (!iso) return '—'
@@ -15,18 +18,22 @@ function getActivityLink(activity: UnmatchedActivity): string | null {
   if (activity.provider === 'strava') {
     return `https://www.strava.com/activities/${activity.activityId}`
   }
-  // TODO: implementer les autres providers (garmin, etc.)
   return null
 }
 
 export async function UserUnmatchedActivities({
   activities,
+  showAll = false,
 }: {
   activities: UnmatchedActivity[]
+  showAll?: boolean
 }) {
   const t = await getTranslations('Profile')
 
   if (activities.length === 0) return null
+
+  const visible = showAll ? activities : activities.slice(0, DEFAULT_LIMIT)
+  const hasMore = !showAll && activities.length > DEFAULT_LIMIT
 
   return (
     <div className="rounded-2xl bg-card border border-border p-6">
@@ -48,7 +55,7 @@ export async function UserUnmatchedActivities({
       </div>
 
       <div className="divide-y divide-border">
-        {activities.map((activity) => {
+        {visible.map((activity) => {
           const link = getActivityLink(activity)
           return (
             <div
@@ -98,6 +105,19 @@ export async function UserUnmatchedActivities({
           )
         })}
       </div>
+
+      {hasMore && (
+        <div className="mt-4 pt-4 border-t border-border text-center">
+          <Link
+            href="?tab=historique&showAll=1"
+            scroll={false}
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ChevronDown className="w-4 h-4" />
+            Voir les {activities.length - DEFAULT_LIMIT} autres activités
+          </Link>
+        </div>
+      )}
     </div>
   )
 }
