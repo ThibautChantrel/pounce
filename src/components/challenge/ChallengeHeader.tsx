@@ -16,6 +16,7 @@ interface ChallengeHeaderProps {
   totalElevation: number
   tracksCount: number
   createdAt: Date
+  categories?: { category: { id: string; value: string } }[]
 }
 
 export async function ChallengeHeader({
@@ -28,6 +29,7 @@ export async function ChallengeHeader({
   totalElevation,
   tracksCount,
   createdAt,
+  categories,
 }: ChallengeHeaderProps) {
   const t = await getTranslations('Challenges.ChallengeDetail')
 
@@ -81,6 +83,11 @@ export async function ChallengeHeader({
                 >
                   {t(`Difficulties.${difficulty}`)}
                 </Badge>
+                {categories?.map((c) => (
+                  <Badge key={c.category.id} variant="secondary">
+                    {c.category.value}
+                  </Badge>
+                ))}
 
                 <span className="flex items-center hover:text-primary transition-colors">
                   <MapPin className="w-4 h-4 mr-1.5 text-primary" />

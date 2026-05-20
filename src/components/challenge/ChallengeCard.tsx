@@ -4,20 +4,26 @@ import Image from 'next/image'
 import { Link } from '@/navigation'
 import { Map, Mountain, Trophy, ArrowRight } from 'lucide-react'
 import { ChallengeWithRelations } from '@/actions/challenge/challenge.admin.type'
-// 👇 Import de la traduction
+import { getCategoryIcon } from '@/utils/category-icons'
 import { useTranslations } from 'next-intl'
 
 interface ChallengeCardProps {
   challenge: ChallengeWithRelations
+  completedTracks?: number
 }
 
-export function ChallengeCard({ challenge }: ChallengeCardProps) {
-  // 👇 Initialisation du hook
+export function ChallengeCard({
+  challenge,
+  completedTracks,
+}: ChallengeCardProps) {
   const t = useTranslations('Challenges')
 
   const trackCount = challenge.tracks.length
-
-  console.log('challenge in ChallengeCard:', challenge)
+  const showProgress = completedTracks !== undefined
+  const progressPct =
+    showProgress && trackCount > 0
+      ? Math.round((completedTracks! / trackCount) * 100)
+      : 0
 
   const totalDistance = challenge.tracks.reduce(
     (acc, curr) => acc + curr.track.distance,
@@ -51,6 +57,24 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
         <div className="absolute inset-0 bg-secondary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
         <div className="relative h-full flex flex-col justify-between p-6 text-white group-hover:text-primary transition-colors duration-300">
+          {/* Icônes catégories en haut à droite */}
+          {challenge.categories && challenge.categories.length > 0 && (
+            <div className="absolute top-4 right-4 z-10 flex gap-1.5">
+              {challenge.categories.map((c) => {
+                const Icon = getCategoryIcon(c.category.value)
+                return (
+                  <div
+                    key={c.category.id}
+                    title={c.category.value}
+                    className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center"
+                  >
+                    <Icon className="w-4 h-4 text-white" />
+                  </div>
+                )
+              })}
+            </div>
+          )}
+
           <div className="z-10">
             <h3 className="text-2xl font-bold uppercase tracking-wider font-heading">
               {challenge.title}
@@ -77,27 +101,48 @@ export function ChallengeCard({ challenge }: ChallengeCardProps) {
             </div>
           </div>
 
-          <div className="z-10 flex w-full items-center justify-between transition-opacity duration-300 group-hover:opacity-0">
-            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
-              <Trophy className="w-4 h-4" />
-              <span>{trackCount}</span>
+          <div className="z-10 flex flex-col gap-2">
+            <div className="flex w-full items-center justify-between transition-opacity duration-300 group-hover:opacity-0">
+              <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+                <Trophy className="w-4 h-4" />
+                <span>{trackCount}</span>
+              </div>
+
+              <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+                <Map className="w-4 h-4" />
+                <span>
+                  {totalDistance.toFixed(1)}{' '}
+                  <span className="text-xs font-normal">{t('km')}</span>
+                </span>
+              </div>
+
+              <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
+                <Mountain className="w-4 h-4" />
+                <span>
+                  {totalElevation}{' '}
+                  <span className="text-xs font-normal">{t('m')}</span>
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
-              <Map className="w-4 h-4" />
-              <span>
-                {totalDistance.toFixed(1)}{' '}
-                <span className="text-xs font-normal">{t('km')}</span>
-              </span>
-            </div>
-
-            <div className="flex flex-1 items-center justify-center gap-2 text-lg font-bold">
-              <Mountain className="w-4 h-4" />
-              <span>
-                {totalElevation}{' '}
-                <span className="text-xs font-normal">{t('m')}</span>
-              </span>
-            </div>
+            {showProgress && (
+              <div className="transition-opacity duration-300 group-hover:opacity-0">
+                <div className="flex justify-between items-center text-[10px] font-semibold uppercase tracking-wider text-sienna mb-1">
+                  <span>{t('progression')}</span>
+                  <span>
+                    {completedTracks}/{trackCount}
+                  </span>
+                </div>
+                <div className="h-1 rounded-full overflow-hidden bg-white/25">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 bg-primary" // La classe va ici
+                    style={{
+                      width: `${progressPct}%`, // Seul le dynamique reste ici
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

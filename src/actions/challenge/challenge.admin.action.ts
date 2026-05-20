@@ -23,8 +23,8 @@ const challengeSchema = z.object({
   coverId: z.string().optional().nullable(),
   bannerId: z.string().optional().nullable(),
 
-  // Tableau d'IDs pour les tracks
   trackIds: z.array(z.string()).optional(),
+  categoryIds: z.array(z.string()).optional(),
 })
 
 // Schéma update (partiel + id obligatoire)

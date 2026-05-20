@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import { useFormatter } from 'next-intl'
+import { useFormatter, useTranslations } from 'next-intl'
 import FileDetails from '../FileDetails'
 import { FileData } from '@/actions/file/file.admin.type'
 import { Link } from '@/navigation'
@@ -55,6 +55,7 @@ export function DataDetails<T extends Record<string, unknown>>({
   className,
 }: DataDetailsProps<T>) {
   const format = useFormatter()
+  const t = useTranslations('Admin.Global')
 
   // 2. MODIFICATION DU FILTRE : On inclut 'file-list' avec les fichiers pour l'affichage en bas
   const fileFields = fields.filter(
@@ -72,7 +73,9 @@ export function DataDetails<T extends Record<string, unknown>>({
 
   const renderValue = (field: FieldConfig<T>, value: unknown) => {
     if (value === null || value === undefined) {
-      return <span className="text-muted-foreground italic">Non défini</span>
+      return (
+        <span className="text-muted-foreground italic">{t('notDefined')}</span>
+      )
     }
 
     switch (field.type) {
@@ -99,14 +102,14 @@ export function DataDetails<T extends Record<string, unknown>>({
             variant="outline"
             className="bg-green-50 text-green-700 border-green-200 gap-1"
           >
-            <Check className="w-3 h-3" /> Oui
+            <Check className="w-3 h-3" /> {t('yes')}
           </Badge>
         ) : (
           <Badge
             variant="outline"
             className="bg-red-50 text-red-700 border-red-200 gap-1"
           >
-            <X className="w-3 h-3" /> Non
+            <X className="w-3 h-3" /> {t('no')}
           </Badge>
         )
 
@@ -118,14 +121,14 @@ export function DataDetails<T extends Record<string, unknown>>({
       case 'file':
         const fileData = value as FileData | null
         if (!fileData || !fileData.id)
-          return <span className="text-muted-foreground">Aucun fichier</span>
+          return <span className="text-muted-foreground">{t('noFile')}</span>
 
         return <FileDetails file={fileData} />
 
       case 'file-list':
         const filesList = value as FileData[] | null
         if (!filesList || !Array.isArray(filesList) || filesList.length === 0)
-          return <span className="text-muted-foreground">Aucun fichier</span>
+          return <span className="text-muted-foreground">{t('noFile')}</span>
 
         return (
           <div className="flex flex-col gap-6 w-full items-center">

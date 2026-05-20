@@ -1,6 +1,6 @@
 'use server'
 
-import { BusinessError, ERROR_CODES } from '@/core/errors' // <--- Import
+import { BusinessError, ERROR_CODES } from '@/core/errors'
 import { registerUser } from '@/server/modules/user/services/user.service'
 import { LoginSchema, RegisterSchema } from './auth.schema'
 import { signIn, signOut } from '@/server/modules/auth/auth.config'
@@ -10,6 +10,7 @@ export interface AuthActionState {
   error?: string
   code?: string
 }
+
 export async function registerAction(
   prevState: AuthActionState,
   formData: FormData
@@ -17,7 +18,14 @@ export async function registerAction(
   const rawData = {
     email: formData.get('email') as string,
     password: formData.get('password') as string,
-    name: formData.get('name') as string,
+    pseudo: formData.get('pseudo') as string,
+    firstName: formData.get('firstName') as string,
+    lastName: formData.get('lastName') as string,
+    nationality: formData.get('nationality') as string,
+    gender: formData.get('gender') as string,
+    birthDate: formData.get('birthDate') as string,
+    height: formData.get('height') as string,
+    weight: formData.get('weight') as string,
   }
 
   const validated = RegisterSchema.safeParse(rawData)
@@ -45,18 +53,22 @@ export async function registerAction(
       }
     }
     return { success: true }
-
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e: any) {
     if (e instanceof BusinessError) {
-      console.log('Erreur Métier :', e.code)
+      // Return user-facing messages for known business errors
+      const messages: Partial<Record<string, string>> = {
+        USER_ALREADY_EXISTS: 'Un compte existe déjà avec cet email.',
+        PSEUDO_TAKEN: 'Ce pseudo est déjà utilisé.',
+        PASSWORD_TOO_WEAK:
+          'Le mot de passe doit contenir au moins 6 caractères.',
+      }
       return {
         success: false,
-        error: e.message,
+        error: messages[e.code] ?? e.message,
         code: e.code,
       }
     }
-
     console.error('Erreur Critique :', e)
     return {
       success: false,

@@ -8,7 +8,7 @@ export default function PublicLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar showConnexionStatus />
       <main className="grow">{children}</main>
       <Footer />
     </div>

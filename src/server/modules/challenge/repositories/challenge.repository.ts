@@ -10,7 +10,16 @@ const defaultInclude = {
   tracks: {
     orderBy: { order: 'asc' },
     include: {
-      track: true,
+      track: {
+        include: {
+          categories: { include: { category: true } },
+        },
+      },
+    },
+  },
+  categories: {
+    include: {
+      category: true,
     },
   },
 } satisfies Prisma.ChallengeInclude
@@ -41,7 +50,7 @@ export class ChallengeRepository {
   }
 
   async update(data: UpdateChallengeInput, userId: string) {
-    const { id, trackIds, ...fields } = data
+    const { id, trackIds, categoryIds, ...fields } = data
 
     return await prisma.challenge.update({
       where: { id },
@@ -55,6 +64,15 @@ export class ChallengeRepository {
               create: trackIds.map((trackId, index) => ({
                 track: { connect: { id: trackId } },
                 order: index,
+              })),
+            }
+          : undefined,
+
+        categories: categoryIds
+          ? {
+              deleteMany: {},
+              create: categoryIds.map((categoryId) => ({
+                category: { connect: { id: categoryId } },
               })),
             }
           : undefined,
@@ -95,6 +113,7 @@ export class ChallengeRepository {
       : {
           cover: defaultInclude.cover,
           banner: defaultInclude.banner,
+          categories: defaultInclude.categories,
           tracks: {
             orderBy: { order: 'asc' as Prisma.SortOrder },
             where: {
@@ -103,7 +122,11 @@ export class ChallengeRepository {
               },
             },
             include: {
-              track: true,
+              track: {
+                include: {
+                  categories: { include: { category: true } },
+                },
+              },
             },
           },
         }
@@ -158,7 +181,8 @@ export class ChallengeRepository {
     skip: number,
     take: number,
     search?: string,
-    admin?: boolean
+    admin?: boolean,
+    categoryIds?: string[]
   ) => {
     const where: Prisma.ChallengeWhereInput = search
       ? {
@@ -188,6 +212,12 @@ export class ChallengeRepository {
             visible: true,
           },
         },
+      }
+    }
+
+    if (categoryIds && categoryIds.length > 0) {
+      where.categories = {
+        some: { categoryId: { in: categoryIds } },
       }
     }
 

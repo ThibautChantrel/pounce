@@ -69,12 +69,28 @@ export default async function ChallengeShowPage(props: PageProps) {
       type: 'link-list',
       getValue: (item) => {
         const sortedTracks = [...item.tracks].sort((a, b) => a.order - b.order)
-
-        // On map vers le format attendu par DataDetails { label, url }
         return sortedTracks.map((t, index) => ({
-          label: `${index + 1}. ${t.track.title}`, // Ex: "1. Traversée de Paris"
+          label: `${index + 1}. ${t.track.title}`,
           url: `/admin/tracks/${t.track.id}`,
         }))
+      },
+    },
+    {
+      label: tAdmin('Navbar.categories'),
+      key: 'categories',
+      type: 'custom',
+      getValue: (item) => {
+        if (!item.categories || item.categories.length === 0)
+          return <span className="text-muted-foreground text-sm">-</span>
+        return (
+          <div className="flex flex-wrap gap-1">
+            {item.categories.map((c) => (
+              <Badge key={c.category.id} variant="secondary">
+                {c.category.value}
+              </Badge>
+            ))}
+          </div>
+        )
       },
     },
 

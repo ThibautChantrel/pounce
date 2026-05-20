@@ -104,6 +104,7 @@ export default async function TrackDetailPage(props: PageProps) {
         bannerUrl={bannerUrl}
         createdAt={createdAt}
         hasGpx={!!track.gpxFile}
+        categories={track.categories}
       />
 
       <div className="container max-w-5xl mx-auto px-4 sm:px-6 py-4">
@@ -160,7 +161,7 @@ export default async function TrackDetailPage(props: PageProps) {
                   )}
 
                   <div className="text-[10px] text-muted-foreground mt-1 uppercase tracking-wider">
-                    {poi.type}
+                    {poi.type?.value || '-'}
                   </div>
                 </>
               )}

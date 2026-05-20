@@ -5,9 +5,8 @@ import { toast } from 'sonner'
 import { DataCreate, CreateFieldConfig } from '@/components/admin/data-create'
 import { useRouter } from '@/navigation'
 import { useTranslations } from 'next-intl'
-import { PoiType } from '@prisma/client' // Import de l'enum Prisma
 import { createPoiAction } from '@/actions/poi/poi.admin.actions'
-import { PoiTypeOptions } from '@/utils/pois'
+import { fetchPoiTypesForSelect } from '@/actions/poi-type/poi-type.admin.action'
 
 export default function CreatePoiPage() {
   const router = useRouter()
@@ -15,9 +14,7 @@ export default function CreatePoiPage() {
 
   const createPoiSchema = z.object({
     name: z.string().min(2, { message: t('Pois.validation.nameTooShort') }),
-    type: z.nativeEnum(PoiType, {
-      message: t('Pois.validation.typeInvalid'),
-    }),
+    typeId: z.string().nullable().optional(),
     description: z.string().optional(),
     latitude: z
       .number({ message: t('Pois.validation.invalidNumber') })
@@ -40,11 +37,18 @@ export default function CreatePoiPage() {
       placeholder: 'Ex: Tour Eiffel',
     },
     {
-      name: 'type',
+      name: 'typeId',
       label: t('Pois.type'),
-      type: 'select',
-      placeholder: 'Sélectionner un type',
-      options: PoiTypeOptions,
+      type: 'relation',
+      relationMode: 'single',
+      placeholder: 'Sélectionner un type (optionnel)',
+      relationFetch: async (params) => {
+        const res = await fetchPoiTypesForSelect(params)
+        return {
+          data: res.data.map((item) => ({ id: item.id, name: item.value })),
+          total: res.total,
+        }
+      },
     },
     {
       name: 'latitude',
@@ -96,7 +100,7 @@ export default function CreatePoiPage() {
         fields={fields}
         defaultValues={{
           name: '',
-          type: PoiType.OTHER,
+          typeId: null,
           description: '',
           latitude: 0,
           longitude: 0,

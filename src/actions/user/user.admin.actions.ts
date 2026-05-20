@@ -6,6 +6,7 @@ import {
   deleteUserById,
   getAllUsers,
   getUserById,
+  resetUserPassword,
   updateUserById,
 } from '@/server/modules/user/services/user.admin.service'
 import { FetchParams } from '@/utils/fetch'
@@ -50,6 +51,22 @@ export async function updateUserAction(id: string, formData: FormData) {
       return { success: false, error: error.message }
     }
     return { success: false, error: 'Erreur lors de la mise à jour' }
+  }
+}
+
+export async function resetUserPasswordAction(id: string, newPassword: string) {
+  try {
+    await resetUserPassword(id, newPassword)
+    revalidatePath(`/admin/users/${id}`)
+    return { success: true }
+  } catch (error) {
+    if (error instanceof BusinessError) {
+      return { success: false, error: error.message }
+    }
+    return {
+      success: false,
+      error: 'Erreur lors de la réinitialisation du mot de passe',
+    }
   }
 }
 

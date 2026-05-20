@@ -1,5 +1,5 @@
 import { fileWithoutData } from '@/server/modules/file/file.types'
-import { Difficulty } from '@prisma/client'
+import { Category, Difficulty } from '@prisma/client'
 import { Track } from '../track/track.types'
 
 export type Challenge = {
@@ -30,6 +30,7 @@ export type ChallengeWithRelations = Challenge & {
   tracks: (ChallengeTrack & {
     track: Track
   })[]
+  categories?: { category: Category }[]
 }
 
 export type CreateChallengeInput = {
@@ -42,6 +43,7 @@ export type CreateChallengeInput = {
   coverId?: string | null
   bannerId?: string | null
   trackIds?: string[]
+  categoryIds?: string[]
 }
 
 export type UpdateChallengeInput = Partial<CreateChallengeInput> & {
@@ -49,4 +51,5 @@ export type UpdateChallengeInput = Partial<CreateChallengeInput> & {
   coverId?: string | null
   bannerId?: string | null
   trackIds?: string[]
+  categoryIds?: string[]
 }

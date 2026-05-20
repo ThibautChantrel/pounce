@@ -21,17 +21,17 @@ import {
 import { toast } from 'sonner'
 import { useFormatter, useTranslations } from 'next-intl'
 import { Link, useRouter } from '@/navigation'
-import { PoiType } from '@prisma/client'
 import { deletePoiAction } from '@/actions/poi/poi.admin.actions'
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import { Badge } from '@/components/ui/badge'
-import { PoiTypeVariants } from '@/utils/pois'
+import { getPoiTypeVariant } from '@/utils/pois'
 
 export type PoiColumn = {
   id: string
   name: string
   description?: string | null
-  type: PoiType
+  typeId: string | null
+  type: { id: string; value: string } | null
   latitude: number
   longitude: number
   createdAt: Date
@@ -146,9 +146,12 @@ export const usePoiColumns = () => {
         accessorKey: 'type',
         header: t('type'),
         cell: ({ row }) => {
-          const type = row.original.type
-
-          return <Badge variant={PoiTypeVariants[type]}>{type}</Badge>
+          const typeValue = row.original.type?.value
+          return (
+            <Badge variant={getPoiTypeVariant(typeValue)}>
+              {typeValue || '-'}
+            </Badge>
+          )
         },
       },
       {

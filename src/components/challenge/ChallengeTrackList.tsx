@@ -7,12 +7,16 @@ type TrackWithRelation = ChallengeTrack & { track: Track }
 
 interface ChallengeTrackListProps {
   tracks: TrackWithRelation[]
+  certifiedTrackIds?: string[]
 }
 
-export async function ChallengeTrackList({ tracks }: ChallengeTrackListProps) {
+export async function ChallengeTrackList({
+  tracks,
+  certifiedTrackIds,
+}: ChallengeTrackListProps) {
   const t = await getTranslations('Challenges.ChallengeDetail')
+  const certifiedSet = new Set(certifiedTrackIds ?? [])
 
-  // Tri des parcours par ordre
   const sortedTracks = [...tracks].sort((a, b) => a.order - b.order)
 
   return (
@@ -24,13 +28,15 @@ export async function ChallengeTrackList({ tracks }: ChallengeTrackListProps) {
         {t('tracksTitle')}
       </h2>
 
-      {/* 👇 MODIFICATION ICI :
-          - grid-cols-2 : 2 colonnes sur mobile (affichage grille compacte)
-          - md:grid-cols-1 : 1 colonne sur tablette/desktop (affichage liste détaillée)
-      */}
       <div className="grid grid-cols-2 md:grid-cols-1 gap-3">
         {sortedTracks.map((item, index) => (
-          <TrackCard key={item.id} item={item} index={index} t={t} />
+          <TrackCard
+            key={item.id}
+            item={item}
+            index={index}
+            isCertified={certifiedSet.has(item.trackId)}
+            t={t}
+          />
         ))}
       </div>
     </div>

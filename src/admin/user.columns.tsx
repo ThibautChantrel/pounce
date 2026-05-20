@@ -19,7 +19,9 @@ import { Link } from '@/navigation'
 
 export type UserColumn = {
   id: string
-  name: string | null
+  pseudo: string | null
+  firstName: string | null
+  lastName: string | null
   email: string | null
   role: string
   createdAt: Date
@@ -79,7 +81,7 @@ const UserActions = ({ user }: { user: UserColumn }) => {
         actionLabel={t('Actions.confirm')}
         cancelLabel={t('Actions.cancel')}
         description={t('Actions.AlertDialog.description', {
-          item: user.name || user.email || 'User',
+          item: user.pseudo || user.firstName || user.email || 'User',
         })}
       />
     </>
@@ -92,16 +94,23 @@ export const useUserColumns = () => {
   return useMemo<ColumnDef<UserColumn>[]>(
     () => [
       {
-        accessorKey: 'name',
+        accessorKey: 'pseudo',
         header: t('Users.name'),
         cell: ({ row }) => (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col">
             <Link
               href={`/admin/users/${row.original.id}`}
               className="font-medium hover:underline hover:text-blue-600"
             >
-              {row.getValue('name')}
+              {[row.original.firstName, row.original.lastName]
+                .filter(Boolean)
+                .join(' ') || row.original.email}
             </Link>
+            {row.original.pseudo && (
+              <span className="text-xs text-muted-foreground">
+                @{row.original.pseudo}
+              </span>
+            )}
           </div>
         ),
       },

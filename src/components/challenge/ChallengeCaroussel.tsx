@@ -16,10 +16,16 @@ import { useDebounce } from 'use-debounce'
 import { useTranslations } from 'next-intl'
 import { ChallengeCard } from './ChallengeCard'
 import { fetchChallengesForUser } from '@/actions/challenge/challenge.action'
+import { fetchUserChallengeData } from '@/actions/user/user.certifications.actions'
+import { fetchCategoriesForSelect } from '@/actions/category/category.admin.action'
 import { Button } from '../ui/button'
 import { Link } from '@/navigation'
+import { getCategoryIcon } from '@/utils/category-icons'
+import { cn } from '@/lib/utils'
 
 const ITEMS_PER_PAGE = 10
+
+type CategoryOption = { id: string; value: string }
 
 export function ChallengeCarousel() {
   const t = useTranslations('Challenges')
@@ -35,6 +41,31 @@ export function ChallengeCarousel() {
   const [searchTerm, setSearchTerm] = React.useState('')
   const [debouncedSearch] = useDebounce(searchTerm, 500)
 
+  const [progressData, setProgressData] = React.useState<{
+    isLoggedIn: boolean
+    map: Record<string, number>
+  } | null>(null)
+
+  const [categories, setCategories] = React.useState<CategoryOption[]>([])
+  const [selectedCategoryIds, setSelectedCategoryIds] = React.useState<
+    string[]
+  >([])
+
+  React.useEffect(() => {
+    fetchCategoriesForSelect({ skip: 0, take: 50 }).then((res) =>
+      setCategories(res.data)
+    )
+    fetchUserChallengeData().then(({ isLoggedIn, progressMap }) =>
+      setProgressData({ isLoggedIn, map: progressMap })
+    )
+  }, [])
+
+  const toggleCategory = (id: string) => {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    )
+  }
+
   const loadChallenges = React.useCallback(
     async (reset = false) => {
       setIsLoading(true)
@@ -44,7 +75,8 @@ export function ChallengeCarousel() {
         const response = await fetchChallengesForUser(
           currentSkip,
           ITEMS_PER_PAGE,
-          debouncedSearch
+          debouncedSearch,
+          selectedCategoryIds.length > 0 ? selectedCategoryIds : undefined
         )
 
         if (reset) {
@@ -66,14 +98,14 @@ export function ChallengeCarousel() {
         setHasInitialized(true)
       }
     },
-    [debouncedSearch, challenges.length]
+    [debouncedSearch, selectedCategoryIds, challenges.length]
   )
 
   React.useEffect(() => {
     loadChallenges(true)
     if (api) api.scrollTo(0)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch])
+  }, [debouncedSearch, selectedCategoryIds])
 
   // 2. Effet : Scroll Infini
   React.useEffect(() => {
@@ -112,18 +144,44 @@ export function ChallengeCarousel() {
             </h2>
           </div>
 
-          <div className="relative w-full md:w-72 lg:w-96">
-            <Input
-              placeholder={t('searchPlaceholder')}
-              className="pl-9 bg-background/50 backdrop-blur-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="relative w-full md:w-72 lg:w-96">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t('searchPlaceholder')}
+                className="pl-9 bg-background/50 backdrop-blur-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {isLoading && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                </div>
+              )}
+            </div>
 
-            {/* Spinner à droite */}
-            {isLoading && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            {categories.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                {categories.map((cat) => {
+                  const Icon = getCategoryIcon(cat.value)
+                  const isActive = selectedCategoryIds.includes(cat.id)
+                  return (
+                    <Button
+                      key={cat.id}
+                      variant="ghost"
+                      onClick={() => toggleCategory(cat.id)}
+                      className={cn(
+                        'h-auto rounded-full border px-3 py-1.5 text-sm font-medium transition-all',
+                        isActive
+                          ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90 hover:text-primary-foreground'
+                          : 'bg-background/50 text-muted-foreground border-border hover:bg-background/50 hover:border-primary/50 hover:text-foreground'
+                      )}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      {cat.value}
+                    </Button>
+                  )
+                })}
               </div>
             )}
           </div>
@@ -146,7 +204,14 @@ export function ChallengeCarousel() {
               key={challenge.id}
               className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
             >
-              <ChallengeCard challenge={challenge} />
+              <ChallengeCard
+                challenge={challenge}
+                completedTracks={
+                  progressData?.isLoggedIn
+                    ? (progressData.map[challenge.id] ?? 0)
+                    : undefined
+                }
+              />
             </CarouselItem>
           ))}
 
